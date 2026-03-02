@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import Header from "@/components/Header";
 import FooterSection from "@/components/FooterSection";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,12 @@ const roleNames: Record<string, string> = {
 
 const DemoPage = () => {
   const { role } = useParams<{ role: string }>();
+
+  // Admin role redirects to admin dashboard
+  if (role === "admin") {
+    return <Navigate to="/admin" replace />;
+  }
+
   const roleName = roleNames[role || ""] || role;
 
   return (
@@ -25,7 +31,7 @@ const DemoPage = () => {
         <div className="container mx-auto px-4 text-center max-w-lg">
           <div className="bg-card rounded-3xl p-10 shadow-elevated border border-border">
             <div className="w-16 h-16 rounded-2xl gradient-hero flex items-center justify-center mx-auto mb-6 shadow-neon">
-              <span className="text-neon font-bold text-2xl font-display">{roleName[0]}</span>
+              <span className="text-neon font-bold text-2xl font-display">{roleName?.[0]}</span>
             </div>
             <h1 className="text-2xl font-extrabold font-display text-foreground mb-3">Demo: {roleName}</h1>
             <p className="text-muted-foreground mb-8">
