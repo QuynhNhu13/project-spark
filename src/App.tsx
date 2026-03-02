@@ -48,6 +48,7 @@ const App = () => (
       <TooltipProvider>
         <AdminProvider>
           <TutorProvider>
+          <TeacherProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
