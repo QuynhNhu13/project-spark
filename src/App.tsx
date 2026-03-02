@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AdminProvider } from "@/contexts/AdminContext";
 import { TutorProvider } from "@/contexts/TutorContext";
+import { TeacherProvider } from "@/contexts/TeacherContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
