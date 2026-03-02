@@ -2,6 +2,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Users, GraduationCap, ThumbsUp, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import tutor1 from "@/assets/tutor-1.jpg";
+import tutor2 from "@/assets/tutor-2.jpg";
+import tutor3 from "@/assets/tutor-3.jpg";
+import tutor4 from "@/assets/tutor-4.jpg";
+import tutor5 from "@/assets/tutor-5.jpg";
 
 const stats = [
   { icon: Users, value: "1,200+", label: "Gia sư & Giáo viên" },
@@ -15,13 +20,7 @@ const bullets = [
   "Thanh toán an toàn, minh bạch",
 ];
 
-const avatars = [
-  "https://randomuser.me/api/portraits/men/32.jpg",
-  "https://randomuser.me/api/portraits/women/44.jpg",
-  "https://randomuser.me/api/portraits/women/68.jpg",
-  "https://randomuser.me/api/portraits/men/75.jpg",
-  "https://randomuser.me/api/portraits/men/22.jpg",
-];
+const avatars = [tutor1, tutor2, tutor3, tutor4, tutor5];
 
 const HeroSection = () => {
   return (
