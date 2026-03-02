@@ -35,10 +35,7 @@ const AdminDashboard = () => {
     { label: "Doanh thu tháng", value: `${(monthRevenue / 1000000).toFixed(1)}M`, icon: CreditCard, change: "+18%", up: true, color: "bg-primary/10 text-primary" },
   ];
 
-  // Recent classes (searching or new)
   const recentClasses = classes.filter(c => c.status === "searching" || c.status === "active").slice(0, 4);
-  
-  // Recent transactions
   const recentTransactions = transactions.slice(0, 5);
 
   const getUserName = (id: string) => users.find(u => u.id === id)?.name || "—";
@@ -84,9 +81,8 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* Secondary row: 3 cards */}
+      {/* Secondary row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Pending approvals */}
         <Card className="border-0 shadow-soft">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
@@ -106,7 +102,6 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Month tests */}
         <Card className="border-0 shadow-soft">
           <CardContent className="p-5">
             <div className="flex items-center gap-3 mb-4">
@@ -128,7 +123,6 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Avg approval time */}
         <Card className="border-0 shadow-soft">
           <CardContent className="p-5">
             <div className="flex items-center gap-3 mb-4">
@@ -154,9 +148,8 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
-      {/* New row: Quản lý lớp mới + Giao dịch gần đây */}
+      {/* Classes + Transactions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Quản lý lớp mới */}
         <Card className="border-0 shadow-soft">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
@@ -188,7 +181,6 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Giao dịch gần đây */}
         <Card className="border-0 shadow-soft">
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">

@@ -1,7 +1,10 @@
 import { useAdmin } from "@/contexts/AdminContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CreditCard, TrendingUp, Wallet, Receipt } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CreditCard, TrendingUp, Wallet, Receipt, Search } from "lucide-react";
+import { useState } from "react";
 
 const typeLabel: Record<string, string> = { tuition: "Học phí", salary: "Lương gia sư", "exam-fee": "Phí thi thử" };
 const typeColor: Record<string, string> = {
@@ -19,10 +22,24 @@ const statusColor: Record<string, string> = {
 
 const AdminTransactions = () => {
   const { transactions, users, settings } = useAdmin();
+  const [search, setSearch] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   const totalRevenue = transactions.filter(t => t.status === "completed").reduce((s, t) => s + t.amount, 0);
   const escrowProfit = Math.round(totalRevenue * settings.escrowPercent / 100);
   const pendingAmount = transactions.filter(t => t.status === "pending").reduce((s, t) => s + t.amount, 0);
+
+  const filtered = transactions.filter(t => {
+    if (filterType !== "all" && t.type !== filterType) return false;
+    if (filterStatus !== "all" && t.status !== filterStatus) return false;
+    if (search) {
+      const user = users.find(u => u.id === t.userId);
+      const q = search.toLowerCase();
+      if (!t.description.toLowerCase().includes(q) && !(user?.name.toLowerCase().includes(q))) return false;
+    }
+    return true;
+  });
 
   const stats = [
     { label: "Tổng giao dịch", value: transactions.length, icon: Receipt, color: "bg-primary/10 text-primary" },
@@ -50,6 +67,38 @@ const AdminTransactions = () => {
         ))}
       </div>
 
+      {/* Search & Filter bar */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="relative flex-1 min-w-[250px] max-w-md">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Tìm theo tên hoặc mô tả..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-10 h-10 rounded-xl bg-card border-border"
+          />
+        </div>
+        <Select value={filterType} onValueChange={setFilterType}>
+          <SelectTrigger className="w-40 h-10 rounded-xl"><SelectValue placeholder="Loại giao dịch" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tất cả loại</SelectItem>
+            <SelectItem value="tuition">Học phí</SelectItem>
+            <SelectItem value="salary">Lương gia sư</SelectItem>
+            <SelectItem value="exam-fee">Phí thi thử</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <SelectTrigger className="w-40 h-10 rounded-xl"><SelectValue placeholder="Trạng thái" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tất cả trạng thái</SelectItem>
+            <SelectItem value="completed">Hoàn thành</SelectItem>
+            <SelectItem value="pending">Đang xử lý</SelectItem>
+            <SelectItem value="failed">Thất bại</SelectItem>
+            <SelectItem value="refunded">Hoàn tiền</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* Table */}
       <Card className="border-0 shadow-soft overflow-hidden">
         <CardContent className="p-0">
@@ -65,7 +114,7 @@ const AdminTransactions = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {transactions.map(tx => {
+              {filtered.map(tx => {
                 const user = users.find(u => u.id === tx.userId);
                 return (
                   <TableRow key={tx.id} className="hover:bg-muted/20 transition-colors">
@@ -91,6 +140,9 @@ const AdminTransactions = () => {
                   </TableRow>
                 );
               })}
+              {filtered.length === 0 && (
+                <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-12">Không tìm thấy giao dịch</TableCell></TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>

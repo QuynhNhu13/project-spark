@@ -1,9 +1,18 @@
 import { useAdmin } from "@/contexts/AdminContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area, ResponsiveContainer } from "recharts";
 import { useMemo } from "react";
 import { CreditCard, BookOpen, Users, TrendingUp } from "lucide-react";
+
+const COLORS = [
+  "hsl(224, 76%, 48%)",   // primary blue
+  "hsl(142, 71%, 45%)",   // emerald
+  "hsl(38, 92%, 50%)",    // amber
+  "hsl(0, 84%, 60%)",     // red
+  "hsl(262, 83%, 58%)",   // purple
+  "hsl(199, 89%, 48%)",   // sky blue
+];
 
 const AdminReports = () => {
   const { transactions, users, classes, settings } = useAdmin();
@@ -49,10 +58,31 @@ const AdminReports = () => {
     return Object.entries(weeks).sort().slice(-8).map(([week, count]) => ({ week, count }));
   }, [users]);
 
+  // Revenue by type for pie chart
+  const revenueByType = useMemo(() => {
+    const map: Record<string, number> = {};
+    transactions.filter(t => t.status === "completed").forEach(t => {
+      const label = t.type === "tuition" ? "Học phí" : t.type === "salary" ? "Lương gia sư" : "Phí thi thử";
+      map[label] = (map[label] || 0) + t.amount;
+    });
+    return Object.entries(map).map(([name, value]) => ({ name, value }));
+  }, [transactions]);
+
+  // Users by role for pie chart
+  const usersByRole = useMemo(() => {
+    const map: Record<string, number> = {};
+    const labels: Record<string, string> = { tutor: "Gia sư", teacher: "Giáo viên", student: "Học sinh", parent: "Phụ huynh" };
+    users.forEach(u => {
+      const label = labels[u.role] || u.role;
+      map[label] = (map[label] || 0) + 1;
+    });
+    return Object.entries(map).map(([name, value]) => ({ name, value }));
+  }, [users]);
+
   const chartConfig = {
-    revenue: { label: "Doanh thu", color: "hsl(var(--primary))" },
-    profit: { label: "Lợi nhuận", color: "hsl(var(--neon))" },
-    count: { label: "Người dùng mới", color: "hsl(var(--primary))" },
+    revenue: { label: "Doanh thu", color: "hsl(224, 76%, 48%)" },
+    profit: { label: "Lợi nhuận", color: "hsl(142, 71%, 45%)" },
+    count: { label: "Người dùng mới", color: "hsl(224, 76%, 48%)" },
   };
 
   return (
@@ -74,18 +104,19 @@ const AdminReports = () => {
         ))}
       </div>
 
-      {/* Charts */}
+      {/* Row 1: Revenue bar + Revenue area */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <Card className="border-0 shadow-soft">
           <CardContent className="p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Doanh thu theo tháng</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-4">Doanh thu & Lợi nhuận theo tháng</h3>
             <ChartContainer config={chartConfig} className="h-[280px]">
               <BarChart data={monthlyRevenue}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis tickFormatter={v => `${(v / 1000000).toFixed(1)}M`} tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="revenue" fill="hsl(224, 76%, 48%)" radius={[6, 6, 0, 0]} name="Doanh thu" />
+                <Bar dataKey="profit" fill="hsl(142, 71%, 45%)" radius={[6, 6, 0, 0]} name="Lợi nhuận" />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -93,16 +124,87 @@ const AdminReports = () => {
 
         <Card className="border-0 shadow-soft">
           <CardContent className="p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Người dùng mới theo tuần</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-4">Xu hướng người dùng mới</h3>
             <ChartContainer config={chartConfig} className="h-[280px]">
-              <LineChart data={weeklyUsers}>
+              <AreaChart data={weeklyUsers}>
+                <defs>
+                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(224, 76%, 48%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(224, 76%, 48%)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="week" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Line type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={{ r: 4, fill: "hsl(var(--primary))" }} />
-              </LineChart>
+                <Area type="monotone" dataKey="count" stroke="hsl(224, 76%, 48%)" strokeWidth={2.5} fill="url(#colorCount)" dot={{ r: 4, fill: "hsl(224, 76%, 48%)" }} />
+              </AreaChart>
             </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Row 2: Pie charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <Card className="border-0 shadow-soft">
+          <CardContent className="p-5">
+            <h3 className="text-sm font-semibold text-foreground mb-4">Phân bổ doanh thu theo loại</h3>
+            <div className="h-[280px] flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={revenueByType}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={4}
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {revenueByType.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <ChartTooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-soft">
+          <CardContent className="p-5">
+            <h3 className="text-sm font-semibold text-foreground mb-4">Phân bổ người dùng theo vai trò</h3>
+            <div className="h-[280px] flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={usersByRole}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={4}
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {usersByRole.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <ChartTooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex flex-wrap gap-3 justify-center mt-2">
+              {usersByRole.map((entry, i) => (
+                <div key={entry.name} className="flex items-center gap-1.5">
+                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                  <span className="text-xs text-muted-foreground">{entry.name}: {entry.value}</span>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>

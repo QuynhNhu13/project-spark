@@ -1,5 +1,19 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
 
+// Avatar imports
+import avatarMale1 from "@/assets/avatar-male-1.jpg";
+import avatarFemale1 from "@/assets/avatar-female-1.jpg";
+import avatarMale2 from "@/assets/avatar-male-2.jpg";
+import avatarFemale2 from "@/assets/avatar-female-2.jpg";
+import avatarMale3 from "@/assets/avatar-male-3.jpg";
+import avatarFemale3 from "@/assets/avatar-female-3.jpg";
+import avatarMale4 from "@/assets/avatar-male-4.jpg";
+import avatarFemale4 from "@/assets/avatar-female-4.jpg";
+import avatarMale5 from "@/assets/avatar-male-5.jpg";
+import avatarFemale5 from "@/assets/avatar-female-5.jpg";
+import avatarMale6 from "@/assets/avatar-male-6.jpg";
+import avatarFemale6 from "@/assets/avatar-female-6.jpg";
+
 // Types
 export type UserRole = "tutor" | "teacher" | "student" | "parent" | "accountant" | "office" | "exam-manager" | "admin";
 export type UserStatus = "pending" | "approved" | "rejected" | "suspended";
@@ -21,6 +35,8 @@ export interface AdminUser {
   createdAt: string;
   subject?: string;
   bio?: string;
+  school?: string;
+  studentId?: string;
 }
 
 export interface AdminClass {
@@ -33,6 +49,10 @@ export interface AdminClass {
   status: ClassStatus;
   subject: string;
   createdAt: string;
+  schedule?: string;
+  totalSessions?: number;
+  completedSessions?: number;
+  notes?: string;
 }
 
 export interface TestQuestion {
@@ -70,6 +90,15 @@ export interface AuditLogEntry {
   actor: string;
   action: string;
   target: string;
+  timestamp: string;
+}
+
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  type: "info" | "warning" | "success" | "error";
+  read: boolean;
   timestamp: string;
 }
 
@@ -173,47 +202,27 @@ function generateQuestions(subject: string, count: number = 10): TestQuestion[] 
   }));
 }
 
-// Asian-style avatar URLs
-const avatarUrls = {
-  men: [
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
-  ],
-  women: [
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
-    "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face",
-  ],
-};
-
-// Seed data
+// Seed data with local avatar imports
 const seedUsers: AdminUser[] = [
-  { id: "u1", name: "Nguyễn Văn An", email: "an.nguyen@edu.vn", phone: "0901234567", role: "tutor", status: "approved", avatar: avatarUrls.men[0], createdAt: "2025-12-01", subject: "Toán", bio: "Gia sư Toán 5 năm kinh nghiệm, tốt nghiệp ĐH Sư Phạm" },
-  { id: "u2", name: "Trần Thị Bích", email: "bich.tran@edu.vn", phone: "0912345678", role: "teacher", status: "approved", avatar: avatarUrls.women[0], createdAt: "2025-11-15", subject: "Văn", bio: "Giáo viên Ngữ Văn trường THPT chuyên" },
-  { id: "u3", name: "Lê Minh Châu", email: "chau.le@edu.vn", phone: "0923456789", role: "student", status: "approved", avatar: avatarUrls.men[1], createdAt: "2026-01-10" },
-  { id: "u4", name: "Phạm Hồng Đào", email: "dao.pham@edu.vn", phone: "0934567890", role: "parent", status: "approved", avatar: avatarUrls.women[1], createdAt: "2026-01-05" },
-  { id: "u5", name: "Hoàng Đức Em", email: "em.hoang@edu.vn", phone: "0945678901", role: "tutor", status: "pending", avatar: avatarUrls.men[2], createdAt: "2026-02-20", subject: "Lý", bio: "Thạc sĩ Vật Lý, dạy ôn thi đại học" },
-  { id: "u6", name: "Vũ Thị Phương", email: "phuong.vu@edu.vn", phone: "0956789012", role: "teacher", status: "pending", avatar: avatarUrls.women[2], createdAt: "2026-02-22", subject: "Hóa", bio: "GV Hóa 10 năm kinh nghiệm, THPT Lê Quý Đôn" },
-  { id: "u7", name: "Đỗ Quang Minh", email: "minh.do@edu.vn", phone: "0967890123", role: "tutor", status: "pending", avatar: avatarUrls.men[3], createdAt: "2026-02-25", subject: "Anh", bio: "IELTS 8.5, dạy IELTS/TOEIC 3 năm" },
-  { id: "u8", name: "Ngô Thị Lan", email: "lan.ngo@edu.vn", phone: "0978901234", role: "student", status: "approved", avatar: avatarUrls.women[3], createdAt: "2026-01-20" },
-  { id: "u9", name: "Bùi Văn Hùng", email: "hung.bui@edu.vn", phone: "0989012345", role: "tutor", status: "rejected", avatar: avatarUrls.men[4], createdAt: "2026-01-30", subject: "Sinh", bio: "Sinh viên năm 3 ĐH Y" },
-  { id: "u10", name: "Lý Thị Mai", email: "mai.ly@edu.vn", phone: "0990123456", role: "parent", status: "approved", avatar: avatarUrls.women[4], createdAt: "2026-02-01" },
-  { id: "u11", name: "Trương Văn Kiên", email: "kien.truong@edu.vn", phone: "0901112233", role: "student", status: "approved", avatar: avatarUrls.men[5], createdAt: "2026-02-10" },
-  { id: "u12", name: "Đinh Thị Hoa", email: "hoa.dinh@edu.vn", phone: "0912223344", role: "teacher", status: "approved", avatar: avatarUrls.women[5], createdAt: "2025-10-05", subject: "Sử", bio: "Giáo viên Lịch Sử THPT chuyên Hà Nội" },
+  { id: "u1", name: "Nguyễn Văn An", email: "an.nguyen@edu.vn", phone: "0901234567", role: "tutor", status: "approved", avatar: avatarMale1, createdAt: "2025-12-01", subject: "Toán", bio: "Gia sư Toán 5 năm kinh nghiệm, tốt nghiệp ĐH Sư Phạm", school: "ĐH Sư Phạm TP.HCM", studentId: "SP2019001" },
+  { id: "u2", name: "Trần Thị Bích", email: "bich.tran@edu.vn", phone: "0912345678", role: "teacher", status: "approved", avatar: avatarFemale1, createdAt: "2025-11-15", subject: "Văn", bio: "Giáo viên Ngữ Văn trường THPT chuyên", school: "THPT Chuyên Lê Hồng Phong" },
+  { id: "u3", name: "Lê Minh Châu", email: "chau.le@edu.vn", phone: "0923456789", role: "student", status: "approved", avatar: avatarMale2, createdAt: "2026-01-10", school: "THPT Nguyễn Thị Minh Khai", studentId: "HS2024001" },
+  { id: "u4", name: "Phạm Hồng Đào", email: "dao.pham@edu.vn", phone: "0934567890", role: "parent", status: "approved", avatar: avatarFemale2, createdAt: "2026-01-05" },
+  { id: "u5", name: "Hoàng Đức Em", email: "em.hoang@edu.vn", phone: "0945678901", role: "tutor", status: "pending", avatar: avatarMale3, createdAt: "2026-02-20", subject: "Lý", bio: "Thạc sĩ Vật Lý, dạy ôn thi đại học", school: "ĐH Bách Khoa Hà Nội", studentId: "BK2018042" },
+  { id: "u6", name: "Vũ Thị Phương", email: "phuong.vu@edu.vn", phone: "0956789012", role: "teacher", status: "pending", avatar: avatarFemale3, createdAt: "2026-02-22", subject: "Hóa", bio: "GV Hóa 10 năm kinh nghiệm, THPT Lê Quý Đôn", school: "THPT Lê Quý Đôn" },
+  { id: "u7", name: "Đỗ Quang Minh", email: "minh.do@edu.vn", phone: "0967890123", role: "tutor", status: "pending", avatar: avatarMale4, createdAt: "2026-02-25", subject: "Anh", bio: "IELTS 8.5, dạy IELTS/TOEIC 3 năm", school: "ĐH Ngoại Thương", studentId: "FTU2017088" },
+  { id: "u8", name: "Ngô Thị Lan", email: "lan.ngo@edu.vn", phone: "0978901234", role: "student", status: "approved", avatar: avatarFemale4, createdAt: "2026-01-20", school: "THPT Trần Đại Nghĩa" },
+  { id: "u9", name: "Bùi Văn Hùng", email: "hung.bui@edu.vn", phone: "0989012345", role: "tutor", status: "rejected", avatar: avatarMale5, createdAt: "2026-01-30", subject: "Sinh", bio: "Sinh viên năm 3 ĐH Y", school: "ĐH Y Dược TP.HCM", studentId: "YD2022015" },
+  { id: "u10", name: "Lý Thị Mai", email: "mai.ly@edu.vn", phone: "0990123456", role: "parent", status: "approved", avatar: avatarFemale5, createdAt: "2026-02-01" },
+  { id: "u11", name: "Trương Văn Kiên", email: "kien.truong@edu.vn", phone: "0901112233", role: "student", status: "approved", avatar: avatarMale6, createdAt: "2026-02-10", school: "THPT Nguyễn Huệ" },
+  { id: "u12", name: "Đinh Thị Hoa", email: "hoa.dinh@edu.vn", phone: "0912223344", role: "teacher", status: "approved", avatar: avatarFemale6, createdAt: "2025-10-05", subject: "Sử", bio: "Giáo viên Lịch Sử THPT chuyên Hà Nội", school: "THPT Chuyên Hà Nội - Amsterdam" },
 ];
 
 const seedClasses: AdminClass[] = [
-  { id: "c1", name: "Toán 12 - Ôn thi ĐH", studentId: "u3", tutorId: "u1", format: "online", fee: 2000000, status: "active", subject: "Toán", createdAt: "2026-01-15" },
-  { id: "c2", name: "Văn 11 - Nâng cao", studentId: "u8", tutorId: "u2", format: "offline", fee: 1500000, status: "active", subject: "Văn", createdAt: "2026-01-20" },
-  { id: "c3", name: "IELTS Writing", studentId: "u11", tutorId: "u1", format: "hybrid", fee: 3000000, status: "searching", subject: "Anh", createdAt: "2026-02-15" },
-  { id: "c4", name: "Lý 10 - Cơ bản", studentId: "u3", tutorId: "u1", format: "online", fee: 1800000, status: "completed", subject: "Lý", createdAt: "2025-11-01" },
+  { id: "c1", name: "Toán 12 - Ôn thi ĐH", studentId: "u3", tutorId: "u1", format: "online", fee: 2000000, status: "active", subject: "Toán", createdAt: "2026-01-15", schedule: "T2, T4, T6 - 19:00-21:00", totalSessions: 24, completedSessions: 12, notes: "Ôn tập trọng tâm đại số và giải tích" },
+  { id: "c2", name: "Văn 11 - Nâng cao", studentId: "u8", tutorId: "u2", format: "offline", fee: 1500000, status: "active", subject: "Văn", createdAt: "2026-01-20", schedule: "T3, T5 - 18:00-20:00", totalSessions: 16, completedSessions: 8, notes: "Tập trung phân tích tác phẩm văn học" },
+  { id: "c3", name: "IELTS Writing", studentId: "u11", tutorId: "u1", format: "hybrid", fee: 3000000, status: "searching", subject: "Anh", createdAt: "2026-02-15", schedule: "T7 - 9:00-12:00", totalSessions: 12, completedSessions: 0, notes: "Mục tiêu IELTS Writing 7.0+" },
+  { id: "c4", name: "Lý 10 - Cơ bản", studentId: "u3", tutorId: "u1", format: "online", fee: 1800000, status: "completed", subject: "Lý", createdAt: "2025-11-01", schedule: "T2, T6 - 17:00-19:00", totalSessions: 20, completedSessions: 20, notes: "Hoàn thành chương trình Lý 10" },
 ];
 
 const seedTests: AdminTest[] = [
@@ -242,6 +251,15 @@ const seedAuditLog: AuditLogEntry[] = [
   { id: "al4", actor: "Admin", action: "Cập nhật cài đặt", target: "Phí escrow: 20%", timestamp: "2026-02-10 08:15" },
 ];
 
+const seedNotifications: Notification[] = [
+  { id: "n1", title: "Tài khoản mới chờ duyệt", message: "Hoàng Đức Em đã đăng ký làm gia sư môn Lý", type: "warning", read: false, timestamp: "2026-02-20 10:00" },
+  { id: "n2", title: "Tài khoản mới chờ duyệt", message: "Vũ Thị Phương đã đăng ký làm giáo viên môn Hóa", type: "warning", read: false, timestamp: "2026-02-22 14:30" },
+  { id: "n3", title: "Tài khoản mới chờ duyệt", message: "Đỗ Quang Minh đã đăng ký làm gia sư môn Anh", type: "warning", read: false, timestamp: "2026-02-25 09:15" },
+  { id: "n4", title: "Giao dịch thành công", message: "Học phí Toán 12 - T3/2026 đã hoàn thành", type: "success", read: false, timestamp: "2026-03-01 08:00" },
+  { id: "n5", title: "Lớp học mới tạo", message: "IELTS Writing đang tìm gia sư phù hợp", type: "info", read: true, timestamp: "2026-02-15 16:00" },
+  { id: "n6", title: "Giao dịch đang chờ", message: "Lương GV Văn 11 chưa được xử lý", type: "warning", read: true, timestamp: "2026-02-12 11:00" },
+];
+
 const defaultSettings: SystemSettings = {
   platformName: "EduConnect",
   escrowPercent: 20,
@@ -264,6 +282,7 @@ interface AdminContextType {
   tests: AdminTest[];
   transactions: AdminTransaction[];
   auditLog: AuditLogEntry[];
+  notifications: Notification[];
   settings: SystemSettings;
   approveUser: (id: string) => void;
   rejectUser: (id: string) => void;
@@ -280,6 +299,8 @@ interface AdminContextType {
   getUserById: (id: string) => AdminUser | undefined;
   addAuditLog: (action: string, target: string) => void;
   generateQuestionsForTest: (subject: string, count?: number) => TestQuestion[];
+  markNotificationRead: (id: string) => void;
+  markAllNotificationsRead: () => void;
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -299,6 +320,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [tests, setTests] = useState<AdminTest[]>(seedTests);
   const [transactions, setTransactions] = useState<AdminTransaction[]>(seedTransactions);
   const [auditLog, setAuditLog] = useState<AuditLogEntry[]>(seedAuditLog);
+  const [notifications, setNotifications] = useState<Notification[]>(seedNotifications);
   const [settings, setSettings] = useState<SystemSettings>(defaultSettings);
 
   const addAuditLog = useCallback((action: string, target: string) => {
@@ -384,14 +406,22 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     return generateQuestions(subject, count);
   }, []);
 
+  const markNotificationRead = useCallback((id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  }, []);
+
+  const markAllNotificationsRead = useCallback(() => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  }, []);
+
   return (
     <AdminContext.Provider value={{
-      users, classes, tests, transactions, auditLog, settings,
+      users, classes, tests, transactions, auditLog, notifications, settings,
       approveUser, rejectUser, updateUserStatus, deleteUser,
       addClass, updateClass, deleteClass,
       addTest, updateTest, deleteTest,
       addTransaction, updateSettings, getUserById, addAuditLog,
-      generateQuestionsForTest,
+      generateQuestionsForTest, markNotificationRead, markAllNotificationsRead,
     }}>
       {children}
     </AdminContext.Provider>
