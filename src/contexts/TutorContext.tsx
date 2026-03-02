@@ -13,7 +13,7 @@ import avatarFemale5 from "@/assets/avatar-female-5.jpg";
 // ========== TYPES ==========
 
 export type EscrowStatus = "pending" | "in_progress" | "completed" | "refunded";
-export type SessionStatus = "scheduled" | "completed" | "missed" | "cancelled";
+export type SessionStatus = "scheduled" | "completed" | "missed" | "cancelled" | "in_progress" | "pending_confirm";
 export type TrialStatus = "pending" | "confirmed" | "rejected" | "completed";
 export type WalletTxType = "escrow_in" | "escrow_release" | "withdrawal" | "refund" | "platform_fee" | "deposit";
 
@@ -40,6 +40,19 @@ export interface TutorProfile {
   location: string;
   teachingStyle: string;
   achievements: string[];
+  role: "tutor" | "teacher";
+  yearsExperience?: number;
+  currentSchool?: string;
+  platformFeeRate: number;
+}
+
+export interface ClassMaterial {
+  id: string;
+  name: string;
+  type: "pdf" | "doc" | "image" | "video" | "link";
+  url: string;
+  uploadedAt: string;
+  size?: string;
 }
 
 export interface TutorClass {
@@ -61,6 +74,8 @@ export interface TutorClass {
   schedule: string;
   createdAt: string;
   sessions: TutorSession[];
+  materials: ClassMaterial[];
+  monthlyFee?: number;
 }
 
 export interface TutorSession {
@@ -74,8 +89,15 @@ export interface TutorSession {
   content?: string;
   notes?: string;
   homework?: string;
+  homeworkFiles?: string[];
   rating?: number;
   ratingComment?: string;
+  parentConfirmed?: boolean;
+  absenceReason?: string;
+  absenceRequestedBy?: "tutor" | "student";
+  absenceApproved?: boolean;
+  format?: "online" | "offline";
+  meetingLink?: string;
 }
 
 export interface TrialBooking {
@@ -95,6 +117,7 @@ export interface TrialBooking {
   note?: string;
   goals?: string;
   currentLevel?: string;
+  rejectionReason?: string;
 }
 
 export interface WalletTransaction {
@@ -168,6 +191,17 @@ export interface TestQuestion {
   explanation: string;
 }
 
+export interface TestResult {
+  id: string;
+  seekingId: string;
+  subject: string;
+  score: number;
+  passed: boolean;
+  answers: Record<string, number>;
+  date: string;
+  questions: TestQuestion[];
+}
+
 // ========== SEED DATA ==========
 
 const tutorProfile: TutorProfile = {
@@ -200,32 +234,42 @@ const tutorProfile: TutorProfile = {
     { day: "Thứ 6", slots: ["17:00-19:00", "19:00-21:00"] },
     { day: "Thứ 7", slots: ["9:00-11:00", "14:00-16:00"] },
   ],
+  role: "tutor",
+  platformFeeRate: 20,
 };
 
+const seedMaterials: ClassMaterial[] = [
+  { id: "mat1", name: "Giáo trình Toán 12 - Chương 1", type: "pdf", url: "#", uploadedAt: "2026-01-20", size: "2.4 MB" },
+  { id: "mat2", name: "Đề thi thử số 1", type: "doc", url: "#", uploadedAt: "2026-02-10", size: "1.1 MB" },
+  { id: "mat3", name: "Video giải đề minh họa", type: "video", url: "#", uploadedAt: "2026-02-15", size: "45 MB" },
+  { id: "mat4", name: "Bảng công thức tổng hợp", type: "image", url: "#", uploadedAt: "2026-02-20", size: "800 KB" },
+  { id: "mat5", name: "Link tài liệu bổ sung", type: "link", url: "https://example.com", uploadedAt: "2026-02-25" },
+];
+
 const seedSessions: TutorSession[] = [
-  { id: "s1", classId: "c1", date: "2026-02-03", time: "19:00-21:00", status: "completed", startedAt: "19:02", endedAt: "20:58", content: "Giới hạn hàm số", notes: "Học sinh nắm tốt lý thuyết, cần luyện thêm bài tập", homework: "Bài 1-5 trang 45 SGK" },
-  { id: "s2", classId: "c1", date: "2026-02-05", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "21:00", content: "Đạo hàm cơ bản", notes: "Cần ôn lại công thức", homework: "Làm đề số 3", rating: 5, ratingComment: "Thầy giảng rất dễ hiểu" },
-  { id: "s3", classId: "c1", date: "2026-02-07", time: "19:00-21:00", status: "completed", startedAt: "19:05", endedAt: "20:55", content: "Đạo hàm nâng cao", notes: "Tiến bộ rõ rệt", homework: "Bài tập trắc nghiệm chương 3" },
-  { id: "s4", classId: "c1", date: "2026-02-10", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "21:02", content: "Tích phân", notes: "Hiểu khái niệm nhưng cần luyện nhiều", homework: "10 bài tích phân cơ bản", rating: 4, ratingComment: "Bài hơi khó" },
-  { id: "s5", classId: "c1", date: "2026-02-12", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "20:50", content: "Ôn tập tích phân", notes: "Đã làm tốt hơn", homework: "Đề thi thử số 1" },
-  { id: "s6", classId: "c1", date: "2026-02-14", time: "19:00-21:00", status: "completed", startedAt: "19:01", endedAt: "21:00", content: "Hình học không gian", notes: "Yếu phần nhìn hình, cần bổ sung", homework: "Vẽ 5 hình không gian" },
-  { id: "s7", classId: "c1", date: "2026-02-17", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "20:58", content: "Hình học giải tích", notes: "Khá tốt", homework: "Bài 1-8 chương 4" },
-  { id: "s8", classId: "c1", date: "2026-02-19", time: "19:00-21:00", status: "completed", startedAt: "19:03", endedAt: "21:00", content: "Xác suất thống kê", notes: "Nắm vững", homework: "Bài tập xác suất", rating: 5, ratingComment: "Rất hài lòng" },
-  { id: "s9", classId: "c1", date: "2026-02-21", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "20:55", content: "Tổ hợp chỉnh hợp", notes: "OK", homework: "Đề thi thử số 2" },
-  { id: "s10", classId: "c1", date: "2026-02-24", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "21:05", content: "Ôn tập tổng hợp", notes: "Sẵn sàng cho đề thi thử", homework: "Làm 2 đề thi thử" },
-  { id: "s11", classId: "c1", date: "2026-02-26", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "20:50", content: "Chữa đề thi thử 1", notes: "Điểm 7.5/10 - Cần cải thiện phần hình học" },
-  { id: "s12", classId: "c1", date: "2026-02-28", time: "19:00-21:00", status: "completed", startedAt: "19:02", endedAt: "21:00", content: "Chữa đề thi thử 2", notes: "Điểm 8.0/10 - Tiến bộ tốt", rating: 5, ratingComment: "Con tiến bộ nhiều" },
-  { id: "s13", classId: "c1", date: "2026-03-03", time: "19:00-21:00", status: "scheduled" },
-  { id: "s14", classId: "c1", date: "2026-03-05", time: "19:00-21:00", status: "scheduled" },
-  { id: "s15", classId: "c1", date: "2026-03-07", time: "19:00-21:00", status: "scheduled" },
+  { id: "s1", classId: "c1", date: "2026-02-03", time: "19:00-21:00", status: "completed", startedAt: "19:02", endedAt: "20:58", content: "Giới hạn hàm số", notes: "Học sinh nắm tốt lý thuyết, cần luyện thêm bài tập", homework: "Bài 1-5 trang 45 SGK", parentConfirmed: true, format: "online" },
+  { id: "s2", classId: "c1", date: "2026-02-05", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "21:00", content: "Đạo hàm cơ bản", notes: "Cần ôn lại công thức", homework: "Làm đề số 3", rating: 5, ratingComment: "Thầy giảng rất dễ hiểu", parentConfirmed: true, format: "online" },
+  { id: "s3", classId: "c1", date: "2026-02-07", time: "19:00-21:00", status: "completed", startedAt: "19:05", endedAt: "20:55", content: "Đạo hàm nâng cao", notes: "Tiến bộ rõ rệt", homework: "Bài tập trắc nghiệm chương 3", parentConfirmed: true, format: "online" },
+  { id: "s4", classId: "c1", date: "2026-02-10", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "21:02", content: "Tích phân", notes: "Hiểu khái niệm nhưng cần luyện nhiều", homework: "10 bài tích phân cơ bản", rating: 4, ratingComment: "Bài hơi khó", parentConfirmed: true, format: "online" },
+  { id: "s5", classId: "c1", date: "2026-02-12", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "20:50", content: "Ôn tập tích phân", notes: "Đã làm tốt hơn", homework: "Đề thi thử số 1", parentConfirmed: true, format: "online" },
+  { id: "s6", classId: "c1", date: "2026-02-14", time: "19:00-21:00", status: "completed", startedAt: "19:01", endedAt: "21:00", content: "Hình học không gian", notes: "Yếu phần nhìn hình, cần bổ sung", homework: "Vẽ 5 hình không gian", parentConfirmed: true, format: "online" },
+  { id: "s7", classId: "c1", date: "2026-02-17", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "20:58", content: "Hình học giải tích", notes: "Khá tốt", homework: "Bài 1-8 chương 4", parentConfirmed: true, format: "online" },
+  { id: "s8", classId: "c1", date: "2026-02-19", time: "19:00-21:00", status: "completed", startedAt: "19:03", endedAt: "21:00", content: "Xác suất thống kê", notes: "Nắm vững", homework: "Bài tập xác suất", rating: 5, ratingComment: "Rất hài lòng", parentConfirmed: true, format: "online" },
+  { id: "s9", classId: "c1", date: "2026-02-21", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "20:55", content: "Tổ hợp chỉnh hợp", notes: "OK", homework: "Đề thi thử số 2", parentConfirmed: true, format: "online" },
+  { id: "s10", classId: "c1", date: "2026-02-24", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "21:05", content: "Ôn tập tổng hợp", notes: "Sẵn sàng cho đề thi thử", homework: "Làm 2 đề thi thử", parentConfirmed: true, format: "online" },
+  { id: "s11", classId: "c1", date: "2026-02-26", time: "19:00-21:00", status: "completed", startedAt: "19:00", endedAt: "20:50", content: "Chữa đề thi thử 1", notes: "Điểm 7.5/10 - Cần cải thiện phần hình học", parentConfirmed: true, format: "online" },
+  { id: "s12", classId: "c1", date: "2026-02-28", time: "19:00-21:00", status: "completed", startedAt: "19:02", endedAt: "21:00", content: "Chữa đề thi thử 2", notes: "Điểm 8.0/10 - Tiến bộ tốt", rating: 5, ratingComment: "Con tiến bộ nhiều", parentConfirmed: true, format: "online" },
+  { id: "s13", classId: "c1", date: "2026-03-03", time: "19:00-21:00", status: "scheduled", format: "online", meetingLink: "/tutor/meeting/s13" },
+  { id: "s14", classId: "c1", date: "2026-03-05", time: "19:00-21:00", status: "scheduled", format: "offline" },
+  { id: "s15", classId: "c1", date: "2026-03-07", time: "19:00-21:00", status: "scheduled", format: "online", meetingLink: "/tutor/meeting/s15" },
   // Class c2 sessions
-  { id: "s16", classId: "c2", date: "2026-02-10", time: "17:00-19:00", status: "completed", startedAt: "17:00", endedAt: "19:00", content: "Cơ học Newton", notes: "Nắm tốt 3 định luật", homework: "Bài tập chương 1" },
-  { id: "s17", classId: "c2", date: "2026-02-17", time: "17:00-19:00", status: "completed", startedAt: "17:05", endedAt: "18:55", content: "Động lượng", notes: "Khá", homework: "5 bài tập", rating: 4 },
-  { id: "s18", classId: "c2", date: "2026-02-24", time: "17:00-19:00", status: "completed", startedAt: "17:00", endedAt: "19:02", content: "Năng lượng", notes: "Tốt", homework: "Đề thi thử" },
-  { id: "s19", classId: "c2", date: "2026-03-03", time: "17:00-19:00", status: "scheduled" },
+  { id: "s16", classId: "c2", date: "2026-02-10", time: "17:00-19:00", status: "completed", startedAt: "17:00", endedAt: "19:00", content: "Cơ học Newton", notes: "Nắm tốt 3 định luật", homework: "Bài tập chương 1", parentConfirmed: true, format: "offline" },
+  { id: "s17", classId: "c2", date: "2026-02-17", time: "17:00-19:00", status: "completed", startedAt: "17:05", endedAt: "18:55", content: "Động lượng", notes: "Khá", homework: "5 bài tập", rating: 4, parentConfirmed: true, format: "offline" },
+  { id: "s18", classId: "c2", date: "2026-02-24", time: "17:00-19:00", status: "completed", startedAt: "17:00", endedAt: "19:02", content: "Năng lượng", notes: "Tốt", homework: "Đề thi thử", parentConfirmed: true, format: "offline" },
+  { id: "s19", classId: "c2", date: "2026-03-03", time: "17:00-19:00", status: "scheduled", format: "offline" },
   // Class c3 sessions
-  { id: "s20", classId: "c3", date: "2026-03-01", time: "9:00-12:00", status: "scheduled" },
-  { id: "s21", classId: "c3", date: "2026-03-08", time: "9:00-12:00", status: "scheduled" },
+  { id: "s20", classId: "c3", date: "2026-03-01", time: "9:00-12:00", status: "scheduled", format: "online", meetingLink: "/tutor/meeting/s20" },
+  { id: "s21", classId: "c3", date: "2026-03-08", time: "9:00-12:00", status: "scheduled", format: "online", meetingLink: "/tutor/meeting/s21" },
 ];
 
 const seedClasses: TutorClass[] = [
@@ -237,6 +281,8 @@ const seedClasses: TutorClass[] = [
     escrowStatus: "in_progress", escrowAmount: 2000000, escrowReleased: 800000, releaseMilestone: 5,
     schedule: "T2, T4, T6 - 19:00-21:00", createdAt: "2026-01-15",
     sessions: seedSessions.filter(s => s.classId === "c1"),
+    materials: seedMaterials,
+    monthlyFee: 2000000,
   },
   {
     id: "c2", name: "Lý 11 - Nâng cao", subject: "Lý",
@@ -246,6 +292,8 @@ const seedClasses: TutorClass[] = [
     escrowStatus: "in_progress", escrowAmount: 1500000, escrowReleased: 0, releaseMilestone: 4,
     schedule: "T2 - 17:00-19:00", createdAt: "2026-02-01",
     sessions: seedSessions.filter(s => s.classId === "c2"),
+    materials: [seedMaterials[0]],
+    monthlyFee: 1500000,
   },
   {
     id: "c3", name: "IELTS Writing", subject: "Anh",
@@ -255,6 +303,8 @@ const seedClasses: TutorClass[] = [
     escrowStatus: "pending", escrowAmount: 3000000, escrowReleased: 0, releaseMilestone: 4,
     schedule: "T7 - 9:00-12:00", createdAt: "2026-02-15",
     sessions: seedSessions.filter(s => s.classId === "c3"),
+    materials: [],
+    monthlyFee: 3000000,
   },
   {
     id: "c4", name: "Lý 10 - Cơ bản", subject: "Lý",
@@ -264,6 +314,8 @@ const seedClasses: TutorClass[] = [
     escrowStatus: "completed", escrowAmount: 1800000, escrowReleased: 1800000, releaseMilestone: 5,
     schedule: "T2, T6 - 17:00-19:00", createdAt: "2025-11-01",
     sessions: [],
+    materials: [],
+    monthlyFee: 1800000,
   },
 ];
 
@@ -272,6 +324,7 @@ const seedTrials: TrialBooking[] = [
   { id: "tr2", parentName: "Lý Thị Mai", parentAvatar: avatarFemale2, parentPhone: "0923456789", parentEmail: "mai.ly@email.com", studentName: "Lý Quốc Bảo", studentGrade: "Lớp 10", subject: "Lý", requestedDate: "2026-03-06", requestedTime: "17:00-18:00", status: "confirmed", note: "Muốn tìm gia sư dạy kèm lâu dài", goals: "Cải thiện từ 5 lên 7 điểm", currentLevel: "Yếu (4-5 điểm)" },
   { id: "tr3", parentName: "Phạm Hồng Đào", parentAvatar: avatarFemale3, parentPhone: "0934567890", parentEmail: "dao.pham@email.com", studentName: "Lê Minh Châu", studentGrade: "Lớp 12", subject: "Toán", requestedDate: "2026-01-10", requestedTime: "19:00-20:00", status: "completed", feedback: "Thầy dạy rất tốt, con hiểu bài ngay", rating: 5, note: "Ôn thi đại học", goals: "Đạt 8+ thi THPTQG", currentLevel: "Khá (6.5-7 điểm)" },
   { id: "tr4", parentName: "Võ Thị Hà", parentAvatar: avatarFemale5, parentPhone: "0945678901", parentEmail: "ha.vo@email.com", studentName: "Võ Đức Minh", studentGrade: "Lớp 9", subject: "Toán", requestedDate: "2026-03-08", requestedTime: "14:00-15:00", status: "pending", note: "Chuẩn bị thi vào 10", goals: "Đỗ trường chuyên", currentLevel: "Khá (7 điểm)" },
+  { id: "tr5", parentName: "Đặng Văn Tùng", parentAvatar: avatarMale4, parentPhone: "0956789012", parentEmail: "tung.dang@email.com", studentName: "Đặng Thị Linh", studentGrade: "Lớp 11", subject: "Lý", requestedDate: "2026-02-20", requestedTime: "18:00-19:00", status: "rejected", note: "Cần gia sư dạy offline tại nhà", goals: "Cải thiện điểm Lý", currentLevel: "Trung bình", rejectionReason: "Xin lỗi, lịch dạy của tôi đã kín vào khung giờ này. Mong phụ huynh tìm được gia sư phù hợp." },
 ];
 
 const seedWallet: WalletTransaction[] = [
@@ -317,11 +370,11 @@ const seedStudentProgress: StudentProgress[] = [
       { name: "Tổ hợp", score: 7.2, prevScore: 5.8 },
     ],
     weeklyReports: [
-      { week: "T1/2026", sessions: 6, avgScore: 6.5, notes: "Bắt đầu ôn từ cơ bản, nắm lý thuyết chưa vững" },
-      { week: "T2/2026 - Tuần 1", sessions: 3, avgScore: 7.0, notes: "Tiến bộ phần đạo hàm, cần luyện thêm tích phân" },
-      { week: "T2/2026 - Tuần 2", sessions: 3, avgScore: 7.5, notes: "Làm tốt tích phân, yếu hình học không gian" },
-      { week: "T2/2026 - Tuần 3", sessions: 3, avgScore: 7.8, notes: "Cải thiện hình học, xác suất tốt" },
-      { week: "T2/2026 - Tuần 4", sessions: 3, avgScore: 8.0, notes: "Đề thi thử 7.5 và 8.0 điểm. Sẵn sàng ôn nâng cao" },
+      { week: "T1/2026", sessions: 6, avgScore: 6.5, notes: "Bắt đầu ôn từ cơ bản" },
+      { week: "T2/2026 - Tuần 1", sessions: 3, avgScore: 7.0, notes: "Tiến bộ phần đạo hàm" },
+      { week: "T2/2026 - Tuần 2", sessions: 3, avgScore: 7.5, notes: "Làm tốt tích phân" },
+      { week: "T2/2026 - Tuần 3", sessions: 3, avgScore: 7.8, notes: "Cải thiện hình học" },
+      { week: "T2/2026 - Tuần 4", sessions: 3, avgScore: 8.0, notes: "Đề thi thử 7.5 và 8.0 điểm" },
     ],
     scoreHistory: [
       { date: "2026-01-20", score: 5.5 }, { date: "2026-01-27", score: 6.0 },
@@ -401,50 +454,61 @@ const seedStudentProgress: StudentProgress[] = [
 ];
 
 const seedReviews: TutorReview[] = [
-  { id: "r1", classId: "c1", className: "Toán 12 - Ôn thi ĐH", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 5, comment: "Thầy rất tận tâm, con tiến bộ rõ rệt sau 2 tháng. Phương pháp giảng dạy rõ ràng, dễ hiểu.", date: "2026-02-28", avatar: avatarFemale2, subject: "Toán", tags: ["Tận tâm", "Dễ hiểu", "Kiên nhẫn"] },
-  { id: "r2", classId: "c4", className: "Lý 10 - Cơ bản", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 5, comment: "Hoàn thành xuất sắc chương trình. Con đã tự tin hơn rất nhiều với môn Lý.", date: "2026-01-15", avatar: avatarFemale2, subject: "Lý", tags: ["Chuyên nghiệp", "Hiệu quả"] },
-  { id: "r3", classId: "c1", className: "Toán 12 - Ôn thi ĐH", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 4, comment: "Buổi này hơi nhanh, con chưa kịp hiểu hết phần hình học không gian.", date: "2026-02-14", avatar: avatarFemale2, subject: "Toán", tags: ["Hơi nhanh"] },
+  { id: "r1", classId: "c1", className: "Toán 12 - Ôn thi ĐH", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 5, comment: "Thầy rất tận tâm, con tiến bộ rõ rệt sau 2 tháng.", date: "2026-02-28", avatar: avatarFemale2, subject: "Toán", tags: ["Tận tâm", "Dễ hiểu", "Kiên nhẫn"] },
+  { id: "r2", classId: "c4", className: "Lý 10 - Cơ bản", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 5, comment: "Hoàn thành xuất sắc chương trình.", date: "2026-01-15", avatar: avatarFemale2, subject: "Lý", tags: ["Chuyên nghiệp", "Hiệu quả"] },
+  { id: "r3", classId: "c1", className: "Toán 12 - Ôn thi ĐH", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 4, comment: "Buổi này hơi nhanh, con chưa kịp hiểu hết.", date: "2026-02-14", avatar: avatarFemale2, subject: "Toán", tags: ["Hơi nhanh"] },
   { id: "r4", classId: "c1", className: "Toán 12 - Ôn thi ĐH", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 5, comment: "Đề thi thử 8.0 điểm! Rất hài lòng!", date: "2026-02-28", avatar: avatarFemale2, subject: "Toán", tags: ["Hiệu quả", "Hài lòng"] },
-  { id: "r5", classId: "c2", className: "Lý 11 - Nâng cao", studentName: "Trần Thị Hương", parentName: "Trần Văn Minh", rating: 4, comment: "Thầy giảng cơ học rất hay, con bắt đầu thích môn Lý rồi.", date: "2026-02-20", avatar: avatarMale5, subject: "Lý", tags: ["Dễ hiểu", "Vui vẻ"] },
-  { id: "r6", classId: "c4", className: "Lý 10 - Cơ bản", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 5, comment: "Từ 5 điểm lên 8.5 điểm trong 2 tháng, không thể tin được!", date: "2025-12-20", avatar: avatarFemale2, subject: "Lý", tags: ["Tiến bộ nhanh", "Tuyệt vời"] },
-  { id: "r7", classId: "c1", className: "Toán 12 - Ôn thi ĐH", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 5, comment: "Thầy luôn chuẩn bị bài rất kỹ, có tài liệu đầy đủ.", date: "2026-01-20", avatar: avatarFemale2, subject: "Toán", tags: ["Chuẩn bị kỹ", "Tận tâm"] },
+  { id: "r5", classId: "c2", className: "Lý 11 - Nâng cao", studentName: "Trần Thị Hương", parentName: "Trần Văn Minh", rating: 4, comment: "Thầy giảng cơ học rất hay.", date: "2026-02-20", avatar: avatarMale5, subject: "Lý", tags: ["Dễ hiểu", "Vui vẻ"] },
+  { id: "r6", classId: "c4", className: "Lý 10 - Cơ bản", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 5, comment: "Từ 5 điểm lên 8.5 điểm trong 2 tháng!", date: "2025-12-20", avatar: avatarFemale2, subject: "Lý", tags: ["Tiến bộ nhanh", "Tuyệt vời"] },
+  { id: "r7", classId: "c1", className: "Toán 12 - Ôn thi ĐH", studentName: "Lê Minh Châu", parentName: "Phạm Hồng Đào", rating: 5, comment: "Thầy luôn chuẩn bị bài rất kỹ.", date: "2026-01-20", avatar: avatarFemale2, subject: "Toán", tags: ["Chuẩn bị kỹ", "Tận tâm"] },
 ];
 
-// Test questions by subject
 const seedTestQuestions: TestQuestion[] = [
-  // Toán
-  { id: "tq1", subject: "Toán", question: "Đạo hàm của hàm số y = x³ + 2x² - 5x + 1 là:", options: ["3x² + 4x - 5", "3x² + 2x - 5", "x² + 4x - 5", "3x² + 4x + 5"], correctAnswer: 0, explanation: "y' = 3x² + 4x - 5 (áp dụng công thức đạo hàm)" },
+  { id: "tq1", subject: "Toán", question: "Đạo hàm của hàm số y = x³ + 2x² - 5x + 1 là:", options: ["3x² + 4x - 5", "3x² + 2x - 5", "x² + 4x - 5", "3x² + 4x + 5"], correctAnswer: 0, explanation: "y' = 3x² + 4x - 5" },
   { id: "tq2", subject: "Toán", question: "Tích phân ∫₀¹ 2x dx bằng:", options: ["1", "2", "0", "1/2"], correctAnswer: 0, explanation: "∫₀¹ 2x dx = [x²]₀¹ = 1" },
-  { id: "tq3", subject: "Toán", question: "Giới hạn lim(x→0) sin(x)/x bằng:", options: ["0", "1", "∞", "Không tồn tại"], correctAnswer: 1, explanation: "Đây là giới hạn cơ bản: lim(x→0) sin(x)/x = 1" },
-  { id: "tq4", subject: "Toán", question: "Phương trình x² - 5x + 6 = 0 có nghiệm là:", options: ["x=1, x=6", "x=2, x=3", "x=-2, x=-3", "x=1, x=5"], correctAnswer: 1, explanation: "x² - 5x + 6 = (x-2)(x-3) = 0, nên x=2 hoặc x=3" },
-  { id: "tq5", subject: "Toán", question: "Trong tam giác vuông, sin²α + cos²α bằng:", options: ["0", "1", "2", "sinα"], correctAnswer: 1, explanation: "Đây là hằng đẳng thức lượng giác cơ bản" },
-  { id: "tq6", subject: "Toán", question: "log₂(8) bằng:", options: ["2", "3", "4", "8"], correctAnswer: 1, explanation: "2³ = 8, nên log₂(8) = 3" },
-  { id: "tq7", subject: "Toán", question: "Số tổ hợp C(5,2) bằng:", options: ["10", "20", "5", "25"], correctAnswer: 0, explanation: "C(5,2) = 5!/(2!×3!) = 10" },
-  { id: "tq8", subject: "Toán", question: "Véc tơ ā = (2,3) và b̄ = (1,-1). Tích vô hướng ā·b̄ bằng:", options: ["-1", "5", "1", "-5"], correctAnswer: 0, explanation: "ā·b̄ = 2×1 + 3×(-1) = 2 - 3 = -1" },
-  { id: "tq9", subject: "Toán", question: "Hàm số y = x³ - 3x có bao nhiêu cực trị?", options: ["0", "1", "2", "3"], correctAnswer: 2, explanation: "y' = 3x² - 3 = 0 → x = ±1, y'' = 6x. x=1: cực tiểu, x=-1: cực đại → 2 cực trị" },
-  { id: "tq10", subject: "Toán", question: "Ma trận A = [[1,2],[3,4]], det(A) bằng:", options: ["-2", "2", "10", "-10"], correctAnswer: 0, explanation: "det(A) = 1×4 - 2×3 = 4 - 6 = -2" },
-  // Lý
-  { id: "tq11", subject: "Lý", question: "Định luật II Newton phát biểu:", options: ["F = ma", "F = mv", "F = m/a", "F = m²a"], correctAnswer: 0, explanation: "Định luật II Newton: F = ma" },
-  { id: "tq12", subject: "Lý", question: "Đơn vị của công suất trong hệ SI là:", options: ["Joule", "Watt", "Newton", "Pascal"], correctAnswer: 1, explanation: "Công suất đo bằng Watt (W) = J/s" },
-  { id: "tq13", subject: "Lý", question: "Vận tốc ánh sáng trong chân không xấp xỉ:", options: ["3×10⁶ m/s", "3×10⁸ m/s", "3×10¹⁰ m/s", "3×10⁴ m/s"], correctAnswer: 1, explanation: "c ≈ 3×10⁸ m/s" },
-  { id: "tq14", subject: "Lý", question: "Định luật bảo toàn năng lượng phát biểu:", options: ["Năng lượng tự sinh ra", "Năng lượng không tự sinh ra và không tự mất đi", "Năng lượng luôn tăng", "Năng lượng luôn giảm"], correctAnswer: 1, explanation: "Năng lượng không tự sinh ra và không tự mất đi, chỉ chuyển từ dạng này sang dạng khác" },
-  { id: "tq15", subject: "Lý", question: "Điện trở R = U/I theo định luật:", options: ["Faraday", "Ohm", "Kirchhoff", "Coulomb"], correctAnswer: 1, explanation: "Định luật Ohm: U = IR, suy ra R = U/I" },
-  { id: "tq16", subject: "Lý", question: "Gia tốc trọng trường trên Trái Đất xấp xỉ:", options: ["8.9 m/s²", "9.8 m/s²", "10.8 m/s²", "7.8 m/s²"], correctAnswer: 1, explanation: "g ≈ 9.8 m/s²" },
-  { id: "tq17", subject: "Lý", question: "Động lượng được tính bằng:", options: ["p = mv", "p = ma", "p = Ft", "p = mv và p = Ft"], correctAnswer: 3, explanation: "Động lượng p = mv, và xung lượng Ft = Δp" },
-  { id: "tq18", subject: "Lý", question: "Sóng âm truyền nhanh nhất trong môi trường:", options: ["Chân không", "Không khí", "Nước", "Chất rắn"], correctAnswer: 3, explanation: "Sóng âm truyền nhanh nhất trong chất rắn do mật độ phân tử cao" },
-  { id: "tq19", subject: "Lý", question: "Công thức tính động năng:", options: ["Wđ = mgh", "Wđ = ½mv²", "Wđ = Fs", "Wđ = ½kx²"], correctAnswer: 1, explanation: "Động năng Wđ = ½mv²" },
-  { id: "tq20", subject: "Lý", question: "Hiện tượng khúc xạ ánh sáng xảy ra khi:", options: ["Ánh sáng gặp gương phẳng", "Ánh sáng truyền qua 2 môi trường trong suốt khác nhau", "Ánh sáng bị chặn", "Ánh sáng phản xạ toàn phần"], correctAnswer: 1, explanation: "Khúc xạ xảy ra khi ánh sáng truyền qua 2 môi trường trong suốt có chiết suất khác nhau" },
-  // Anh
-  { id: "tq21", subject: "Anh", question: "Choose the correct form: 'If I ___ rich, I would travel the world.'", options: ["am", "was", "were", "be"], correctAnswer: 2, explanation: "Conditional Type 2 uses 'were' for all subjects" },
-  { id: "tq22", subject: "Anh", question: "'She has been studying for 3 hours.' What tense is this?", options: ["Present Perfect", "Present Perfect Continuous", "Past Perfect", "Past Continuous"], correctAnswer: 1, explanation: "Present Perfect Continuous: has/have + been + V-ing" },
-  { id: "tq23", subject: "Anh", question: "Choose the synonym of 'abundant':", options: ["scarce", "plentiful", "tiny", "rare"], correctAnswer: 1, explanation: "Abundant = plentiful (dồi dào)" },
-  { id: "tq24", subject: "Anh", question: "'The book ___ by Mark Twain.' Choose the correct passive form:", options: ["wrote", "was written", "has wrote", "is writing"], correctAnswer: 1, explanation: "Passive voice: was/were + past participle" },
-  { id: "tq25", subject: "Anh", question: "Which sentence is grammatically correct?", options: ["He don't like coffee.", "He doesn't likes coffee.", "He doesn't like coffee.", "He not like coffee."], correctAnswer: 2, explanation: "Third person singular negative: doesn't + base form" },
-  { id: "tq26", subject: "Anh", question: "'Despite ___ tired, she continued working.'", options: ["be", "being", "to be", "been"], correctAnswer: 1, explanation: "Despite + V-ing" },
-  { id: "tq27", subject: "Anh", question: "The word 'phenomenon' is plural as:", options: ["phenomenons", "phenomena", "phenomenas", "phenomeni"], correctAnswer: 1, explanation: "Phenomenon → Phenomena (Greek origin)" },
-  { id: "tq28", subject: "Anh", question: "'I wish I ___ speak French fluently.'", options: ["can", "could", "will", "may"], correctAnswer: 1, explanation: "Wish + past simple (could) for present unreal situations" },
-  { id: "tq29", subject: "Anh", question: "Choose the correct preposition: 'She is interested ___ music.'", options: ["on", "at", "in", "for"], correctAnswer: 2, explanation: "Interested IN something" },
-  { id: "tq30", subject: "Anh", question: "'Had I known, I ___ differently.'", options: ["would act", "would have acted", "will act", "acted"], correctAnswer: 1, explanation: "Conditional Type 3: would have + past participle" },
+  { id: "tq3", subject: "Toán", question: "Giới hạn lim(x→0) sin(x)/x bằng:", options: ["0", "1", "∞", "Không tồn tại"], correctAnswer: 1, explanation: "Giới hạn cơ bản = 1" },
+  { id: "tq4", subject: "Toán", question: "Phương trình x² - 5x + 6 = 0 có nghiệm:", options: ["x=1, x=6", "x=2, x=3", "x=-2, x=-3", "x=1, x=5"], correctAnswer: 1, explanation: "(x-2)(x-3) = 0" },
+  { id: "tq5", subject: "Toán", question: "sin²α + cos²α bằng:", options: ["0", "1", "2", "sinα"], correctAnswer: 1, explanation: "Hằng đẳng thức lượng giác" },
+  { id: "tq6", subject: "Toán", question: "log₂(8) bằng:", options: ["2", "3", "4", "8"], correctAnswer: 1, explanation: "2³ = 8" },
+  { id: "tq7", subject: "Toán", question: "C(5,2) bằng:", options: ["10", "20", "5", "25"], correctAnswer: 0, explanation: "C(5,2) = 10" },
+  { id: "tq8", subject: "Toán", question: "ā=(2,3), b̄=(1,-1). ā·b̄ bằng:", options: ["-1", "5", "1", "-5"], correctAnswer: 0, explanation: "2×1+3×(-1)=-1" },
+  { id: "tq9", subject: "Toán", question: "y = x³ - 3x có bao nhiêu cực trị?", options: ["0", "1", "2", "3"], correctAnswer: 2, explanation: "y' = 3x²-3=0 → 2 cực trị" },
+  { id: "tq10", subject: "Toán", question: "det([[1,2],[3,4]]) bằng:", options: ["-2", "2", "10", "-10"], correctAnswer: 0, explanation: "1×4-2×3=-2" },
+  { id: "tq11", subject: "Lý", question: "Định luật II Newton:", options: ["F = ma", "F = mv", "F = m/a", "F = m²a"], correctAnswer: 0, explanation: "F = ma" },
+  { id: "tq12", subject: "Lý", question: "Đơn vị công suất:", options: ["Joule", "Watt", "Newton", "Pascal"], correctAnswer: 1, explanation: "Watt" },
+  { id: "tq13", subject: "Lý", question: "Vận tốc ánh sáng:", options: ["3×10⁶ m/s", "3×10⁸ m/s", "3×10¹⁰ m/s", "3×10⁴ m/s"], correctAnswer: 1, explanation: "c ≈ 3×10⁸ m/s" },
+  { id: "tq14", subject: "Lý", question: "Định luật bảo toàn năng lượng:", options: ["Tự sinh ra", "Không tự sinh/mất đi", "Luôn tăng", "Luôn giảm"], correctAnswer: 1, explanation: "Không tự sinh ra và không tự mất đi" },
+  { id: "tq15", subject: "Lý", question: "R = U/I theo định luật:", options: ["Faraday", "Ohm", "Kirchhoff", "Coulomb"], correctAnswer: 1, explanation: "Định luật Ohm" },
+  { id: "tq16", subject: "Lý", question: "g ≈ ?", options: ["8.9 m/s²", "9.8 m/s²", "10.8 m/s²", "7.8 m/s²"], correctAnswer: 1, explanation: "g ≈ 9.8 m/s²" },
+  { id: "tq17", subject: "Lý", question: "Động lượng:", options: ["p = mv", "p = ma", "p = Ft", "p = mv và p = Ft"], correctAnswer: 3, explanation: "p = mv, Ft = Δp" },
+  { id: "tq18", subject: "Lý", question: "Sóng âm truyền nhanh nhất trong:", options: ["Chân không", "Không khí", "Nước", "Chất rắn"], correctAnswer: 3, explanation: "Chất rắn" },
+  { id: "tq19", subject: "Lý", question: "Công thức động năng:", options: ["mgh", "½mv²", "Fs", "½kx²"], correctAnswer: 1, explanation: "Wđ = ½mv²" },
+  { id: "tq20", subject: "Lý", question: "Khúc xạ xảy ra khi:", options: ["Gặp gương", "Qua 2 môi trường khác nhau", "Bị chặn", "Phản xạ toàn phần"], correctAnswer: 1, explanation: "Qua 2 môi trường trong suốt khác chiết suất" },
+  { id: "tq21", subject: "Anh", question: "'If I ___ rich, I would travel.'", options: ["am", "was", "were", "be"], correctAnswer: 2, explanation: "Conditional Type 2: were" },
+  { id: "tq22", subject: "Anh", question: "'She has been studying for 3 hours.' Thì gì?", options: ["Present Perfect", "Present Perfect Continuous", "Past Perfect", "Past Continuous"], correctAnswer: 1, explanation: "Present Perfect Continuous" },
+  { id: "tq23", subject: "Anh", question: "Synonym of 'abundant':", options: ["scarce", "plentiful", "tiny", "rare"], correctAnswer: 1, explanation: "plentiful" },
+  { id: "tq24", subject: "Anh", question: "'The book ___ by Mark Twain.'", options: ["wrote", "was written", "has wrote", "is writing"], correctAnswer: 1, explanation: "Passive voice" },
+  { id: "tq25", subject: "Anh", question: "Correct sentence:", options: ["He don't like", "He doesn't likes", "He doesn't like", "He not like"], correctAnswer: 2, explanation: "doesn't + base form" },
+  { id: "tq26", subject: "Anh", question: "'Despite ___ tired, she continued.'", options: ["be", "being", "to be", "been"], correctAnswer: 1, explanation: "Despite + V-ing" },
+  { id: "tq27", subject: "Anh", question: "Plural of 'phenomenon':", options: ["phenomenons", "phenomena", "phenomenas", "phenomeni"], correctAnswer: 1, explanation: "phenomena" },
+  { id: "tq28", subject: "Anh", question: "'I wish I ___ speak French.'", options: ["can", "could", "will", "may"], correctAnswer: 1, explanation: "Wish + could" },
+  { id: "tq29", subject: "Anh", question: "'She is interested ___ music.'", options: ["on", "at", "in", "for"], correctAnswer: 2, explanation: "interested IN" },
+  { id: "tq30", subject: "Anh", question: "'Had I known, I ___.'", options: ["would act", "would have acted", "will act", "acted"], correctAnswer: 1, explanation: "Conditional Type 3" },
+];
+
+const seedTestResults: TestResult[] = [
+  {
+    id: "tr1", seekingId: "seek_old1", subject: "Toán", score: 90, passed: true,
+    answers: { tq1: 0, tq2: 0, tq3: 1, tq4: 1, tq5: 1, tq6: 1, tq7: 0, tq8: 0, tq9: 2, tq10: 0 },
+    date: "2026-01-10",
+    questions: seedTestQuestions.filter(q => q.subject === "Toán").slice(0, 10),
+  },
+  {
+    id: "tr2", seekingId: "seek_old2", subject: "Lý", score: 80, passed: true,
+    answers: { tq11: 0, tq12: 1, tq13: 1, tq14: 1, tq15: 1, tq16: 1, tq17: 3, tq18: 3, tq19: 1, tq20: 1 },
+    date: "2026-02-05",
+    questions: seedTestQuestions.filter(q => q.subject === "Lý").slice(0, 10),
+  },
 ];
 
 // ========== CONTEXT ==========
@@ -458,19 +522,25 @@ interface TutorContextType {
   studentProgress: StudentProgress[];
   reviews: TutorReview[];
   testQuestions: TestQuestion[];
+  testResults: TestResult[];
   walletBalance: number;
   escrowBalance: number;
   updateProfile: (data: Partial<TutorProfile>) => void;
   confirmTrial: (id: string) => void;
-  rejectTrial: (id: string) => void;
+  rejectTrial: (id: string, reason?: string) => void;
   startSession: (sessionId: string, classId: string) => void;
-  endSession: (sessionId: string, classId: string, content: string, notes: string, homework: string) => void;
+  endSession: (sessionId: string, classId: string, content: string, notes: string, homework: string, files?: string[]) => void;
+  confirmSessionByParent: (sessionId: string, classId: string) => void;
+  requestAbsence: (sessionId: string, classId: string, reason: string, requestedBy: "tutor" | "student") => void;
   sendMessage: (classId: string, message: string) => void;
   markMessagesRead: (classId: string) => void;
   requestRefund: (classId: string) => void;
   requestWithdrawal: (amount: number, method: string) => void;
   requestDeposit: (amount: number, method: string) => void;
   updateAvailability: (availability: TutorProfile["availability"]) => void;
+  addTestResult: (result: TestResult) => void;
+  addMaterial: (classId: string, material: ClassMaterial) => void;
+  removeMaterial: (classId: string, materialId: string) => void;
 }
 
 const TutorContext = createContext<TutorContextType | null>(null);
@@ -492,6 +562,7 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(seedChat);
   const [studentProgress] = useState<StudentProgress[]>(seedStudentProgress);
   const [reviews] = useState<TutorReview[]>(seedReviews);
+  const [testResults, setTestResults] = useState<TestResult[]>(seedTestResults);
 
   const walletBalance = wallet
     .filter(w => w.status === "completed" && w.type !== "escrow_in")
@@ -509,8 +580,8 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
     setTrials(prev => prev.map(t => t.id === id ? { ...t, status: "confirmed" as TrialStatus } : t));
   }, []);
 
-  const rejectTrial = useCallback((id: string) => {
-    setTrials(prev => prev.map(t => t.id === id ? { ...t, status: "rejected" as TrialStatus } : t));
+  const rejectTrial = useCallback((id: string, reason?: string) => {
+    setTrials(prev => prev.map(t => t.id === id ? { ...t, status: "rejected" as TrialStatus, rejectionReason: reason || "Không có lý do cụ thể" } : t));
   }, []);
 
   const startSession = useCallback((sessionId: string, classId: string) => {
@@ -520,18 +591,28 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
       return {
         ...c,
         sessions: c.sessions.map(s =>
-          s.id === sessionId ? { ...s, status: "completed" as SessionStatus, startedAt: now } : s
+          s.id === sessionId ? { ...s, status: "in_progress" as SessionStatus, startedAt: now } : s
         ),
       };
     }));
   }, []);
 
-  const endSession = useCallback((sessionId: string, classId: string, content: string, notes: string, homework: string) => {
+  const endSession = useCallback((sessionId: string, classId: string, content: string, notes: string, homework: string, files?: string[]) => {
     const now = new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
     setClasses(prev => prev.map(c => {
       if (c.id !== classId) return c;
       const updatedSessions = c.sessions.map(s =>
-        s.id === sessionId ? { ...s, status: "completed" as SessionStatus, endedAt: now, content, notes, homework } : s
+        s.id === sessionId ? { ...s, status: "pending_confirm" as SessionStatus, endedAt: now, content, notes, homework, homeworkFiles: files } : s
+      );
+      return { ...c, sessions: updatedSessions };
+    }));
+  }, []);
+
+  const confirmSessionByParent = useCallback((sessionId: string, classId: string) => {
+    setClasses(prev => prev.map(c => {
+      if (c.id !== classId) return c;
+      const updatedSessions = c.sessions.map(s =>
+        s.id === sessionId ? { ...s, status: "completed" as SessionStatus, parentConfirmed: true } : s
       );
       const completedCount = updatedSessions.filter(s => s.status === "completed").length;
       let newEscrowReleased = c.escrowReleased;
@@ -547,6 +628,18 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
         newEscrowStatus = "in_progress";
       }
       return { ...c, sessions: updatedSessions, completedSessions: completedCount, escrowReleased: newEscrowReleased, escrowStatus: newEscrowStatus as EscrowStatus };
+    }));
+  }, []);
+
+  const requestAbsence = useCallback((sessionId: string, classId: string, reason: string, requestedBy: "tutor" | "student") => {
+    setClasses(prev => prev.map(c => {
+      if (c.id !== classId) return c;
+      return {
+        ...c,
+        sessions: c.sessions.map(s =>
+          s.id === sessionId ? { ...s, absenceReason: reason, absenceRequestedBy: requestedBy, absenceApproved: false } : s
+        ),
+      };
     }));
   }, []);
 
@@ -573,37 +666,28 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
         : c
     ));
     setWallet(prev => [...prev, {
-      id: genId("w"),
-      type: "refund",
-      amount: 0,
+      id: genId("w"), type: "refund", amount: 0,
       date: new Date().toISOString().slice(0, 10),
       description: `Yêu cầu hoàn tiền lớp ${classId} - đang chờ Admin xử lý`,
-      classId,
-      status: "pending",
+      classId, status: "pending",
     }]);
   }, []);
 
   const requestWithdrawal = useCallback((amount: number, method: string) => {
     setWallet(prev => [...prev, {
-      id: genId("w"),
-      type: "withdrawal",
-      amount: -amount,
+      id: genId("w"), type: "withdrawal", amount: -amount,
       date: new Date().toISOString().slice(0, 10),
       description: `Rút ${amount.toLocaleString("vi-VN")}đ qua ${method}`,
-      status: "pending",
-      paymentMethod: method,
+      status: "completed", paymentMethod: method,
     }]);
   }, []);
 
   const requestDeposit = useCallback((amount: number, method: string) => {
     setWallet(prev => [...prev, {
-      id: genId("w"),
-      type: "deposit",
-      amount: amount,
+      id: genId("w"), type: "deposit", amount: amount,
       date: new Date().toISOString().slice(0, 10),
       description: `Nạp ${amount.toLocaleString("vi-VN")}đ từ ${method}`,
-      status: "completed",
-      paymentMethod: method,
+      status: "completed", paymentMethod: method,
     }]);
   }, []);
 
@@ -611,14 +695,32 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
     setProfile(prev => ({ ...prev, availability }));
   }, []);
 
+  const addTestResult = useCallback((result: TestResult) => {
+    setTestResults(prev => [...prev, result]);
+  }, []);
+
+  const addMaterial = useCallback((classId: string, material: ClassMaterial) => {
+    setClasses(prev => prev.map(c =>
+      c.id === classId ? { ...c, materials: [...c.materials, material] } : c
+    ));
+  }, []);
+
+  const removeMaterial = useCallback((classId: string, materialId: string) => {
+    setClasses(prev => prev.map(c =>
+      c.id === classId ? { ...c, materials: c.materials.filter(m => m.id !== materialId) } : c
+    ));
+  }, []);
+
   return (
     <TutorContext.Provider value={{
       profile, classes, trials, wallet, chatMessages, studentProgress, reviews,
       testQuestions: seedTestQuestions,
-      walletBalance, escrowBalance,
+      testResults, walletBalance, escrowBalance,
       updateProfile, confirmTrial, rejectTrial,
-      startSession, endSession, sendMessage, markMessagesRead,
+      startSession, endSession, confirmSessionByParent, requestAbsence,
+      sendMessage, markMessagesRead,
       requestRefund, requestWithdrawal, requestDeposit, updateAvailability,
+      addTestResult, addMaterial, removeMaterial,
     }}>
       {children}
     </TutorContext.Provider>

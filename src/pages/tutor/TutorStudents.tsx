@@ -9,14 +9,14 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
 
 const TutorStudents = () => {
-  const { studentProgress, classes } = useTutor();
+  const { studentProgress } = useTutor();
   const [selected, setSelected] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [filterSubject, setFilterSubject] = useState("all");
+  const [filterCompletion, setFilterCompletion] = useState("all");
 
   const sp = selected ? studentProgress.find(s => s.studentId + s.classId === selected) : null;
 
-  // Summary stats
   const totalStudents = new Set(studentProgress.map(s => s.studentId)).size;
   const activeStudents = studentProgress.filter(s => s.completedSessions > 0 && s.completedSessions < s.totalSessions).length;
   const avgAttendance = studentProgress.filter(s => s.completedSessions > 0).reduce((sum, s) => sum + s.attendanceRate, 0) / Math.max(1, studentProgress.filter(s => s.completedSessions > 0).length);
@@ -26,6 +26,9 @@ const TutorStudents = () => {
   const filtered = studentProgress.filter(s => {
     if (search && !s.studentName.toLowerCase().includes(search.toLowerCase()) && !s.className.toLowerCase().includes(search.toLowerCase())) return false;
     if (filterSubject !== "all" && s.subject !== filterSubject) return false;
+    if (filterCompletion === "completed" && s.goalCompletion < 100) return false;
+    if (filterCompletion === "in_progress" && (s.goalCompletion >= 100 || s.completedSessions === 0)) return false;
+    if (filterCompletion === "not_started" && s.completedSessions > 0) return false;
     return true;
   });
 
@@ -68,6 +71,12 @@ const TutorStudents = () => {
           <option value="all">Tất cả môn</option>
           {subjects.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
+        <select value={filterCompletion} onChange={e => setFilterCompletion(e.target.value)} className="px-3 py-2 bg-card border border-border rounded-xl text-sm">
+          <option value="all">Tất cả trạng thái</option>
+          <option value="in_progress">Đang học</option>
+          <option value="completed">Hoàn thành</option>
+          <option value="not_started">Chưa bắt đầu</option>
+        </select>
       </div>
 
       {/* Student List */}
@@ -81,6 +90,7 @@ const TutorStudents = () => {
                 <p className="text-xs text-muted-foreground">{s.className} • {s.subject} • {s.studentGrade}</p>
               </div>
               {s.goalCompletion === 100 && <span className="text-[10px] font-medium bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-0.5 rounded-lg">Hoàn thành</span>}
+              {s.completedSessions === 0 && <span className="text-[10px] font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-lg">Chưa học</span>}
             </div>
             <div className="grid grid-cols-5 gap-2">
               <div className="p-2 bg-muted/50 rounded-lg text-center">
@@ -125,7 +135,6 @@ const TutorStudents = () => {
                 </DialogTitle>
               </DialogHeader>
 
-              {/* Contact Info */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
                 <div className="p-3 bg-muted/50 rounded-xl flex items-center gap-2"><Phone className="w-3 h-3 text-muted-foreground" /><span>{sp.studentPhone}</span></div>
                 <div className="p-3 bg-muted/50 rounded-xl flex items-center gap-2"><Mail className="w-3 h-3 text-muted-foreground" /><span className="truncate">{sp.studentEmail}</span></div>
@@ -143,34 +152,12 @@ const TutorStudents = () => {
 
                 <TabsContent value="overview">
                   <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-                    <div className="p-4 bg-muted/50 rounded-xl text-center">
-                      <BookOpen className="w-5 h-5 text-primary mx-auto mb-1" />
-                      <p className="text-2xl font-bold text-foreground">{sp.completedSessions}/{sp.totalSessions}</p>
-                      <p className="text-xs text-muted-foreground">Buổi hoàn thành</p>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-xl text-center">
-                      <BarChart3 className="w-5 h-5 text-primary mx-auto mb-1" />
-                      <p className="text-2xl font-bold text-foreground">{sp.averageScore > 0 ? sp.averageScore.toFixed(1) : "—"}</p>
-                      <p className="text-xs text-muted-foreground">Điểm TB</p>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-xl text-center">
-                      <CheckCircle2 className={cn("w-5 h-5 mx-auto mb-1", sp.attendanceRate >= 90 ? "text-emerald-500" : "text-amber-500")} />
-                      <p className="text-2xl font-bold text-foreground">{sp.attendanceRate}%</p>
-                      <p className="text-xs text-muted-foreground">Chuyên cần</p>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-xl text-center">
-                      <Target className="w-5 h-5 text-primary mx-auto mb-1" />
-                      <p className="text-2xl font-bold text-primary">{sp.goalCompletion}%</p>
-                      <p className="text-xs text-muted-foreground">Mục tiêu</p>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-xl text-center">
-                      <p className="text-2xl font-bold text-foreground">{sp.homeworkCompletion}%</p>
-                      <p className="text-xs text-muted-foreground">Hoàn thành BTVN</p>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-xl text-center">
-                      <p className="text-2xl font-bold text-foreground">{sp.missedSessions}</p>
-                      <p className="text-xs text-muted-foreground">Buổi vắng</p>
-                    </div>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center"><BookOpen className="w-5 h-5 text-primary mx-auto mb-1" /><p className="text-2xl font-bold text-foreground">{sp.completedSessions}/{sp.totalSessions}</p><p className="text-xs text-muted-foreground">Buổi</p></div>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center"><BarChart3 className="w-5 h-5 text-primary mx-auto mb-1" /><p className="text-2xl font-bold text-foreground">{sp.averageScore > 0 ? sp.averageScore.toFixed(1) : "—"}</p><p className="text-xs text-muted-foreground">Điểm TB</p></div>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center"><CheckCircle2 className={cn("w-5 h-5 mx-auto mb-1", sp.attendanceRate >= 90 ? "text-emerald-500" : "text-amber-500")} /><p className="text-2xl font-bold text-foreground">{sp.attendanceRate}%</p><p className="text-xs text-muted-foreground">Chuyên cần</p></div>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center"><Target className="w-5 h-5 text-primary mx-auto mb-1" /><p className="text-2xl font-bold text-primary">{sp.goalCompletion}%</p><p className="text-xs text-muted-foreground">Mục tiêu</p></div>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center"><p className="text-2xl font-bold text-foreground">{sp.homeworkCompletion}%</p><p className="text-xs text-muted-foreground">BTVN</p></div>
+                    <div className="p-4 bg-muted/50 rounded-xl text-center"><p className="text-2xl font-bold text-foreground">{sp.missedSessions}</p><p className="text-xs text-muted-foreground">Buổi vắng</p></div>
                   </div>
                   {sp.notes && <div className="mt-4 p-4 bg-primary/5 rounded-xl border border-primary/10"><p className="text-xs text-muted-foreground mb-1">Ghi chú</p><p className="text-sm text-foreground">{sp.notes}</p></div>}
                 </TabsContent>
@@ -204,9 +191,7 @@ const TutorStudents = () => {
                         <Line type="monotone" dataKey="score" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4, fill: "hsl(var(--primary))" }} />
                       </LineChart>
                     </ChartContainer>
-                  ) : (
-                    <p className="text-sm text-muted-foreground text-center py-8">Chưa có dữ liệu điểm</p>
-                  )}
+                  ) : <p className="text-sm text-muted-foreground text-center py-8">Chưa có dữ liệu</p>}
                 </TabsContent>
 
                 <TabsContent value="reports" className="space-y-3">
