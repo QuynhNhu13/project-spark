@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Users, GraduationCap, ThumbsUp } from "lucide-react";
+import { CheckCircle, Users, GraduationCap, ThumbsUp, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 const stats = [
@@ -17,84 +17,130 @@ const bullets = [
 
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden gradient-hero pt-28 pb-20 md:pt-36 md:pb-28">
-      {/* Decorative circles */}
-      <div className="absolute top-20 right-0 w-96 h-96 rounded-full bg-secondary/10 blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-primary-foreground/5 blur-3xl" />
+    <section className="relative overflow-hidden gradient-hero pt-28 pb-24 md:pt-40 md:pb-32">
+      {/* Decorative blobs */}
+      <div className="absolute top-20 -right-20 w-[500px] h-[500px] bg-neon/10 blur-[120px] rounded-full" />
+      <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] bg-bright-blue/20 blur-[100px] rounded-full" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[150px] rounded-full" />
+
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: `linear-gradient(hsl(82 100% 54% / 0.3) 1px, transparent 1px), linear-gradient(90deg, hsl(82 100% 54% / 0.3) 1px, transparent 1px)`,
+        backgroundSize: '60px 60px'
+      }} />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left */}
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
-            <span className="inline-block px-4 py-1.5 rounded-full bg-secondary/20 text-secondary text-sm font-semibold mb-6">
+            <motion.span
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neon/10 border border-neon/20 text-neon text-sm font-semibold mb-8"
+            >
+              <span className="w-2 h-2 rounded-full bg-neon animate-pulse" />
               Nền tảng giáo dục hàng đầu Việt Nam
-            </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary-foreground leading-tight mb-6">
-              Kết nối Gia sư chất lượng với Học sinh
+            </motion.span>
+
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold font-display leading-[1.1] mb-6">
+              <span className="text-white">Kết nối</span>
+              <br />
+              <span className="text-gradient">Gia sư chất lượng</span>
+              <br />
+              <span className="text-white">với Học sinh</span>
             </h1>
-            <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl">
+
+            <p className="text-white/60 text-lg md:text-xl mb-8 max-w-lg leading-relaxed">
               EduConnect giúp phụ huynh tìm gia sư phù hợp, đảm bảo chất lượng giảng dạy thông qua hệ thống kiểm tra năng lực và đánh giá AI.
             </p>
 
-            <ul className="space-y-3 mb-8">
-              {bullets.map((b) => (
-                <li key={b} className="flex items-center gap-3 text-primary-foreground/90">
-                  <CheckCircle className="w-5 h-5 text-secondary flex-shrink-0" />
+            <ul className="space-y-3 mb-10">
+              {bullets.map((b, i) => (
+                <motion.li
+                  key={b}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 + i * 0.1 }}
+                  className="flex items-center gap-3 text-white/80"
+                >
+                  <CheckCircle className="w-5 h-5 text-neon flex-shrink-0" />
                   <span className="font-medium">{b}</span>
-                </li>
+                </motion.li>
               ))}
             </ul>
 
-            <div className="flex flex-wrap gap-4 mb-10">
-              <Button size="lg" asChild className="bg-secondary hover:bg-secondary/90 text-secondary-foreground text-base px-8 h-12 rounded-xl shadow-elevated">
-                <Link to="/find-tutor">Tìm gia sư ngay</Link>
+            <div className="flex flex-wrap gap-4 mb-12">
+              <Button size="lg" asChild className="bg-neon text-neon-foreground hover:bg-neon/90 text-base px-8 h-13 rounded-2xl font-bold shadow-neon group">
+                <Link to="/find-tutor" className="flex items-center gap-2">
+                  Tìm gia sư ngay
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base px-8 h-12 rounded-xl">
+              <Button size="lg" variant="outline" asChild className="border-white/20 text-white hover:bg-white/10 text-base px-8 h-13 rounded-2xl font-semibold">
                 <Link to="/register-tutor">Đăng ký làm gia sư</Link>
               </Button>
             </div>
 
-            {/* Tutors preview */}
-            <div className="flex items-center gap-3">
+            {/* Avatars */}
+            <div className="flex items-center gap-4">
               <div className="flex -space-x-3">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="w-10 h-10 rounded-full bg-secondary/30 border-2 border-primary flex items-center justify-center text-xs font-bold text-primary-foreground">
-                    {String.fromCharCode(64 + i)}
+                {["T", "H", "M", "A", "D"].map((letter, i) => (
+                  <div
+                    key={i}
+                    className="w-11 h-11 rounded-full border-2 border-deep-blue flex items-center justify-center text-xs font-bold"
+                    style={{
+                      background: `linear-gradient(135deg, hsl(${82 + i * 30} 70% 50%), hsl(${100 + i * 30} 70% 40%))`,
+                      color: '#0F172A'
+                    }}
+                  >
+                    {letter}
                   </div>
                 ))}
               </div>
-              <span className="text-primary-foreground/70 text-sm font-medium">+180 gia sư nổi bật</span>
+              <div>
+                <span className="text-neon font-bold text-sm">+180</span>
+                <span className="text-white/50 text-sm ml-1">gia sư nổi bật</span>
+              </div>
             </div>
           </motion.div>
 
-          {/* Right - Stats */}
+          {/* Right - Stats cards */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
             className="flex flex-col gap-5"
           >
             {stats.map((stat, i) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-                className="bg-primary-foreground/10 backdrop-blur-md rounded-2xl p-6 flex items-center gap-5 border border-primary-foreground/10"
+                transition={{ duration: 0.5, delay: 0.5 + i * 0.15 }}
+                className="bg-white/5 backdrop-blur-xl rounded-2xl p-7 flex items-center gap-6 border border-white/10 hover:border-neon/30 transition-all group"
               >
-                <div className="w-14 h-14 rounded-xl bg-secondary/20 flex items-center justify-center flex-shrink-0">
-                  <stat.icon className="w-7 h-7 text-secondary" />
+                <div className="w-16 h-16 rounded-2xl bg-neon/10 flex items-center justify-center flex-shrink-0 group-hover:bg-neon/20 transition-colors">
+                  <stat.icon className="w-8 h-8 text-neon" />
                 </div>
                 <div>
-                  <div className="text-3xl font-extrabold text-primary-foreground">{stat.value}</div>
-                  <div className="text-primary-foreground/70 text-sm">{stat.label}</div>
+                  <div className="text-4xl font-extrabold text-white font-display">{stat.value}</div>
+                  <div className="text-white/50 text-sm mt-1">{stat.label}</div>
                 </div>
               </motion.div>
             ))}
+
+            {/* Floating badge */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              className="self-end bg-neon text-neon-foreground px-6 py-3 rounded-2xl font-bold text-sm shadow-neon"
+            >
+              AI-Powered Platform
+            </motion.div>
           </motion.div>
         </div>
       </div>
