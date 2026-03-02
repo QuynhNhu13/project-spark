@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
+import EduLogo from "@/components/EduLogo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,34 +22,71 @@ const demoRoles = [
   { name: "Quản lý đề", path: "/demo/exam-manager" },
 ];
 
+const sectionLinks = [
+  { id: "features", label: "Tính năng" },
+  { id: "how-it-works", label: "Cách hoạt động" },
+  { id: "subjects", label: "Môn học" },
+];
+
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    setMobileOpen(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      }, 300);
+    } else {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/70 backdrop-blur-xl border-b border-border/50">
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-soft" : "bg-background/50 backdrop-blur-md"}`}>
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl gradient-hero flex items-center justify-center shadow-neon">
-            <span className="text-neon font-bold text-base font-display">E</span>
-          </div>
-          <span className="font-bold text-xl font-display text-foreground">
+          <EduLogo size={36} />
+          <span className="font-bold text-xl text-foreground">
             Edu<span className="text-gradient">Connect</span>
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1">
-          {[
-            { to: "/find-tutor", label: "Tìm gia sư" },
-            { to: "/exam-online", label: "Thi thử" },
-          ].map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
+        <nav className="hidden lg:flex items-center gap-1">
+          {sectionLinks.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => scrollToSection(link.id)}
               className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
             >
               {link.label}
-            </Link>
+            </button>
           ))}
+          <Link
+            to="/find-tutor"
+            className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
+          >
+            Tìm gia sư
+          </Link>
+          <Link
+            to="/exam-online"
+            className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all"
+          >
+            Thi thử
+          </Link>
+        </nav>
+
+        <div className="hidden lg:flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/50 transition-all">
@@ -63,9 +101,6 @@ const Header = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-        </nav>
-
-        <div className="hidden md:flex items-center gap-2">
           <ThemeToggle />
           <Button variant="ghost" asChild className="rounded-xl text-sm">
             <Link to="/login">Đăng nhập</Link>
@@ -75,7 +110,7 @@ const Header = () => {
           </Button>
         </div>
 
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex lg:hidden items-center gap-2">
           <ThemeToggle />
           <button className="p-2" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -84,7 +119,16 @@ const Header = () => {
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden bg-background border-b border-border px-4 pb-4 space-y-2">
+        <div className="lg:hidden bg-background border-b border-border px-4 pb-4 space-y-2">
+          {sectionLinks.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => scrollToSection(link.id)}
+              className="block w-full text-left py-2.5 px-3 text-sm font-medium text-muted-foreground rounded-lg hover:bg-muted/50"
+            >
+              {link.label}
+            </button>
+          ))}
           <Link to="/find-tutor" className="block py-2.5 px-3 text-sm font-medium text-muted-foreground rounded-lg hover:bg-muted/50" onClick={() => setMobileOpen(false)}>Tìm gia sư</Link>
           <Link to="/exam-online" className="block py-2.5 px-3 text-sm font-medium text-muted-foreground rounded-lg hover:bg-muted/50" onClick={() => setMobileOpen(false)}>Thi thử Online</Link>
           <details className="group">

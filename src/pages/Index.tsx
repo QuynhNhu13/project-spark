@@ -7,6 +7,7 @@ import ExamSection from "@/components/ExamSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import CTASection from "@/components/CTASection";
 import FooterSection from "@/components/FooterSection";
+import ChatWidget from "@/components/ChatWidget";
 
 const Index = () => {
   return (
@@ -20,6 +21,7 @@ const Index = () => {
       <TestimonialsSection />
       <CTASection />
       <FooterSection />
+      <ChatWidget />
     </div>
   );
 };

@@ -14,8 +14,16 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
-        display: ["Space Grotesk", "sans-serif"],
+        sans: ["Be Vietnam Pro", "sans-serif"],
+        display: ["Be Vietnam Pro", "sans-serif"],
+      },
+      fontSize: {
+        'hero': ['3.5rem', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '800' }],
+        'hero-lg': ['4rem', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '800' }],
+        'section': ['2rem', { lineHeight: '1.2', letterSpacing: '-0.02em', fontWeight: '800' }],
+        'section-lg': ['2.25rem', { lineHeight: '1.2', letterSpacing: '-0.02em', fontWeight: '800' }],
+        'body': ['1rem', { lineHeight: '1.7', letterSpacing: '-0.01em' }],
+        'body-lg': ['1.125rem', { lineHeight: '1.7', letterSpacing: '-0.01em' }],
       },
       colors: {
         border: "hsl(var(--border))",

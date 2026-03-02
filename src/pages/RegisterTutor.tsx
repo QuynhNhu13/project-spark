@@ -1,3 +1,4 @@
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -5,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/Header";
 import FooterSection from "@/components/FooterSection";
 import { toast } from "sonner";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Loader2 } from "lucide-react";
 
 const benefits = [
   "Thu nhập ổn định, thanh toán minh bạch",
@@ -15,9 +16,17 @@ const benefits = [
 ];
 
 const RegisterTutor = () => {
+  const [loading, setLoading] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Đăng ký thành công! Chúng tôi sẽ xem xét hồ sơ của bạn trong 48 giờ.");
+    setLoading(true);
+    setTimeout(() => {
+      toast.success("Đăng ký thành công! Chúng tôi sẽ xem xét hồ sơ của bạn trong 48 giờ.");
+      formRef.current?.reset();
+      setLoading(false);
+    }, 1500);
   };
 
   return (
@@ -30,10 +39,10 @@ const RegisterTutor = () => {
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neon/10 text-neon text-sm font-semibold mb-6">
                 Tuyển gia sư
               </span>
-              <h1 className="text-4xl font-extrabold font-display text-foreground mb-4">
+              <h1 className="text-section-lg md:text-hero font-extrabold text-foreground mb-4">
                 Trở thành gia sư <span className="text-gradient">EduConnect</span>
               </h1>
-              <p className="text-muted-foreground text-lg mb-8">
+              <p className="text-muted-foreground text-body-lg mb-8">
                 Tham gia đội ngũ hơn 1,200 gia sư chất lượng và bắt đầu hành trình giảng dạy.
               </p>
               <ul className="space-y-4">
@@ -47,8 +56,8 @@ const RegisterTutor = () => {
             </div>
 
             <div className="bg-card rounded-3xl p-8 shadow-elevated border border-border">
-              <h2 className="text-xl font-bold font-display text-foreground mb-6">Thông tin đăng ký</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <h2 className="text-xl font-bold text-foreground mb-6">Thông tin đăng ký</h2>
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="fullname">Họ và tên</Label>
@@ -75,8 +84,8 @@ const RegisterTutor = () => {
                   <Label htmlFor="education">Bằng cấp / Chứng chỉ</Label>
                   <Input id="education" placeholder="VD: Cử nhân Sư phạm Toán" className="mt-1.5 rounded-xl h-11" required />
                 </div>
-                <Button type="submit" className="w-full h-12 rounded-2xl bg-neon text-neon-foreground hover:bg-neon/90 text-base font-bold shadow-neon">
-                  Gửi đăng ký
+                <Button type="submit" disabled={loading} className="w-full h-12 rounded-2xl bg-neon text-neon-foreground hover:bg-neon/90 text-base font-bold shadow-neon">
+                  {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Đang gửi...</> : "Gửi đăng ký"}
                 </Button>
               </form>
             </div>

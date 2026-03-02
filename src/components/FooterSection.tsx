@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone } from "lucide-react";
+import EduLogo from "@/components/EduLogo";
 
 const FooterSection = () => {
   return (
@@ -8,10 +9,8 @@ const FooterSection = () => {
         <div className="grid md:grid-cols-4 gap-10 mb-14">
           <div>
             <div className="flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 rounded-xl bg-neon flex items-center justify-center">
-                <span className="text-neon-foreground font-bold text-base font-display">E</span>
-              </div>
-              <span className="font-bold text-xl font-display text-background dark:text-foreground">
+              <EduLogo size={36} />
+              <span className="font-bold text-xl text-background dark:text-foreground">
                 Edu<span className="text-neon">Connect</span>
               </span>
             </div>
@@ -57,7 +56,7 @@ const FooterSection = () => {
             },
           ].map((group) => (
             <div key={group.title}>
-              <h4 className="font-bold text-background dark:text-foreground font-display mb-5">{group.title}</h4>
+              <h4 className="font-bold text-background dark:text-foreground mb-5">{group.title}</h4>
               <ul className="space-y-3">
                 {group.links.map((link) => (
                   <li key={link.to}>

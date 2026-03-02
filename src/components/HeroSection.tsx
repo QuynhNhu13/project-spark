@@ -15,15 +15,21 @@ const bullets = [
   "Thanh toán an toàn, minh bạch",
 ];
 
+const avatars = [
+  "https://api.dicebear.com/9.x/personas/svg?seed=Tuan&backgroundColor=b6e3f4",
+  "https://api.dicebear.com/9.x/personas/svg?seed=Huong&backgroundColor=c0aede",
+  "https://api.dicebear.com/9.x/personas/svg?seed=Mai&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/personas/svg?seed=Anh&backgroundColor=c0f0d4",
+  "https://api.dicebear.com/9.x/personas/svg?seed=Duc&backgroundColor=d1d4f9",
+];
+
 const HeroSection = () => {
   return (
     <section className="relative overflow-hidden gradient-hero pt-28 pb-24 md:pt-40 md:pb-32">
-      {/* Decorative blobs */}
       <div className="absolute top-20 -right-20 w-[500px] h-[500px] bg-neon/10 blur-[120px] rounded-full" />
       <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] bg-bright-blue/20 blur-[100px] rounded-full" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[150px] rounded-full" />
 
-      {/* Grid pattern overlay */}
       <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage: `linear-gradient(hsl(82 100% 54% / 0.3) 1px, transparent 1px), linear-gradient(90deg, hsl(82 100% 54% / 0.3) 1px, transparent 1px)`,
         backgroundSize: '60px 60px'
@@ -46,7 +52,7 @@ const HeroSection = () => {
               Nền tảng giáo dục hàng đầu Việt Nam
             </motion.span>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold font-display leading-[1.1] mb-6">
+            <h1 className="text-hero md:text-hero-lg lg:text-[4.5rem] leading-[1.1] mb-6">
               <span className="text-white">Kết nối</span>
               <br />
               <span className="text-gradient">Gia sư chất lượng</span>
@@ -54,7 +60,7 @@ const HeroSection = () => {
               <span className="text-white">với Học sinh</span>
             </h1>
 
-            <p className="text-white/60 text-lg md:text-xl mb-8 max-w-lg leading-relaxed">
+            <p className="text-white/60 text-body-lg mb-8 max-w-lg leading-relaxed">
               EduConnect giúp phụ huynh tìm gia sư phù hợp, đảm bảo chất lượng giảng dạy thông qua hệ thống kiểm tra năng lực và đánh giá AI.
             </p>
 
@@ -68,37 +74,32 @@ const HeroSection = () => {
                   className="flex items-center gap-3 text-white/80"
                 >
                   <CheckCircle className="w-5 h-5 text-neon flex-shrink-0" />
-                  <span className="font-medium">{b}</span>
+                  <span className="font-medium text-body">{b}</span>
                 </motion.li>
               ))}
             </ul>
 
             <div className="flex flex-wrap gap-4 mb-12">
-              <Button size="lg" asChild className="bg-neon text-neon-foreground hover:bg-neon/90 text-base px-8 h-13 rounded-2xl font-bold shadow-neon group">
+              <Button size="lg" asChild className="bg-neon text-neon-foreground hover:bg-neon/90 text-body px-8 h-13 rounded-2xl font-bold shadow-neon group">
                 <Link to="/find-tutor" className="flex items-center gap-2">
                   Tìm gia sư ngay
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="border-white/20 text-white hover:bg-white/10 text-base px-8 h-13 rounded-2xl font-semibold">
+              <Button size="lg" variant="outline" asChild className="border-white/20 text-white hover:bg-white/10 text-body px-8 h-13 rounded-2xl font-semibold">
                 <Link to="/register-tutor">Đăng ký làm gia sư</Link>
               </Button>
             </div>
 
-            {/* Avatars */}
             <div className="flex items-center gap-4">
               <div className="flex -space-x-3">
-                {["T", "H", "M", "A", "D"].map((letter, i) => (
-                  <div
+                {avatars.map((src, i) => (
+                  <img
                     key={i}
-                    className="w-11 h-11 rounded-full border-2 border-deep-blue flex items-center justify-center text-xs font-bold"
-                    style={{
-                      background: `linear-gradient(135deg, hsl(${82 + i * 30} 70% 50%), hsl(${100 + i * 30} 70% 40%))`,
-                      color: '#0F172A'
-                    }}
-                  >
-                    {letter}
-                  </div>
+                    src={src}
+                    alt="Gia sư"
+                    className="w-11 h-11 rounded-full border-2 border-deep-blue bg-muted object-cover"
+                  />
                 ))}
               </div>
               <div>
@@ -108,7 +109,6 @@ const HeroSection = () => {
             </div>
           </motion.div>
 
-          {/* Right - Stats cards */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -127,13 +127,12 @@ const HeroSection = () => {
                   <stat.icon className="w-8 h-8 text-neon" />
                 </div>
                 <div>
-                  <div className="text-4xl font-extrabold text-white font-display">{stat.value}</div>
+                  <div className="text-4xl font-extrabold text-white">{stat.value}</div>
                   <div className="text-white/50 text-sm mt-1">{stat.label}</div>
                 </div>
               </motion.div>
             ))}
 
-            {/* Floating badge */}
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}

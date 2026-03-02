@@ -6,13 +6,20 @@ import { Label } from "@/components/ui/label";
 import Header from "@/components/Header";
 import FooterSection from "@/components/FooterSection";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Đăng nhập thành công!");
+    setLoading(true);
+    setTimeout(() => {
+      toast.success("Đăng nhập thành công!");
+      setFormData({ email: "", password: "" });
+      setLoading(false);
+    }, 1500);
   };
 
   return (
@@ -21,8 +28,8 @@ const Login = () => {
       <div className="pt-28 pb-16 min-h-[80vh] flex items-center">
         <div className="container mx-auto px-4 max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-extrabold font-display text-foreground mb-2">Đăng nhập</h1>
-            <p className="text-muted-foreground">Chào mừng trở lại EduConnect</p>
+            <h1 className="text-section font-extrabold text-foreground mb-2">Đăng nhập</h1>
+            <p className="text-muted-foreground text-body">Chào mừng trở lại EduConnect</p>
           </div>
 
           <div className="bg-card rounded-3xl p-8 shadow-elevated border border-border">
@@ -35,8 +42,8 @@ const Login = () => {
                 <Label htmlFor="password">Mật khẩu</Label>
                 <Input id="password" type="password" placeholder="••••••••" className="mt-1.5 rounded-xl h-11" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required />
               </div>
-              <Button type="submit" className="w-full h-12 rounded-2xl gradient-blue text-white text-base font-bold">
-                Đăng nhập
+              <Button type="submit" disabled={loading} className="w-full h-12 rounded-2xl gradient-blue text-white text-base font-bold">
+                {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Đang xử lý...</> : "Đăng nhập"}
               </Button>
             </form>
 

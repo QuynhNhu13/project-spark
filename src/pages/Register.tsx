@@ -6,10 +6,12 @@ import { Label } from "@/components/ui/label";
 import Header from "@/components/Header";
 import FooterSection from "@/components/FooterSection";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const Register = () => {
   const [role, setRole] = useState<"student" | "parent" | "tutor">("student");
   const [formData, setFormData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +19,12 @@ const Register = () => {
       toast.error("Mật khẩu xác nhận không khớp!");
       return;
     }
-    toast.success("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
+    setLoading(true);
+    setTimeout(() => {
+      toast.success("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
+      setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+      setLoading(false);
+    }, 1500);
   };
 
   const roles = [
@@ -32,8 +39,8 @@ const Register = () => {
       <div className="pt-28 pb-16">
         <div className="container mx-auto px-4 max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-extrabold font-display text-foreground mb-2">Đăng ký tài khoản</h1>
-            <p className="text-muted-foreground">Tham gia EduConnect ngay hôm nay</p>
+            <h1 className="text-section font-extrabold text-foreground mb-2">Đăng ký tài khoản</h1>
+            <p className="text-muted-foreground text-body">Tham gia EduConnect ngay hôm nay</p>
           </div>
 
           <div className="bg-card rounded-3xl p-8 shadow-elevated border border-border">
@@ -70,8 +77,8 @@ const Register = () => {
                 <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
                 <Input id="confirmPassword" type="password" placeholder="••••••••" className="mt-1.5 rounded-xl h-11" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} required />
               </div>
-              <Button type="submit" className="w-full h-12 rounded-2xl bg-neon text-neon-foreground hover:bg-neon/90 text-base font-bold shadow-neon">
-                Đăng ký
+              <Button type="submit" disabled={loading} className="w-full h-12 rounded-2xl bg-neon text-neon-foreground hover:bg-neon/90 text-base font-bold shadow-neon">
+                {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Đang xử lý...</> : "Đăng ký"}
               </Button>
             </form>
 
