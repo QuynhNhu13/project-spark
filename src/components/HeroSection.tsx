@@ -136,7 +136,7 @@ const HeroSection = () => {
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="self-end bg-neon text-neon-foreground px-6 py-3 rounded-2xl font-bold text-sm shadow-neon"
+              className="self-end bg-neon text-neon-foreground px-8 py-3.5 rounded-full font-bold text-sm shadow-neon"
             >
               AI-Powered Platform
             </motion.div>

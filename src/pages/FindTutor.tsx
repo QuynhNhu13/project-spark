@@ -65,7 +65,7 @@ const FindTutor = () => {
                   <span className="text-sm text-muted-foreground">KN: {t.exp}</span>
                   <span className="font-bold text-foreground">{t.price}</span>
                 </div>
-                <Button className="w-full rounded-2xl gradient-blue text-white font-semibold" asChild>
+                <Button className="w-full rounded-full gradient-blue text-white font-semibold h-12" asChild>
                   <Link to="/register">Đặt lịch học</Link>
                 </Button>
               </div>
