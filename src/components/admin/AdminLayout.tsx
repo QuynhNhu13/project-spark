@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, CheckCircle, BookOpen, FileText, CreditCard, BarChart3, ScrollText, Settings, LogOut, Bell, Check, ChevronRight, AlertTriangle, Info, CheckCircle2, XCircle } from "lucide-react";
+import { LayoutDashboard, Users, CheckCircle, BookOpen, FileText, CreditCard, BarChart3, ScrollText, Settings, LogOut, Bell, Check, ChevronRight, AlertTriangle, Info, CheckCircle2, XCircle, PanelLeftClose, PanelLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "@/contexts/AdminContext";
 import EduLogo from "@/components/EduLogo";
@@ -42,6 +42,7 @@ const AdminLayout = () => {
   const location = useLocation();
   const { users, notifications, markNotificationRead, markAllNotificationsRead } = useAdmin();
   const [showNotif, setShowNotif] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
 
   const pendingCount = users.filter(u => u.status === "pending").length;
@@ -59,35 +60,51 @@ const AdminLayout = () => {
   return (
     <div className="flex h-screen bg-muted/30 overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-[260px] bg-card border-r border-border flex flex-col shrink-0">
-        <div className="h-16 flex items-center gap-3 px-6 border-b border-border">
-          <EduLogo size={36} />
-          <div>
-            <h1 className="text-base font-bold text-foreground leading-tight">EduConnect</h1>
-            <p className="text-[11px] text-muted-foreground leading-tight">Admin Panel</p>
-          </div>
+      <aside className={cn("bg-card border-r border-border flex flex-col shrink-0 transition-all duration-300", collapsed ? "w-[72px]" : "w-[260px]")}>
+        <div className="h-16 flex items-center gap-3 px-4 border-b border-border">
+          <EduLogo size={collapsed ? 28 : 36} />
+          {!collapsed && (
+            <div className="min-w-0">
+              <h1 className="text-base font-bold text-foreground leading-tight truncate">EduConnect</h1>
+              <p className="text-[11px] text-muted-foreground leading-tight">Admin Panel</p>
+            </div>
+          )}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className={cn("p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground", collapsed ? "mx-auto" : "ml-auto")}
+            title={collapsed ? "Mở rộng" : "Thu gọn"}
+          >
+            {collapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+          </button>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-3">Menu</p>
+        <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
+          {!collapsed && <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-3">Menu</p>}
           {navItems.map(item => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.end}
+              title={collapsed ? item.label : undefined}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 group relative",
+                  "flex items-center gap-3 rounded-xl text-[13px] font-medium transition-all duration-200 group relative",
+                  collapsed ? "px-0 py-2.5 justify-center" : "px-3 py-2.5",
                   isActive
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )
               }
             >
-              <item.icon className="w-[18px] h-[18px]" />
-              <span className="flex-1">{item.label}</span>
-              {item.to === "/admin/approvals" && pendingCount > 0 && (
+              <item.icon className="w-[18px] h-[18px] shrink-0" />
+              {!collapsed && <span className="flex-1">{item.label}</span>}
+              {!collapsed && item.to === "/admin/approvals" && pendingCount > 0 && (
                 <span className="min-w-[20px] h-5 flex items-center justify-center text-[10px] font-bold rounded-full bg-destructive text-destructive-foreground px-1.5">
+                  {pendingCount}
+                </span>
+              )}
+              {collapsed && item.to === "/admin/approvals" && pendingCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center text-[9px] font-bold rounded-full bg-destructive text-destructive-foreground px-1">
                   {pendingCount}
                 </span>
               )}
@@ -95,13 +112,14 @@ const AdminLayout = () => {
           ))}
         </nav>
 
-        <div className="px-3 py-3 border-t border-border">
+        <div className="px-2 py-3 border-t border-border">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive w-full transition-all duration-200"
+            title={collapsed ? "Đăng xuất" : undefined}
+            className={cn("flex items-center gap-3 rounded-xl text-[13px] font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive w-full transition-all duration-200", collapsed ? "px-0 py-2.5 justify-center" : "px-3 py-2.5")}
           >
-            <LogOut className="w-[18px] h-[18px]" />
-            <span>Đăng xuất</span>
+            <LogOut className="w-[18px] h-[18px] shrink-0" />
+            {!collapsed && <span>Đăng xuất</span>}
           </button>
         </div>
       </aside>
