@@ -7,12 +7,12 @@ import Header from "@/components/Header";
 import FooterSection from "@/components/FooterSection";
 
 const tutors = [
-  { name: "Nguyễn Minh Tuấn", subject: "Toán học", rating: 4.9, reviews: 127, location: "Hà Nội", price: "200.000đ/buổi", exp: "8 năm", avatar: "https://api.dicebear.com/9.x/personas/svg?seed=MinhTuan&backgroundColor=b6e3f4" },
-  { name: "Trần Thị Hương", subject: "Tiếng Anh", rating: 4.8, reviews: 98, location: "TP.HCM", price: "250.000đ/buổi", exp: "6 năm", avatar: "https://api.dicebear.com/9.x/personas/svg?seed=ThiHuong&backgroundColor=c0aede" },
-  { name: "Phạm Văn Đức", subject: "Vật lý", rating: 4.9, reviews: 85, location: "Đà Nẵng", price: "180.000đ/buổi", exp: "10 năm", avatar: "https://api.dicebear.com/9.x/personas/svg?seed=VanDuc&backgroundColor=d1d4f9" },
-  { name: "Lê Thị Mai", subject: "Hóa học", rating: 4.7, reviews: 72, location: "Hà Nội", price: "220.000đ/buổi", exp: "5 năm", avatar: "https://api.dicebear.com/9.x/personas/svg?seed=ThiMai&backgroundColor=ffd5dc" },
-  { name: "Hoàng Đức Anh", subject: "Ngữ văn", rating: 4.8, reviews: 64, location: "TP.HCM", price: "190.000đ/buổi", exp: "7 năm", avatar: "https://api.dicebear.com/9.x/personas/svg?seed=DucAnh&backgroundColor=c0f0d4" },
-  { name: "Vũ Thanh Hà", subject: "Sinh học", rating: 4.6, reviews: 53, location: "Hải Phòng", price: "170.000đ/buổi", exp: "4 năm", avatar: "https://api.dicebear.com/9.x/personas/svg?seed=ThanhHa&backgroundColor=fce4b8" },
+  { name: "Nguyễn Minh Tuấn", subject: "Toán học", rating: 4.9, reviews: 127, location: "Hà Nội", price: "200.000đ/buổi", exp: "8 năm", avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
+  { name: "Trần Thị Hương", subject: "Tiếng Anh", rating: 4.8, reviews: 98, location: "TP.HCM", price: "250.000đ/buổi", exp: "6 năm", avatar: "https://randomuser.me/api/portraits/women/44.jpg" },
+  { name: "Phạm Văn Đức", subject: "Vật lý", rating: 4.9, reviews: 85, location: "Đà Nẵng", price: "180.000đ/buổi", exp: "10 năm", avatar: "https://randomuser.me/api/portraits/men/75.jpg" },
+  { name: "Lê Thị Mai", subject: "Hóa học", rating: 4.7, reviews: 72, location: "Hà Nội", price: "220.000đ/buổi", exp: "5 năm", avatar: "https://randomuser.me/api/portraits/women/68.jpg" },
+  { name: "Hoàng Đức Anh", subject: "Ngữ văn", rating: 4.8, reviews: 64, location: "TP.HCM", price: "190.000đ/buổi", exp: "7 năm", avatar: "https://randomuser.me/api/portraits/men/22.jpg" },
+  { name: "Vũ Thanh Hà", subject: "Sinh học", rating: 4.6, reviews: 53, location: "Hải Phòng", price: "170.000đ/buổi", exp: "4 năm", avatar: "https://randomuser.me/api/portraits/women/85.jpg" },
 ];
 
 const FindTutor = () => {
