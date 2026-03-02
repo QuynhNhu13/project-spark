@@ -543,7 +543,7 @@ interface TutorContextType {
   removeMaterial: (classId: string, materialId: string) => void;
 }
 
-const TutorContext = createContext<TutorContextType | null>(null);
+export const TutorContext = createContext<TutorContextType | null>(null);
 
 export const useTutor = () => {
   const ctx = useContext(TutorContext);
