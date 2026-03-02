@@ -35,7 +35,9 @@ import TutorReviews from "./pages/tutor/TutorReviews";
 import TutorChat from "./pages/tutor/TutorChat";
 import TutorProfile from "./pages/tutor/TutorProfile";
 import TutorClassDetail from "./pages/tutor/TutorClassDetail";
+import OnlineMeeting from "./pages/tutor/OnlineMeeting";
 import TutorPublicProfile from "./pages/TutorPublicProfile";
+import TeacherLayout from "./components/teacher/TeacherLayout";
 
 const queryClient = new QueryClient();
 
@@ -79,6 +81,19 @@ const App = () => (
                   <Route path="chat" element={<TutorChat />} />
                   <Route path="profile" element={<TutorProfile />} />
                 </Route>
+                <Route path="/tutor/meeting/:sessionId" element={<OnlineMeeting />} />
+                <Route path="/teacher" element={<TeacherLayout />}>
+                  <Route index element={<TutorDashboard />} />
+                  <Route path="classes" element={<TutorClasses />} />
+                  <Route path="classes/:classId" element={<TutorClassDetail />} />
+                  <Route path="wallet" element={<TutorWallet />} />
+                  <Route path="schedule" element={<TutorSchedule />} />
+                  <Route path="students" element={<TutorStudents />} />
+                  <Route path="reviews" element={<TutorReviews />} />
+                  <Route path="chat" element={<TutorChat />} />
+                  <Route path="profile" element={<TutorProfile />} />
+                </Route>
+                <Route path="/teacher/meeting/:sessionId" element={<OnlineMeeting />} />
                 <Route path="/pricing" element={<PlaceholderPage title="Bảng giá" description="Trang bảng giá đang được cập nhật." />} />
                 <Route path="/help" element={<PlaceholderPage title="Trung tâm trợ giúp" description="Trung tâm trợ giúp đang được xây dựng." />} />
                 <Route path="/faq" element={<PlaceholderPage title="Câu hỏi thường gặp" description="Trang FAQ đang được cập nhật." />} />
