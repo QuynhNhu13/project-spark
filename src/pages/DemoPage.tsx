@@ -17,9 +17,12 @@ const roleNames: Record<string, string> = {
 const DemoPage = () => {
   const { role } = useParams<{ role: string }>();
 
-  // Admin role redirects to admin dashboard
+  // Redirect to actual dashboards
   if (role === "admin") {
     return <Navigate to="/admin" replace />;
+  }
+  if (role === "tutor") {
+    return <Navigate to="/tutor" replace />;
   }
 
   const roleName = roleNames[role || ""] || role;
