@@ -211,6 +211,7 @@ const TutorLayout = () => {
           <Outlet />
         </main>
       </div>
+      <ChatWidget />
     </div>
   );
 };

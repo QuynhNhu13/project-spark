@@ -192,6 +192,7 @@ const TeacherLayout = () => {
           </header>
           <main className="flex-1 overflow-y-auto"><Outlet /></main>
         </div>
+        <ChatWidget />
       </div>
     </TutorContext.Provider>
   );
