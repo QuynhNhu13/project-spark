@@ -45,7 +45,7 @@ const CTASection = () => {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="border-white/20 text-white hover:bg-white/10 text-base px-10 h-14 rounded-full font-semibold">
+            <Button size="lg" variant="outline" asChild className="border-white/20 text-white hover:bg-white/10 text-body px-10 h-14 rounded-full font-semibold">
               <Link to="/register-tutor">Trở thành gia sư</Link>
             </Button>
           </div>

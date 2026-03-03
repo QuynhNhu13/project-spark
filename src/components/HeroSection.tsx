@@ -79,7 +79,7 @@ const HeroSection = () => {
             </ul>
 
             <div className="flex flex-wrap gap-4 mb-12">
-              <Button size="lg" asChild className="bg-neon text-neon-foreground hover:bg-neon/90 text-body px-10 h-14 rounded-full font-bold shadow-neon group">
+              <Button size="lg" asChild className="bg-neon text-neon-foreground hover:bg-neon/90 text-base px-10 h-14 rounded-full font-bold shadow-neon group">
                 <Link to="/find-tutor" className="flex items-center gap-2">
                   Tìm gia sư ngay
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
