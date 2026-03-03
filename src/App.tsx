@@ -59,6 +59,8 @@ import ParentChat from "./pages/parent/ParentChat";
 import ParentChildren from "./pages/parent/ParentChildren";
 import ParentReports from "./pages/parent/ParentReports";
 import ParentWallet from "./pages/parent/ParentWallet";
+import ParentFindTutor from "./pages/parent/ParentFindTutor";
+import ParentSupport from "./pages/parent/ParentSupport";
 
 const queryClient = new QueryClient();
 
