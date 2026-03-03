@@ -21,6 +21,7 @@ const navItems = [
   { to: "/student/mock-exam", icon: FileText, label: "Thi thử" },
   { to: "/student/results", icon: Trophy, label: "Kết quả" },
   { to: "/student/report", icon: BarChart3, label: "Báo cáo" },
+  { to: "/student/wallet", icon: Wallet, label: "Ví học phí" },
   { to: "/student/chat", icon: MessageSquare, label: "Tin nhắn" },
 ];
 
