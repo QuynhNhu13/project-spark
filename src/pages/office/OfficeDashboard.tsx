@@ -106,7 +106,7 @@ const OfficeDashboard = () => {
           <CardTitle className="text-base">Hành động nhanh</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             {quickActions.map(a => (
               <Button key={a.label} variant="outline" onClick={a.action} className="h-auto py-4 flex flex-col gap-2 rounded-xl">
                 <a.icon className="w-5 h-5" />
