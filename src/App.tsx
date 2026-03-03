@@ -50,6 +50,7 @@ import StudentTests from "./pages/student/StudentTests";
 import StudentMockExam from "./pages/student/StudentMockExam";
 import StudentResults from "./pages/student/StudentResults";
 import StudentReport from "./pages/student/StudentReport";
+import StudentChat from "./pages/student/StudentChat";
 
 const queryClient = new QueryClient();
 
@@ -118,7 +119,9 @@ const App = () => (
                   <Route path="mock-exam" element={<StudentMockExam />} />
                   <Route path="results" element={<StudentResults />} />
                   <Route path="report" element={<StudentReport />} />
+                  <Route path="chat" element={<StudentChat />} />
                 </Route>
+                <Route path="/student/meeting/:sessionId" element={<OnlineMeeting />} />
                 <Route path="/pricing" element={<PlaceholderPage title="Bảng giá" description="Trang bảng giá đang được cập nhật." />} />
                 <Route path="/help" element={<PlaceholderPage title="Trung tâm trợ giúp" description="Trung tâm trợ giúp đang được xây dựng." />} />
                 <Route path="/faq" element={<PlaceholderPage title="Câu hỏi thường gặp" description="Trang FAQ đang được cập nhật." />} />

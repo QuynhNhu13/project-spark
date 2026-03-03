@@ -1,5 +1,5 @@
 import { useStudent } from "@/contexts/StudentContext";
-import { BookOpen, CheckCircle2, Clock, TrendingUp, Target, CalendarDays, ArrowUpRight, ChevronRight } from "lucide-react";
+import { BookOpen, CheckCircle2, Clock, TrendingUp, Target, CalendarDays, ArrowUpRight, ChevronRight, Search, ClipboardCheck, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";

@@ -1,5 +1,5 @@
 import { useStudent } from "@/contexts/StudentContext";
-import { CalendarDays, Clock, Video, MapPin, CheckCircle2, X as XIcon } from "lucide-react";
+import { CalendarDays, Clock, Video, MapPin, CheckCircle2, X as XIcon, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
