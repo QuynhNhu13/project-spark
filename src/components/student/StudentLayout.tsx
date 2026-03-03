@@ -3,7 +3,7 @@ import ChatWidget from "@/components/ChatWidget";
 import {
   LayoutDashboard, BookOpen, Search, CalendarDays, Clock, ClipboardCheck,
   FileText, BarChart3, Trophy, LogOut, PanelLeftClose, PanelLeft,
-  Bell, Check, ChevronRight, AlertTriangle, Info, CheckCircle2, XCircle, MessageSquare
+  Bell, Check, ChevronRight, AlertTriangle, Info, CheckCircle2, XCircle, MessageSquare, Wallet
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useStudent } from "@/contexts/StudentContext";
