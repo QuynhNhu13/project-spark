@@ -40,6 +40,16 @@ import TutorClassDetail from "./pages/tutor/TutorClassDetail";
 import OnlineMeeting from "./pages/tutor/OnlineMeeting";
 import TutorPublicProfile from "./pages/TutorPublicProfile";
 import TeacherLayout from "./components/teacher/TeacherLayout";
+import StudentLayout from "./components/student/StudentLayout";
+import StudentDashboard from "./pages/student/StudentDashboard";
+import StudentFindTutor from "./pages/student/StudentFindTutor";
+import StudentClasses from "./pages/student/StudentClasses";
+import StudentSchedule from "./pages/student/StudentSchedule";
+import StudentAvailability from "./pages/student/StudentAvailability";
+import StudentTests from "./pages/student/StudentTests";
+import StudentMockExam from "./pages/student/StudentMockExam";
+import StudentResults from "./pages/student/StudentResults";
+import StudentReport from "./pages/student/StudentReport";
 
 const queryClient = new QueryClient();
 
