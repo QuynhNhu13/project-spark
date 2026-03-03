@@ -22,6 +22,8 @@ const DemoPage = () => {
   if (role === "teacher") return <Navigate to="/teacher" replace />;
   if (role === "student") return <Navigate to="/student" replace />;
   if (role === "parent") return <Navigate to="/parent" replace />;
+  if (role === "office") return <Navigate to="/office" replace />;
+  if (role === "accountant") return <Navigate to="/finance" replace />;
 
   const roleName = roleNames[role || ""] || role;
 

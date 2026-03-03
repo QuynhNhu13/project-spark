@@ -9,6 +9,8 @@ import { TutorProvider } from "@/contexts/TutorContext";
 import { TeacherProvider } from "@/contexts/TeacherContext";
 import { StudentProvider } from "@/contexts/StudentContext";
 import { ParentProvider } from "@/contexts/ParentContext";
+import { OfficeProvider } from "@/contexts/OfficeContext";
+import { FinanceProvider } from "@/contexts/FinanceContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
