@@ -1,5 +1,5 @@
 import { useStudent, AvailabilitySlot } from "@/contexts/StudentContext";
-import { Clock, Plus, Trash2, Copy, Save } from "lucide-react";
+import { Clock, Plus, Trash2, Copy, Save, Info, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -10,13 +10,20 @@ const StudentAvailability = () => {
   const { availability, updateAvailability } = useStudent();
   const { toast } = useToast();
   const [localAvail, setLocalAvail] = useState<AvailabilitySlot[]>(JSON.parse(JSON.stringify(availability)));
+  const [addSlotModal, setAddSlotModal] = useState<number | null>(null);
+  const [newFrom, setNewFrom] = useState("18:00");
+  const [newTo, setNewTo] = useState("20:00");
 
   const toggleDay = (idx: number) => {
     setLocalAvail(prev => prev.map((a, i) => i === idx ? { ...a, enabled: !a.enabled } : a));
   };
 
-  const addSlot = (dayIdx: number) => {
-    setLocalAvail(prev => prev.map((a, i) => i === dayIdx ? { ...a, slots: [...a.slots, { from: "18:00", to: "20:00" }] } : a));
+  const addSlot = () => {
+    if (addSlotModal === null) return;
+    setLocalAvail(prev => prev.map((a, i) => i === addSlotModal ? { ...a, slots: [...a.slots, { from: newFrom, to: newTo }] } : a));
+    setAddSlotModal(null);
+    setNewFrom("18:00");
+    setNewTo("20:00");
   };
 
   const removeSlot = (dayIdx: number, slotIdx: number) => {
@@ -42,10 +49,45 @@ const StudentAvailability = () => {
 
   return (
     <div className="p-6 space-y-6">
+      {/* Explanation */}
+      <div className="bg-muted/50 border border-border rounded-2xl p-4 flex items-start gap-3">
+        <Info className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+        <div>
+          <p className="text-sm font-medium text-foreground">Khung giờ rảnh của bạn</p>
+          <p className="text-xs text-muted-foreground mt-1">Hệ thống sẽ sử dụng khung giờ rảnh này để đề xuất lịch học phù hợp nhất cho bạn. Gia sư và giáo viên cũng có thể xem lịch rảnh của bạn khi sắp xếp buổi học.</p>
+        </div>
+      </div>
+
+      {/* Add Slot Modal */}
+      {addSlotModal !== null && (
+        <div className="fixed inset-0 z-50 bg-background/80 flex items-center justify-center p-4" onClick={() => setAddSlotModal(null)}>
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-foreground">Thêm khung giờ - {localAvail[addSlotModal].day}</h3>
+              <button onClick={() => setAddSlotModal(null)}><X className="w-4 h-4 text-muted-foreground" /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Từ</label>
+                <input type="time" value={newFrom} onChange={e => setNewFrom(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Đến</label>
+                <input type="time" value={newTo} onChange={e => setNewTo(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm" />
+              </div>
+            </div>
+            <div className="flex gap-2 mt-6">
+              <Button className="flex-1 rounded-xl" onClick={addSlot}>Thêm</Button>
+              <Button variant="outline" className="rounded-xl" onClick={() => setAddSlotModal(null)}>Hủy</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="bg-card border border-border rounded-2xl p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <Clock className="w-4 h-4 text-primary" /> Quản lý khung giờ rảnh
+            <Clock className="w-4 h-4 text-muted-foreground" /> Quản lý khung giờ rảnh
           </h3>
           <Button className="rounded-xl gap-2" size="sm" onClick={handleSave}>
             <Save className="w-4 h-4" /> Lưu thay đổi
@@ -65,7 +107,7 @@ const StudentAvailability = () => {
                   </Button>
                 )}
                 {day.enabled && (
-                  <Button variant="ghost" size="sm" className="text-xs gap-1 rounded-lg h-7" onClick={() => addSlot(dayIdx)}>
+                  <Button variant="ghost" size="sm" className="text-xs gap-1 rounded-lg h-7" onClick={() => setAddSlotModal(dayIdx)}>
                     <Plus className="w-3 h-3" /> Thêm
                   </Button>
                 )}

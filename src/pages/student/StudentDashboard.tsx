@@ -1,8 +1,9 @@
 import { useStudent } from "@/contexts/StudentContext";
-import { BookOpen, CheckCircle2, Clock, TrendingUp, Target, CalendarDays, ArrowUpRight, Star, ChevronRight } from "lucide-react";
+import { BookOpen, CheckCircle2, Clock, TrendingUp, Target, CalendarDays, ArrowUpRight, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
 
@@ -23,15 +24,15 @@ const StudentDashboard = () => {
   }, 0));
   const avgScore = examResults.length > 0 ? Math.round(examResults.reduce((s, r) => s + r.score, 0) / examResults.length) : 0;
 
-  const upcomingSessions = classes.flatMap(c => c.sessions.filter(s => s.status === "scheduled").map(s => ({ ...s, className: c.name, tutorName: c.tutorName, tutorAvatar: c.tutorAvatar }))).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
+  const upcomingSessions = classes.flatMap(c => c.sessions.filter(s => s.status === "scheduled").map(s => ({ ...s, className: c.name, tutorName: c.tutorName, tutorAvatar: c.tutorAvatar, subject: c.subject }))).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
 
   const gpaData = monthlyProgress.map(m => ({ month: m.month.replace("/2025", "").replace("/2026", ""), gpa: m.gpa }));
 
   const stats = [
-    { label: "Lớp đang học", value: activeClasses.length, sub: `${classes.filter(c => c.status === "completed").length} hoàn thành`, icon: BookOpen, color: "text-primary", bg: "bg-primary/10", link: "/student/classes" },
-    { label: "Buổi đã học", value: completedSessions, sub: `/ ${classes.reduce((s, c) => s + c.totalSessions, 0)} tổng`, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-900/20", link: "/student/schedule" },
-    { label: "Giờ học / tuần", value: weeklyStudyHours > 0 ? weeklyStudyHours : 12, sub: `Mục tiêu: ${weeklyGoal.target}h`, icon: Clock, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-900/20", link: "/student/schedule" },
-    { label: "Điểm TB", value: `${avgScore}%`, sub: `${examResults.length} bài thi`, icon: TrendingUp, color: "text-primary", bg: "bg-primary/10", link: "/student/results" },
+    { label: "Lớp đang học", value: activeClasses.length, sub: `${classes.filter(c => c.status === "completed").length} hoàn thành`, icon: BookOpen, link: "/student/classes" },
+    { label: "Buổi đã học", value: completedSessions, sub: `/ ${classes.reduce((s, c) => s + c.totalSessions, 0)} tổng`, icon: CheckCircle2, link: "/student/schedule" },
+    { label: "Giờ học / tuần", value: weeklyStudyHours > 0 ? weeklyStudyHours : 12, sub: `Mục tiêu: ${weeklyGoal.target}h`, icon: Clock, link: "/student/schedule" },
+    { label: "Điểm TB", value: `${avgScore}%`, sub: `${examResults.length} bài thi`, icon: TrendingUp, link: "/student/results" },
   ];
 
   return (
@@ -40,15 +41,15 @@ const StudentDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s, i) => (
           <button key={i} onClick={() => navigate(s.link)} className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4 hover:shadow-elevated transition-all text-left group">
-            <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", s.bg)}>
-              <s.icon className={cn("w-6 h-6", s.color)} />
+            <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+              <s.icon className="w-6 h-6 text-foreground" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-muted-foreground">{s.label}</p>
               <p className="text-xl font-bold text-foreground">{s.value}</p>
               <p className="text-[10px] text-muted-foreground">{s.sub}</p>
             </div>
-            <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
           </button>
         ))}
       </div>
@@ -56,7 +57,7 @@ const StudentDashboard = () => {
       {/* Weekly Goals */}
       <div className="bg-card border border-border rounded-2xl p-6">
         <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-          <Target className="w-4 h-4 text-primary" /> Mục tiêu tuần này
+          <Target className="w-4 h-4 text-muted-foreground" /> Mục tiêu tuần này
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
@@ -88,13 +89,13 @@ const StudentDashboard = () => {
           {/* Upcoming Schedule */}
           <div className="bg-card border border-border rounded-2xl p-6">
             <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-primary" /> Lịch học sắp tới
+              <CalendarDays className="w-4 h-4 text-muted-foreground" /> Lịch học sắp tới
             </h3>
             <div className="space-y-3">
               {upcomingSessions.map(s => (
                 <div key={s.id} className="flex items-center gap-4 p-3 bg-muted/50 rounded-xl hover:bg-muted transition-colors">
-                  <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <CalendarDays className="w-5 h-5 text-primary" />
+                  <div className="w-11 h-11 rounded-xl bg-muted flex items-center justify-center">
+                    <CalendarDays className="w-5 h-5 text-foreground" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground">{s.className}</p>
@@ -104,9 +105,12 @@ const StudentDashboard = () => {
                     <img src={s.tutorAvatar} alt="" className="w-7 h-7 rounded-full object-cover" />
                     <span className="text-xs text-muted-foreground">{s.tutorName}</span>
                   </div>
-                  <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full", s.format === "online" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-primary/10 text-primary")}>
+                  <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full", s.format === "online" ? "bg-muted text-foreground" : "bg-muted text-foreground")}>
                     {s.format === "online" ? "Online" : "Offline"}
                   </span>
+                  {s.format === "online" && s.meetingLink && (
+                    <Button size="sm" className="rounded-lg text-xs h-7" onClick={() => navigate(s.meetingLink!)}>Vào lớp</Button>
+                  )}
                 </div>
               ))}
               {upcomingSessions.length === 0 && <p className="text-sm text-muted-foreground text-center py-6">Không có buổi học nào sắp tới</p>}
@@ -116,7 +120,7 @@ const StudentDashboard = () => {
           {/* GPA Progress Chart */}
           <div className="bg-card border border-border rounded-2xl p-6">
             <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-primary" /> Tiến độ GPA
+              <TrendingUp className="w-4 h-4 text-muted-foreground" /> Tiến độ GPA
             </h3>
             <ChartContainer config={{ gpa: { label: "GPA", color: "hsl(var(--primary))" } }} className="h-[200px] w-full">
               <LineChart data={gpaData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
@@ -132,7 +136,6 @@ const StudentDashboard = () => {
 
         {/* Right column */}
         <div className="space-y-4">
-          {/* Class Progress */}
           <div className="bg-card border border-border rounded-2xl p-5">
             <h3 className="text-sm font-semibold text-foreground mb-3">Tiến độ lớp học</h3>
             <div className="space-y-3">
@@ -152,38 +155,36 @@ const StudentDashboard = () => {
             </div>
           </div>
 
-          {/* Recent Results */}
           <div className="bg-card border border-border rounded-2xl p-5">
             <h3 className="text-sm font-semibold text-foreground mb-3">Kết quả gần nhất</h3>
             {examResults.slice(0, 3).map(r => (
               <div key={r.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl mb-2 last:mb-0">
-                <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold", r.passed ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-destructive/10 text-destructive")}>
+                <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold", r.passed ? "bg-muted text-foreground" : "bg-destructive/10 text-destructive")}>
                   {r.score}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-foreground truncate">{r.title}</p>
                   <p className="text-[10px] text-muted-foreground">{r.completedAt}</p>
                 </div>
-                <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full", r.passed ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30" : "bg-destructive/10 text-destructive")}>
+                <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full", r.passed ? "bg-muted text-foreground" : "bg-destructive/10 text-destructive")}>
                   {r.passed ? "Đạt" : "Chưa đạt"}
                 </span>
               </div>
             ))}
-            <button onClick={() => navigate("/student/results")} className="w-full mt-3 text-xs text-primary font-medium hover:underline">Xem tất cả →</button>
+            <button onClick={() => navigate("/student/results")} className="w-full mt-3 text-xs text-primary font-medium hover:underline">Xem tất cả</button>
           </div>
 
-          {/* Quick Links */}
           <div className="bg-card border border-border rounded-2xl p-5">
             <h3 className="text-sm font-semibold text-foreground mb-3">Truy cập nhanh</h3>
             {[
-              { label: "Tìm gia sư mới", link: "/student/find-tutor", icon: "🔍" },
-              { label: "Thi thử THPTQG", link: "/student/mock-exam", icon: "📝" },
-              { label: "Xem báo cáo", link: "/student/report", icon: "📊" },
+              { label: "Tìm gia sư mới", link: "/student/find-tutor", icon: Search },
+              { label: "Thi thử THPTQG", link: "/student/mock-exam", icon: ClipboardCheck },
+              { label: "Xem báo cáo", link: "/student/report", icon: BarChart3 },
             ].map((item, i) => (
               <button key={i} onClick={() => navigate(item.link)} className="w-full flex items-center gap-3 p-3 bg-muted/50 rounded-xl mb-2 last:mb-0 text-left hover:bg-muted transition-colors group">
-                <span className="text-lg">{item.icon}</span>
+                <item.icon className="w-4 h-4 text-muted-foreground" />
                 <span className="text-xs font-medium text-foreground flex-1">{item.label}</span>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary" />
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground" />
               </button>
             ))}
           </div>

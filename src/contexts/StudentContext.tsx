@@ -42,6 +42,7 @@ export interface StudentClass {
   tutorId: string;
   tutorName: string;
   tutorAvatar: string;
+  tutorType: "tutor" | "teacher";
   format: "online" | "offline";
   schedule: string;
   totalSessions: number;
@@ -81,6 +82,8 @@ export interface TutorListing {
   bio: string;
   school: string;
   degree: string;
+  type: "tutor" | "teacher";
+  availableSlots?: { day: string; time: string }[];
 }
 
 export interface AvailabilitySlot {
@@ -94,7 +97,7 @@ export interface StudentTest {
   subject: string;
   title: string;
   totalQuestions: number;
-  duration: number; // minutes
+  duration: number;
   status: "available" | "completed";
   score?: number;
   completedAt?: string;
@@ -119,11 +122,14 @@ export interface MockExam {
   totalQuestions: number;
   communityAvgScore: number;
   attempts: number;
+  price: number;
+  purchased: boolean;
   status: "available" | "completed";
   score?: number;
   completedAt?: string;
   questions: TestQuestion[];
   answers?: Record<string, number>;
+  attemptHistory?: { score: number; date: string; answers: Record<string, number> }[];
 }
 
 export interface ExamResult {
@@ -147,6 +153,25 @@ export interface MonthlyProgress {
   testsCompleted: number;
 }
 
+export interface StudentNotification {
+  id: string;
+  type: "info" | "warning" | "success" | "error";
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+}
+
+export interface StudentChatMessage {
+  id: string;
+  classId: string;
+  sender: "student" | "tutor" | "parent";
+  senderName: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+}
+
 // ========== SEED DATA ==========
 
 const studentProfile: StudentProfile = {
@@ -165,12 +190,12 @@ const studentProfile: StudentProfile = {
 };
 
 const tutorListings: TutorListing[] = [
-  { id: "t1", name: "Nguyễn Văn An", avatar: tutor1, subjects: ["Toán", "Lý"], rating: 4.8, totalReviews: 47, totalSessions: 312, yearsExperience: 5, hourlyRate: 250000, location: "Quận 3, TP.HCM", verified: true, bio: "Gia sư Toán - Lý với 5 năm kinh nghiệm dạy ôn thi đại học.", school: "ĐH Sư Phạm TP.HCM", degree: "Cử nhân Sư phạm Toán" },
-  { id: "t2", name: "Trần Thị Bích Ngọc", avatar: tutor2, subjects: ["Hóa", "Sinh"], rating: 4.9, totalReviews: 62, totalSessions: 450, yearsExperience: 12, hourlyRate: 300000, location: "Quận 1, TP.HCM", verified: true, bio: "Giáo viên trường Lê Hồng Phong, thạc sĩ Hóa hữu cơ.", school: "THPT Lê Hồng Phong", degree: "Thạc sĩ Hóa học" },
-  { id: "t3", name: "Phạm Đức Huy", avatar: tutor3, subjects: ["Anh văn", "IELTS"], rating: 4.7, totalReviews: 35, totalSessions: 198, yearsExperience: 4, hourlyRate: 350000, location: "Quận 7, TP.HCM", verified: true, bio: "IELTS 8.5, chuyên luyện thi IELTS cho học sinh cấp 3.", school: "ĐH Ngoại Thương", degree: "Cử nhân Anh văn" },
-  { id: "t4", name: "Lê Thị Hồng Nhung", avatar: tutor4, subjects: ["Văn", "Sử"], rating: 4.6, totalReviews: 28, totalSessions: 156, yearsExperience: 6, hourlyRate: 200000, location: "Quận Bình Thạnh, TP.HCM", verified: false, bio: "Giáo viên Văn - Sử, đam mê truyền cảm hứng cho học sinh.", school: "ĐH KHXH&NV", degree: "Cử nhân Ngữ Văn" },
-  { id: "t5", name: "Võ Minh Tuấn", avatar: tutor5, subjects: ["Toán", "Tin học"], rating: 4.9, totalReviews: 55, totalSessions: 380, yearsExperience: 8, hourlyRate: 280000, location: "Quận Tân Bình, TP.HCM", verified: true, bio: "Chuyên gia lập trình và toán ứng dụng, phong cách giảng dạy hiện đại.", school: "ĐH Bách Khoa", degree: "Kỹ sư CNTT" },
-  { id: "t6", name: "Nguyễn Thị Mai Anh", avatar: tutor6, subjects: ["Toán", "Hóa"], rating: 4.5, totalReviews: 19, totalSessions: 95, yearsExperience: 3, hourlyRate: 180000, location: "Quận 9, TP.HCM", verified: false, bio: "Sinh viên năm cuối ĐH Sư Phạm, nhiệt tình và kiên nhẫn.", school: "ĐH Sư Phạm TP.HCM", degree: "SV Sư phạm Toán" },
+  { id: "t1", name: "Nguyễn Văn An", avatar: tutor1, subjects: ["Toán", "Lý"], rating: 4.8, totalReviews: 47, totalSessions: 312, yearsExperience: 5, hourlyRate: 250000, location: "Quận 3, TP.HCM", verified: true, bio: "Gia sư Toán - Lý với 5 năm kinh nghiệm dạy ôn thi đại học.", school: "ĐH Sư Phạm TP.HCM", degree: "Cử nhân Sư phạm Toán", type: "tutor", availableSlots: [{ day: "Thứ 2", time: "19:00-21:00" }, { day: "Thứ 4", time: "19:00-21:00" }, { day: "Thứ 6", time: "19:00-21:00" }] },
+  { id: "t2", name: "Trần Thị Bích Ngọc", avatar: tutor2, subjects: ["Hóa", "Sinh"], rating: 4.9, totalReviews: 62, totalSessions: 450, yearsExperience: 12, hourlyRate: 300000, location: "Quận 1, TP.HCM", verified: true, bio: "Giáo viên trường Lê Hồng Phong, thạc sĩ Hóa hữu cơ.", school: "THPT Lê Hồng Phong", degree: "Thạc sĩ Hóa học", type: "teacher", availableSlots: [{ day: "Thứ 3", time: "17:00-18:30" }, { day: "Thứ 5", time: "19:00-20:30" }] },
+  { id: "t3", name: "Phạm Đức Huy", avatar: tutor3, subjects: ["Anh văn", "IELTS"], rating: 4.7, totalReviews: 35, totalSessions: 198, yearsExperience: 4, hourlyRate: 350000, location: "Quận 7, TP.HCM", verified: true, bio: "IELTS 8.5, chuyên luyện thi IELTS cho học sinh cấp 3.", school: "ĐH Ngoại Thương", degree: "Cử nhân Anh văn", type: "tutor", availableSlots: [{ day: "Thứ 7", time: "9:00-10:30" }, { day: "Chủ nhật", time: "9:00-10:30" }] },
+  { id: "t4", name: "Lê Thị Hồng Nhung", avatar: tutor4, subjects: ["Văn", "Sử"], rating: 4.6, totalReviews: 28, totalSessions: 156, yearsExperience: 6, hourlyRate: 200000, location: "Quận Bình Thạnh, TP.HCM", verified: false, bio: "Giáo viên Văn - Sử, đam mê truyền cảm hứng cho học sinh.", school: "ĐH KHXH&NV", degree: "Cử nhân Ngữ Văn", type: "teacher", availableSlots: [{ day: "Thứ 2", time: "17:00-18:30" }, { day: "Thứ 4", time: "17:00-18:30" }] },
+  { id: "t5", name: "Võ Minh Tuấn", avatar: tutor5, subjects: ["Toán", "Tin học"], rating: 4.9, totalReviews: 55, totalSessions: 380, yearsExperience: 8, hourlyRate: 280000, location: "Quận Tân Bình, TP.HCM", verified: true, bio: "Chuyên gia lập trình và toán ứng dụng, phong cách giảng dạy hiện đại.", school: "ĐH Bách Khoa", degree: "Kỹ sư CNTT", type: "tutor", availableSlots: [{ day: "Thứ 3", time: "17:00-18:30" }, { day: "Thứ 5", time: "17:00-18:30" }] },
+  { id: "t6", name: "Nguyễn Thị Mai Anh", avatar: tutor6, subjects: ["Toán", "Hóa"], rating: 4.5, totalReviews: 19, totalSessions: 95, yearsExperience: 3, hourlyRate: 180000, location: "Quận 9, TP.HCM", verified: false, bio: "Sinh viên năm cuối ĐH Sư Phạm, nhiệt tình và kiên nhẫn.", school: "ĐH Sư Phạm TP.HCM", degree: "SV Sư phạm Toán", type: "tutor", availableSlots: [{ day: "Thứ 2", time: "18:00-20:00" }, { day: "Thứ 6", time: "18:00-20:00" }] },
 ];
 
 const seedSessions: StudentSession[] = [
@@ -189,14 +214,12 @@ const seedSessions: StudentSession[] = [
   { id: "ss13", classId: "sc1", date: "2026-03-03", time: "19:00-21:00", status: "scheduled", format: "online", meetingLink: "/student/meeting/ss13" },
   { id: "ss14", classId: "sc1", date: "2026-03-05", time: "19:00-21:00", status: "scheduled", format: "online", meetingLink: "/student/meeting/ss14" },
   { id: "ss15", classId: "sc1", date: "2026-03-07", time: "19:00-21:00", status: "scheduled", format: "online", meetingLink: "/student/meeting/ss15" },
-  // Lý class sessions
   { id: "ss16", classId: "sc2", date: "2026-02-04", time: "17:00-18:30", status: "completed", content: "Cơ học Newton - Định luật 1", format: "offline" },
   { id: "ss17", classId: "sc2", date: "2026-02-11", time: "17:00-18:30", status: "completed", content: "Cơ học Newton - Định luật 2,3", rating: 4, format: "offline" },
   { id: "ss18", classId: "sc2", date: "2026-02-18", time: "17:00-18:30", status: "completed", content: "Động lượng", format: "offline" },
   { id: "ss19", classId: "sc2", date: "2026-02-25", time: "17:00-18:30", status: "missed", format: "offline" },
   { id: "ss20", classId: "sc2", date: "2026-03-04", time: "17:00-18:30", status: "scheduled", format: "offline" },
   { id: "ss21", classId: "sc2", date: "2026-03-11", time: "17:00-18:30", status: "scheduled", format: "offline" },
-  // Anh văn class sessions
   { id: "ss22", classId: "sc3", date: "2026-03-01", time: "9:00-10:30", status: "completed", content: "Writing Task 1 - Line Graph", format: "online", rating: 5, meetingLink: "/student/meeting/ss22" },
   { id: "ss23", classId: "sc3", date: "2026-03-08", time: "9:00-10:30", status: "scheduled", format: "online", meetingLink: "/student/meeting/ss23" },
 ];
@@ -204,28 +227,28 @@ const seedSessions: StudentSession[] = [
 const studentClasses: StudentClass[] = [
   {
     id: "sc1", name: "Toán 12 - Ôn thi ĐH", subject: "Toán",
-    tutorId: "t1", tutorName: "Nguyễn Văn An", tutorAvatar: tutor1,
+    tutorId: "t1", tutorName: "Nguyễn Văn An", tutorAvatar: tutor1, tutorType: "tutor",
     format: "online", schedule: "T2, T4, T6 - 19:00-21:00",
     totalSessions: 24, completedSessions: 12, status: "active", fee: 2000000,
     sessions: seedSessions.filter(s => s.classId === "sc1"),
   },
   {
     id: "sc2", name: "Lý 12 - Nâng cao", subject: "Lý",
-    tutorId: "t5", tutorName: "Võ Minh Tuấn", tutorAvatar: tutor5,
+    tutorId: "t5", tutorName: "Võ Minh Tuấn", tutorAvatar: tutor5, tutorType: "tutor",
     format: "offline", schedule: "T3 - 17:00-18:30",
     totalSessions: 16, completedSessions: 3, status: "active", fee: 1500000,
     sessions: seedSessions.filter(s => s.classId === "sc2"),
   },
   {
     id: "sc3", name: "IELTS Writing", subject: "Anh văn",
-    tutorId: "t3", tutorName: "Phạm Đức Huy", tutorAvatar: tutor3,
+    tutorId: "t3", tutorName: "Phạm Đức Huy", tutorAvatar: tutor3, tutorType: "tutor",
     format: "online", schedule: "T7 - 9:00-10:30",
     totalSessions: 12, completedSessions: 1, status: "active", fee: 3000000,
     sessions: seedSessions.filter(s => s.classId === "sc3"),
   },
   {
     id: "sc4", name: "Hóa 11 - Cơ bản", subject: "Hóa",
-    tutorId: "t2", tutorName: "Trần Thị Bích Ngọc", tutorAvatar: tutor2,
+    tutorId: "t2", tutorName: "Trần Thị Bích Ngọc", tutorAvatar: tutor2, tutorType: "teacher",
     format: "online", schedule: "T5 - 19:00-20:30",
     totalSessions: 20, completedSessions: 20, status: "completed", fee: 1800000,
     sessions: [],
@@ -276,11 +299,12 @@ const studentTests: StudentTest[] = [
 ];
 
 const mockExams: MockExam[] = [
-  { id: "me1", title: "Đề thi thử THPTQG Toán - Đề 1", subject: "Toán", difficulty: "Trung bình", duration: 90, totalQuestions: 10, communityAvgScore: 65, attempts: 234, status: "completed", score: 80, completedAt: "2026-02-22", questions: mathQuestions, answers: { q1: 0, q2: 1, q3: 1, q4: 0, q5: 1, q6: 0, q7: 2, q8: 2, q9: 1, q10: 1 } },
-  { id: "me2", title: "Đề thi thử THPTQG Toán - Đề 2", subject: "Toán", difficulty: "Khó", duration: 90, totalQuestions: 10, communityAvgScore: 55, attempts: 189, status: "available", questions: mathQuestions },
-  { id: "me3", title: "Đề thi thử Vật lý - Đề 1", subject: "Lý", difficulty: "Dễ", duration: 60, totalQuestions: 10, communityAvgScore: 72, attempts: 156, status: "completed", score: 70, completedAt: "2026-02-25", questions: physicsQuestions, answers: { pq1: 0, pq2: 1, pq3: 1, pq4: 0, pq5: 1, pq6: 0, pq7: 3, pq8: 2, pq9: 1, pq10: 0 } },
-  { id: "me4", title: "Đề thi thử Vật lý - Đề 2", subject: "Lý", difficulty: "Trung bình", duration: 60, totalQuestions: 10, communityAvgScore: 60, attempts: 201, status: "available", questions: physicsQuestions },
-  { id: "me5", title: "Đề thi thử THPTQG Toán - Đề 3", subject: "Toán", difficulty: "Dễ", duration: 90, totalQuestions: 10, communityAvgScore: 75, attempts: 312, status: "available", questions: mathQuestions },
+  { id: "me1", title: "Đề thi thử THPTQG Toán - Đề 1", subject: "Toán", difficulty: "Trung bình", duration: 90, totalQuestions: 10, communityAvgScore: 65, attempts: 234, price: 10000, purchased: true, status: "completed", score: 80, completedAt: "2026-02-22", questions: mathQuestions, answers: { q1: 0, q2: 1, q3: 1, q4: 0, q5: 1, q6: 0, q7: 2, q8: 2, q9: 1, q10: 1 }, attemptHistory: [{ score: 80, date: "2026-02-22", answers: { q1: 0, q2: 1, q3: 1, q4: 0, q5: 1, q6: 0, q7: 2, q8: 2, q9: 1, q10: 1 } }] },
+  { id: "me2", title: "Đề thi thử THPTQG Toán - Đề 2", subject: "Toán", difficulty: "Khó", duration: 90, totalQuestions: 10, communityAvgScore: 55, attempts: 189, price: 10000, purchased: false, status: "available", questions: mathQuestions },
+  { id: "me3", title: "Đề thi thử Vật lý - Đề 1", subject: "Lý", difficulty: "Dễ", duration: 60, totalQuestions: 10, communityAvgScore: 72, attempts: 156, price: 10000, purchased: true, status: "completed", score: 70, completedAt: "2026-02-25", questions: physicsQuestions, answers: { pq1: 0, pq2: 1, pq3: 1, pq4: 0, pq5: 1, pq6: 0, pq7: 3, pq8: 2, pq9: 1, pq10: 0 }, attemptHistory: [{ score: 70, date: "2026-02-25", answers: { pq1: 0, pq2: 1, pq3: 1, pq4: 0, pq5: 1, pq6: 0, pq7: 3, pq8: 2, pq9: 1, pq10: 0 } }] },
+  { id: "me4", title: "Đề thi thử Vật lý - Đề 2", subject: "Lý", difficulty: "Trung bình", duration: 60, totalQuestions: 10, communityAvgScore: 60, attempts: 201, price: 10000, purchased: false, status: "available", questions: physicsQuestions },
+  { id: "me5", title: "Đề thi thử THPTQG Toán - Đề 3", subject: "Toán", difficulty: "Dễ", duration: 90, totalQuestions: 10, communityAvgScore: 75, attempts: 312, price: 10000, purchased: false, status: "available", questions: mathQuestions },
+  { id: "me6", title: "Đề thi thử Hóa học - Đề 1", subject: "Hóa", difficulty: "Trung bình", duration: 60, totalQuestions: 10, communityAvgScore: 58, attempts: 145, price: 10000, purchased: false, status: "available", questions: mathQuestions },
 ];
 
 const examResults: ExamResult[] = [
@@ -299,6 +323,24 @@ const monthlyProgress: MonthlyProgress[] = [
   { month: "T2/2026", gpa: 7.8, studyHours: 60, sessionsCompleted: 18, testsCompleted: 4 },
 ];
 
+const seedNotifications: StudentNotification[] = [
+  { id: "sn1", type: "success", title: "Buổi học đã hoàn thành", message: "Buổi Toán 12 ngày 28/02 đã được xác nhận hoàn thành.", timestamp: "28/02/2026 21:05", read: false },
+  { id: "sn2", type: "info", title: "Buổi học sắp tới", message: "Bạn có buổi Toán 12 vào 19:00 hôm nay.", timestamp: "03/03/2026 08:00", read: false },
+  { id: "sn3", type: "warning", title: "Bài tập chưa nộp", message: "Bài tập Đạo hàm nâng cao chưa được nộp. Hạn nộp: 05/03.", timestamp: "02/03/2026 10:00", read: false },
+  { id: "sn4", type: "info", title: "Đề thi thử mới", message: "Đề thi thử THPTQG Toán - Đề 3 vừa được thêm.", timestamp: "01/03/2026 14:00", read: true },
+  { id: "sn5", type: "success", title: "Kết quả thi thử", message: "Bạn đạt 80% đề thi thử Toán - Đề 1. Chúc mừng!", timestamp: "22/02/2026 15:30", read: true },
+];
+
+const seedChatMessages: StudentChatMessage[] = [
+  { id: "scm1", classId: "sc1", sender: "tutor", senderName: "Nguyễn Văn An", message: "Châu ơi, buổi tối nay thầy sẽ chữa đề thi thử số 3 nhé.", timestamp: "03/03 14:00", read: false },
+  { id: "scm2", classId: "sc1", sender: "student", senderName: "Lê Minh Châu", message: "Dạ vâng thầy, em đã làm xong đề rồi ạ.", timestamp: "03/03 14:15", read: true },
+  { id: "scm3", classId: "sc1", sender: "tutor", senderName: "Nguyễn Văn An", message: "Tốt lắm! Có câu nào khó thì note lại để thầy giải thích kỹ hơn.", timestamp: "03/03 14:20", read: false },
+  { id: "scm4", classId: "sc2", sender: "tutor", senderName: "Võ Minh Tuấn", message: "Tuần này mình sẽ học phần điện từ, em chuẩn bị trước chương 4 nhé.", timestamp: "02/03 09:00", read: true },
+  { id: "scm5", classId: "sc3", sender: "tutor", senderName: "Phạm Đức Huy", message: "Writing bài thứ 7 em gửi qua email cho thầy chấm trước nha.", timestamp: "01/03 18:00", read: true },
+  { id: "scm6", classId: "sc1", sender: "parent", senderName: "Phạm Hồng Đào", message: "Thầy ơi, em Châu tiến bộ tốt không ạ?", timestamp: "28/02 20:00", read: true },
+  { id: "scm7", classId: "sc1", sender: "tutor", senderName: "Nguyễn Văn An", message: "Chị yên tâm, em Châu tiến bộ rất nhanh, phần đạo hàm đã vững rồi ạ.", timestamp: "28/02 20:15", read: true },
+];
+
 // ========== CONTEXT ==========
 
 interface StudentContextType {
@@ -311,13 +353,20 @@ interface StudentContextType {
   examResults: ExamResult[];
   monthlyProgress: MonthlyProgress[];
   weeklyGoal: { target: number; current: number };
+  notifications: StudentNotification[];
+  chatMessages: StudentChatMessage[];
   // Actions
-  bookTutor: (tutorId: string, subject: string) => void;
-  requestTrial: (tutorId: string) => void;
+  bookTutor: (tutorId: string, subject: string, startDate: string, totalSessions: number, schedule: string) => void;
+  requestTrial: (tutorId: string, selectedSlot: { day: string; time: string }) => void;
   updateAvailability: (newAvail: AvailabilitySlot[]) => void;
   submitTest: (testId: string, answers: Record<string, number>) => void;
   submitMockExam: (examId: string, answers: Record<string, number>) => void;
   rateSession: (sessionId: string, rating: number, comment: string) => void;
+  markNotificationRead: (id: string) => void;
+  markAllNotificationsRead: () => void;
+  sendChatMessage: (classId: string, message: string) => void;
+  markChatRead: (classId: string) => void;
+  purchaseMockExam: (examId: string) => void;
 }
 
 const StudentContext = createContext<StudentContextType | undefined>(undefined);
@@ -335,8 +384,10 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
   const [tests, setTests] = useState(studentTests);
   const [mockExamsState, setMockExams] = useState(mockExams);
   const [results, setResults] = useState(examResults);
+  const [notifications, setNotifications] = useState(seedNotifications);
+  const [chatMsgs, setChatMsgs] = useState(seedChatMessages);
 
-  const bookTutor = useCallback((tutorId: string, subject: string) => {
+  const bookTutor = useCallback((tutorId: string, subject: string, startDate: string, totalSessions: number, schedule: string) => {
     const tutor = tutorListings.find(t => t.id === tutorId);
     if (!tutor) return;
     const newClass: StudentClass = {
@@ -346,19 +397,23 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
       tutorId,
       tutorName: tutor.name,
       tutorAvatar: tutor.avatar,
+      tutorType: tutor.type,
       format: "online",
-      schedule: "Chưa xếp lịch",
-      totalSessions: 12,
+      schedule: schedule || "Chưa xếp lịch",
+      totalSessions,
       completedSessions: 0,
       status: "active",
-      fee: tutor.hourlyRate * 12,
+      fee: tutor.hourlyRate * totalSessions,
       sessions: [],
     };
     setClasses(prev => [...prev, newClass]);
+    setNotifications(prev => [{ id: `sn${Date.now()}`, type: "success", title: "Đăng ký lớp thành công", message: `Đã đăng ký lớp ${subject} với ${tutor.name}.`, timestamp: new Date().toLocaleString("vi-VN"), read: false }, ...prev]);
   }, []);
 
-  const requestTrial = useCallback((tutorId: string) => {
-    // Trial request logic - in real app would create a trial booking
+  const requestTrial = useCallback((tutorId: string, selectedSlot: { day: string; time: string }) => {
+    const tutor = tutorListings.find(t => t.id === tutorId);
+    if (!tutor) return;
+    setNotifications(prev => [{ id: `sn${Date.now()}`, type: "info", title: "Yêu cầu học thử đã gửi", message: `Đã gửi yêu cầu học thử ${selectedSlot.day} - ${selectedSlot.time} với ${tutor.name}.`, timestamp: new Date().toLocaleString("vi-VN"), read: false }, ...prev]);
   }, []);
 
   const updateAvailability = useCallback((newAvail: AvailabilitySlot[]) => {
@@ -391,7 +446,8 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
         passed: score >= 50, completedAt: new Date().toISOString().split("T")[0], duration: e.duration,
       };
       setResults(prev => [...prev, newResult]);
-      return { ...e, status: "completed" as const, score, completedAt: new Date().toISOString().split("T")[0], answers };
+      const newAttempt = { score, date: new Date().toISOString().split("T")[0], answers };
+      return { ...e, status: "completed" as const, score, completedAt: new Date().toISOString().split("T")[0], answers, attemptHistory: [...(e.attemptHistory || []), newAttempt] };
     }));
   }, []);
 
@@ -402,11 +458,38 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
     })));
   }, []);
 
+  const markNotificationRead = useCallback((id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  }, []);
+
+  const markAllNotificationsRead = useCallback(() => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  }, []);
+
+  const sendChatMessage = useCallback((classId: string, message: string) => {
+    const newMsg: StudentChatMessage = {
+      id: `scm${Date.now()}`, classId, sender: "student", senderName: profile.name,
+      message, timestamp: new Date().toLocaleString("vi-VN", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }), read: true,
+    };
+    setChatMsgs(prev => [...prev, newMsg]);
+  }, [profile.name]);
+
+  const markChatRead = useCallback((classId: string) => {
+    setChatMsgs(prev => prev.map(m => m.classId === classId ? { ...m, read: true } : m));
+  }, []);
+
+  const purchaseMockExam = useCallback((examId: string) => {
+    setMockExams(prev => prev.map(e => e.id === examId ? { ...e, purchased: true } : e));
+    setNotifications(prev => [{ id: `sn${Date.now()}`, type: "success", title: "Mua đề thành công", message: "Bạn đã mua đề thi thử thành công. Bắt đầu làm bài ngay!", timestamp: new Date().toLocaleString("vi-VN"), read: false }, ...prev]);
+  }, []);
+
   return (
     <StudentContext.Provider value={{
       profile, classes, tutorListings, availability, tests, mockExams: mockExamsState,
       examResults: results, monthlyProgress, weeklyGoal: { target: 15, current: 11 },
+      notifications, chatMessages: chatMsgs,
       bookTutor, requestTrial, updateAvailability, submitTest, submitMockExam, rateSession,
+      markNotificationRead, markAllNotificationsRead, sendChatMessage, markChatRead, purchaseMockExam,
     }}>
       {children}
     </StudentContext.Provider>

@@ -1,12 +1,12 @@
 import { useStudent } from "@/contexts/StudentContext";
-import { CalendarDays, Clock, Video, MapPin, CheckCircle2 } from "lucide-react";
+import { CalendarDays, Clock, Video, MapPin, CheckCircle2, X as XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 const daysOfWeek = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "CN"];
-const timeSlots = ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"];
+const timeSlots = ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"];
 
 const StudentSchedule = () => {
   const { classes } = useStudent();
@@ -19,49 +19,67 @@ const StudentSchedule = () => {
 
   const upcoming = allSessions.filter(s => s.status === "scheduled");
   const completed = allSessions.filter(s => s.status === "completed");
+  const missed = allSessions.filter(s => s.status === "missed");
   const totalWeekSessions = upcoming.length;
   const totalWeekHours = upcoming.length * 2;
 
-  // Build timetable grid
   const getSessionsForDayTime = (day: string, time: string) => {
     return allSessions.filter(s => {
       const d = new Date(s.date);
       const dayIndex = d.getDay();
       const dayMap: Record<number, string> = { 1: "Thứ 2", 2: "Thứ 3", 3: "Thứ 4", 4: "Thứ 5", 5: "Thứ 6", 6: "Thứ 7", 0: "CN" };
       const sessionStart = s.time.split("-")[0];
-      return dayMap[dayIndex] === day && sessionStart === time && s.status === "scheduled";
+      return dayMap[dayIndex] === day && sessionStart === time;
     });
+  };
+
+  const statusLabel = (status: string) => {
+    switch (status) {
+      case "completed": return "Hoàn thành";
+      case "missed": return "Vắng";
+      case "cancelled": return "Hủy";
+      default: return "Sắp tới";
+    }
   };
 
   return (
     <div className="p-6 space-y-6">
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <div className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-            <CalendarDays className="w-6 h-6 text-primary" />
+          <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+            <CalendarDays className="w-6 h-6 text-foreground" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Buổi học / tuần</p>
+            <p className="text-xs text-muted-foreground">Buổi sắp tới</p>
             <p className="text-xl font-bold text-foreground">{totalWeekSessions}</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
-            <Clock className="w-6 h-6 text-emerald-600" />
+          <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+            <Clock className="w-6 h-6 text-foreground" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Tổng giờ học / tuần</p>
+            <p className="text-xs text-muted-foreground">Tổng giờ sắp tới</p>
             <p className="text-xl font-bold text-foreground">{totalWeekHours}h</p>
           </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
-            <CheckCircle2 className="w-6 h-6 text-amber-500" />
+          <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+            <CheckCircle2 className="w-6 h-6 text-foreground" />
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Đã hoàn thành</p>
             <p className="text-xl font-bold text-foreground">{completed.length} buổi</p>
+          </div>
+        </div>
+        <div className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+            <XIcon className="w-6 h-6 text-foreground" />
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Vắng mặt</p>
+            <p className="text-xl font-bold text-foreground">{missed.length} buổi</p>
           </div>
         </div>
       </div>
@@ -90,11 +108,13 @@ const StudentSchedule = () => {
                     return (
                       <td key={day} className="p-1 text-center">
                         {sessions.map(s => (
-                          <div key={s.id} className={cn("p-1.5 rounded-lg text-[10px] font-medium mb-1",
-                            s.format === "online" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-primary/10 text-primary"
+                          <div key={s.id} className={cn("p-1.5 rounded-lg text-[10px] font-medium mb-1 border",
+                            s.status === "completed" ? "bg-muted border-border text-foreground" :
+                            s.status === "missed" ? "bg-destructive/5 border-destructive/20 text-destructive" :
+                            "bg-primary/5 border-primary/20 text-foreground"
                           )}>
                             <p className="truncate">{s.className}</p>
-                            <p className="text-[9px] opacity-70">{s.format === "online" ? "🟢 Online" : "📍 Offline"}</p>
+                            <p className="text-[9px] text-muted-foreground">{s.format === "online" ? "Online" : "Offline"} • {statusLabel(s.status)}</p>
                           </div>
                         ))}
                       </td>
@@ -107,7 +127,6 @@ const StudentSchedule = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Upcoming */}
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-3">Sắp tới</h3>
             <div className="space-y-2">
@@ -118,9 +137,7 @@ const StudentSchedule = () => {
                     <p className="text-sm font-medium text-foreground">{s.className}</p>
                     <p className="text-xs text-muted-foreground">{s.tutorName} • {s.date} • {s.time}</p>
                   </div>
-                  <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1",
-                    s.format === "online" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-primary/10 text-primary"
-                  )}>
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-muted text-foreground flex items-center gap-1">
                     {s.format === "online" ? <><Video className="w-3 h-3" /> Online</> : <><MapPin className="w-3 h-3" /> Offline</>}
                   </span>
                   {s.format === "online" && s.meetingLink && (
@@ -132,20 +149,24 @@ const StudentSchedule = () => {
             </div>
           </div>
 
-          {/* Completed */}
           <div>
-            <h3 className="text-sm font-semibold text-foreground mb-3">Đã hoàn thành</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">Đã hoàn thành / Vắng</h3>
             <div className="space-y-2">
-              {completed.slice(0, 10).map(s => (
-                <div key={s.id} className="bg-card border border-border rounded-xl p-4 flex items-center gap-4 opacity-75">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              {[...completed, ...missed].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 15).map(s => (
+                <div key={s.id} className="bg-card border border-border rounded-xl p-4 flex items-center gap-4">
+                  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center bg-muted")}>
+                    {s.status === "completed" ? <CheckCircle2 className="w-4 h-4 text-foreground" /> : <XIcon className="w-4 h-4 text-destructive" />}
+                  </div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-foreground">{s.className} - {s.content || "Buổi học"}</p>
                     <p className="text-xs text-muted-foreground">{s.date} • {s.time}</p>
                   </div>
+                  <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full", s.status === "completed" ? "bg-muted text-foreground" : "bg-destructive/10 text-destructive")}>
+                    {statusLabel(s.status)}
+                  </span>
                   {s.rating && (
                     <div className="flex items-center gap-0.5">
-                      {[...Array(s.rating)].map((_, i) => <span key={i} className="text-amber-400 text-xs">★</span>)}
+                      {[...Array(s.rating)].map((_, i) => <Star key={i} className="w-3 h-3 fill-current text-foreground" />)}
                     </div>
                   )}
                 </div>
