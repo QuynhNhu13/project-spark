@@ -9,6 +9,8 @@ import { TutorProvider } from "@/contexts/TutorContext";
 import { TeacherProvider } from "@/contexts/TeacherContext";
 import { StudentProvider } from "@/contexts/StudentContext";
 import { ParentProvider } from "@/contexts/ParentContext";
+import { OfficeProvider } from "@/contexts/OfficeContext";
+import { FinanceProvider } from "@/contexts/FinanceContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
@@ -61,6 +63,18 @@ import ParentReports from "./pages/parent/ParentReports";
 import ParentWallet from "./pages/parent/ParentWallet";
 import ParentFindTutor from "./pages/parent/ParentFindTutor";
 import ParentSupport from "./pages/parent/ParentSupport";
+import OfficeLayout from "./components/office/OfficeLayout";
+import OfficeDashboard from "./pages/office/OfficeDashboard";
+import OfficeAttendance from "./pages/office/OfficeAttendance";
+import OfficeIncidents from "./pages/office/OfficeIncidents";
+import OfficeClasses from "./pages/office/OfficeClasses";
+import OfficeAISchedule from "./pages/office/OfficeAISchedule";
+import OfficeReports from "./pages/office/OfficeReports";
+import FinanceLayout from "./components/finance/FinanceLayout";
+import FinanceDashboard from "./pages/finance/FinanceDashboard";
+import FinanceTransactions from "./pages/finance/FinanceTransactions";
+import FinancePayouts from "./pages/finance/FinancePayouts";
+import FinanceReports from "./pages/finance/FinanceReports";
 
 const queryClient = new QueryClient();
 
@@ -69,10 +83,12 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AdminProvider>
-          <TutorProvider>
-          <TeacherProvider>
-          <StudentProvider>
-          <ParentProvider>
+        <TutorProvider>
+        <TeacherProvider>
+        <StudentProvider>
+        <ParentProvider>
+        <OfficeProvider>
+        <FinanceProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter>
@@ -143,6 +159,20 @@ const App = () => (
                   <Route path="wallet" element={<ParentWallet />} />
                   <Route path="support" element={<ParentSupport />} />
                 </Route>
+                <Route path="/office" element={<OfficeLayout />}>
+                  <Route index element={<OfficeDashboard />} />
+                  <Route path="attendance" element={<OfficeAttendance />} />
+                  <Route path="incidents" element={<OfficeIncidents />} />
+                  <Route path="classes" element={<OfficeClasses />} />
+                  <Route path="ai-schedule" element={<OfficeAISchedule />} />
+                  <Route path="reports" element={<OfficeReports />} />
+                </Route>
+                <Route path="/finance" element={<FinanceLayout />}>
+                  <Route index element={<FinanceDashboard />} />
+                  <Route path="transactions" element={<FinanceTransactions />} />
+                  <Route path="payouts" element={<FinancePayouts />} />
+                  <Route path="reports" element={<FinanceReports />} />
+                </Route>
                 <Route path="/pricing" element={<PlaceholderPage title="Bảng giá" description="Trang bảng giá đang được cập nhật." />} />
                 <Route path="/help" element={<PlaceholderPage title="Trung tâm trợ giúp" description="Trung tâm trợ giúp đang được xây dựng." />} />
                 <Route path="/faq" element={<PlaceholderPage title="Câu hỏi thường gặp" description="Trang FAQ đang được cập nhật." />} />
@@ -154,10 +184,12 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
-          </ParentProvider>
-          </StudentProvider>
-          </TeacherProvider>
-          </TutorProvider>
+        </FinanceProvider>
+        </OfficeProvider>
+        </ParentProvider>
+        </StudentProvider>
+        </TeacherProvider>
+        </TutorProvider>
         </AdminProvider>
       </TooltipProvider>
     </QueryClientProvider>
