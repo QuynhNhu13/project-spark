@@ -182,6 +182,8 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
+          </FinanceProvider>
+          </OfficeProvider>
           </ParentProvider>
           </StudentProvider>
           </TeacherProvider>
