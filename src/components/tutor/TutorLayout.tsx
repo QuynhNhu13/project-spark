@@ -9,6 +9,7 @@ import { useTutor } from "@/contexts/TutorContext";
 import EduLogo from "@/components/EduLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useState, useRef, useEffect } from "react";
+import ChatWidget from "@/components/ChatWidget";
 
 const navItems = [
   { to: "/tutor", icon: LayoutDashboard, label: "Tổng quan", end: true },
@@ -210,6 +211,7 @@ const TutorLayout = () => {
           <Outlet />
         </main>
       </div>
+      <ChatWidget />
     </div>
   );
 };

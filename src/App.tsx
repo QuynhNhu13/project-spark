@@ -59,6 +59,8 @@ import ParentChat from "./pages/parent/ParentChat";
 import ParentChildren from "./pages/parent/ParentChildren";
 import ParentReports from "./pages/parent/ParentReports";
 import ParentWallet from "./pages/parent/ParentWallet";
+import ParentFindTutor from "./pages/parent/ParentFindTutor";
+import ParentSupport from "./pages/parent/ParentSupport";
 
 const queryClient = new QueryClient();
 
@@ -134,10 +136,12 @@ const App = () => (
                 <Route path="/student/meeting/:sessionId" element={<OnlineMeeting />} />
                 <Route path="/parent" element={<ParentLayout />}>
                   <Route index element={<ParentDashboard />} />
+                  <Route path="find-tutor" element={<ParentFindTutor />} />
                   <Route path="chat" element={<ParentChat />} />
                   <Route path="children" element={<ParentChildren />} />
                   <Route path="reports" element={<ParentReports />} />
                   <Route path="wallet" element={<ParentWallet />} />
+                  <Route path="support" element={<ParentSupport />} />
                 </Route>
                 <Route path="/pricing" element={<PlaceholderPage title="Bảng giá" description="Trang bảng giá đang được cập nhật." />} />
                 <Route path="/help" element={<PlaceholderPage title="Trung tâm trợ giúp" description="Trung tâm trợ giúp đang được xây dựng." />} />

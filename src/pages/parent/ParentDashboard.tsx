@@ -1,22 +1,24 @@
 import { useParent } from "@/contexts/ParentContext";
-import { Wallet, Users, Bell, Star, Search, CreditCard, MessageSquare, HelpCircle } from "lucide-react";
+import { Wallet, Users, Bell, Star, Search, CreditCard, MessageSquare, HelpCircle, CalendarDays, TrendingUp, BookOpen, CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const ParentDashboard = () => {
-  const { profile, children, notifications, walletBalance } = useParent();
+  const { profile, children, notifications, walletBalance, transactions } = useParent();
   const navigate = useNavigate();
   const unreadNotifs = notifications.filter(n => !n.read).length;
   const totalSpent = Math.abs(
-    useParent().transactions.filter(t => t.type === "tuition_payment" && t.status === "completed").reduce((s, t) => s + t.amount, 0)
+    transactions.filter(t => t.type === "tuition_payment" && t.status === "completed").reduce((s, t) => s + t.amount, 0)
   );
   const avgGpa = children.length > 0 ? (children.reduce((s, c) => s + c.gpa, 0) / children.length).toFixed(1) : "0";
+  const totalClasses = children.reduce((s, c) => s + c.totalClasses, 0);
+  const avgAttendance = children.length > 0 ? Math.round(children.reduce((s, c) => s + c.attendance, 0) / children.length) : 0;
 
   const quickActions = [
-    { label: "Tìm gia sư mới", icon: Search, action: () => navigate("/student/find-tutor") },
-    { label: "Thanh toán học phí", icon: CreditCard, action: () => navigate("/parent/wallet") },
-    { label: "Đánh giá gia sư", icon: Star, action: () => navigate("/parent/reports") },
-    { label: "Hỗ trợ", icon: HelpCircle, action: () => navigate("/help") },
+    { label: "Tìm gia sư mới", icon: Search, action: () => navigate("/parent/find-tutor"), desc: "Tìm kiếm gia sư phù hợp" },
+    { label: "Thanh toán học phí", icon: CreditCard, action: () => navigate("/parent/wallet"), desc: "Quản lý ví và thanh toán" },
+    { label: "Xem báo cáo", icon: TrendingUp, action: () => navigate("/parent/reports"), desc: "Theo dõi tiến độ học tập" },
+    { label: "Hỗ trợ", icon: HelpCircle, action: () => navigate("/parent/support"), desc: "Giải đáp thắc mắc" },
   ];
 
   return (
@@ -29,10 +31,10 @@ const ParentDashboard = () => {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { icon: Wallet, label: "Tổng quan chi tiêu", value: `${totalSpent.toLocaleString("vi-VN")}đ`, sub: "Đã thanh toán" },
-          { icon: Users, label: "Số con đang học", value: String(children.length), sub: `${children.reduce((s, c) => s + c.totalClasses, 0)} lớp học` },
+          { icon: Wallet, label: "Tổng chi tiêu", value: `${totalSpent.toLocaleString("vi-VN")}đ`, sub: `Số dư: ${walletBalance.toLocaleString("vi-VN")}đ` },
+          { icon: Users, label: "Số con đang học", value: String(children.length), sub: `${totalClasses} lớp học` },
           { icon: Bell, label: "Thông báo mới", value: String(unreadNotifs), sub: "Chưa đọc" },
-          { icon: Star, label: "Đánh giá trung bình", value: avgGpa, sub: "GPA" },
+          { icon: Star, label: "GPA trung bình", value: avgGpa, sub: `Chuyên cần: ${avgAttendance}%` },
         ].map((s, i) => (
           <div key={i} className="bg-card border border-border rounded-2xl p-5">
             <div className="flex items-center gap-3 mb-3">
@@ -43,6 +45,33 @@ const ParentDashboard = () => {
             <p className="text-xs text-muted-foreground mt-1">{s.sub}</p>
           </div>
         ))}
+      </div>
+
+      {/* Children Overview */}
+      <div className="bg-card border border-border rounded-2xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-foreground">Tổng quan con em</h3>
+          <button onClick={() => navigate("/parent/children")} className="text-xs text-primary font-medium hover:text-primary/80">Xem chi tiết</button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {children.map(child => (
+            <div key={child.id} className="flex items-center gap-4 p-4 rounded-xl border border-border hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate("/parent/children")}>
+              <img src={child.avatar} alt="" className="w-12 h-12 rounded-full object-cover" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">{child.name}</p>
+                <p className="text-xs text-muted-foreground">{child.grade} • {child.school}</p>
+                <div className="flex items-center gap-3 mt-1">
+                  <span className="text-xs text-muted-foreground flex items-center gap-1"><BookOpen className="w-3 h-3" /> {child.totalClasses} lớp</span>
+                  <span className="text-xs text-muted-foreground flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> {child.attendance}%</span>
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-lg font-bold text-foreground">{child.gpa}</p>
+                <p className="text-[10px] text-muted-foreground">GPA</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Recent Notifications */}
@@ -67,9 +96,10 @@ const ParentDashboard = () => {
         <h3 className="text-sm font-semibold text-foreground mb-3">Hành động nhanh</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {quickActions.map((a, i) => (
-            <button key={i} onClick={a.action} className="bg-card border border-border rounded-2xl p-4 hover:bg-muted/50 transition-colors text-left">
-              <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center mb-3"><a.icon className="w-4 h-4 text-foreground" /></div>
+            <button key={i} onClick={a.action} className="bg-card border border-border rounded-2xl p-4 hover:bg-muted/50 hover:shadow-md transition-all text-left group">
+              <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center mb-3 group-hover:bg-primary/10 transition-colors"><a.icon className="w-4 h-4 text-foreground" /></div>
               <p className="text-sm font-medium text-foreground">{a.label}</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">{a.desc}</p>
             </button>
           ))}
         </div>
