@@ -193,6 +193,7 @@ const StudentLayout = () => {
           <Outlet />
         </main>
       </div>
+      <ChatWidget />
     </div>
   );
 };
