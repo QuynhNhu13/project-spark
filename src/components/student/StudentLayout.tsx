@@ -196,7 +196,7 @@ const StudentLayout = () => {
           <Outlet />
         </main>
       </div>
-      <ChatWidget />
+      <MessageBubble to="/student/chat" unreadCount={unreadChat} />
     </div>
   );
 };

@@ -211,7 +211,7 @@ const TutorLayout = () => {
           <Outlet />
         </main>
       </div>
-      <ChatWidget />
+      <MessageBubble to="/tutor/chat" unreadCount={unreadChat} />
     </div>
   );
 };
