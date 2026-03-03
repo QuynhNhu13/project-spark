@@ -63,6 +63,18 @@ import ParentReports from "./pages/parent/ParentReports";
 import ParentWallet from "./pages/parent/ParentWallet";
 import ParentFindTutor from "./pages/parent/ParentFindTutor";
 import ParentSupport from "./pages/parent/ParentSupport";
+import OfficeLayout from "./components/office/OfficeLayout";
+import OfficeDashboard from "./pages/office/OfficeDashboard";
+import OfficeAttendance from "./pages/office/OfficeAttendance";
+import OfficeIncidents from "./pages/office/OfficeIncidents";
+import OfficeClasses from "./pages/office/OfficeClasses";
+import OfficeAISchedule from "./pages/office/OfficeAISchedule";
+import OfficeReports from "./pages/office/OfficeReports";
+import FinanceLayout from "./components/finance/FinanceLayout";
+import FinanceDashboard from "./pages/finance/FinanceDashboard";
+import FinanceTransactions from "./pages/finance/FinanceTransactions";
+import FinancePayouts from "./pages/finance/FinancePayouts";
+import FinanceReports from "./pages/finance/FinanceReports";
 
 const queryClient = new QueryClient();
 
