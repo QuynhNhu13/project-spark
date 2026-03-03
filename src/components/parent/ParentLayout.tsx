@@ -1,28 +1,33 @@
 import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, MessageSquare, Users, BarChart3, Wallet, LogOut,
-  PanelLeftClose, PanelLeft, Bell, Check, AlertTriangle, Info, CheckCircle2, XCircle
+  LayoutDashboard, MessageSquare, Users, BarChart3, Wallet, LogOut, Search,
+  PanelLeftClose, PanelLeft, Bell, Check, AlertTriangle, Info, CheckCircle2, XCircle, HelpCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useParent } from "@/contexts/ParentContext";
 import EduLogo from "@/components/EduLogo";
 import ThemeToggle from "@/components/ThemeToggle";
+import ChatWidget from "@/components/ChatWidget";
 import { useState, useRef, useEffect } from "react";
 
 const navItems = [
   { to: "/parent", icon: LayoutDashboard, label: "Tổng quan", end: true },
+  { to: "/parent/find-tutor", icon: Search, label: "Tìm gia sư" },
   { to: "/parent/chat", icon: MessageSquare, label: "Tin nhắn" },
   { to: "/parent/children", icon: Users, label: "Con em" },
   { to: "/parent/reports", icon: BarChart3, label: "Báo cáo học tập" },
   { to: "/parent/wallet", icon: Wallet, label: "Ví & Thanh toán" },
+  { to: "/parent/support", icon: HelpCircle, label: "Hỗ trợ" },
 ];
 
 const pageTitles: Record<string, string> = {
   "/parent": "Tổng quan",
+  "/parent/find-tutor": "Tìm gia sư",
   "/parent/chat": "Tin nhắn",
   "/parent/children": "Con em",
   "/parent/reports": "Báo cáo học tập",
   "/parent/wallet": "Ví & Thanh toán",
+  "/parent/support": "Hỗ trợ",
 };
 
 const notifIcon: Record<string, React.ReactNode> = {
@@ -140,6 +145,7 @@ const ParentLayout = () => {
           <Outlet />
         </main>
       </div>
+      <ChatWidget />
     </div>
   );
 };
