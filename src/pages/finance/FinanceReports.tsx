@@ -38,8 +38,8 @@ const topTutors = [
   { name: "Hoàng Đức Em", role: "Gia sư", revenue: 3600000, classes: 1, students: 2, rating: 4.5 },
 ];
 
-const COLORS_REV = ["hsl(var(--primary))", "hsl(var(--ring))", "hsl(var(--muted-foreground))", "hsl(var(--foreground))"];
-const COLORS_EXP = ["hsl(var(--destructive))", "hsl(var(--ring))", "hsl(var(--primary))", "hsl(var(--muted-foreground))", "hsl(var(--foreground))"];
+const COLORS_REV = ["hsl(224, 76%, 48%)", "hsl(142, 71%, 45%)", "hsl(38, 92%, 50%)", "hsl(280, 68%, 55%)"];
+const COLORS_EXP = ["hsl(0, 84%, 60%)", "hsl(38, 92%, 50%)", "hsl(224, 76%, 48%)", "hsl(142, 71%, 45%)", "hsl(280, 68%, 55%)"];
 
 const tooltipStyle = {
   borderRadius: "1rem",
