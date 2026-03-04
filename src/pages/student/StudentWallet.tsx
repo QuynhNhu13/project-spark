@@ -147,6 +147,9 @@ const StudentWallet = () => {
             <Button onClick={() => setShowDeposit(true)} className="flex-1 rounded-xl gap-1" size="sm">
               <Plus className="w-3.5 h-3.5" /> Nạp tiền
             </Button>
+            <Button onClick={() => setShowWithdraw(true)} variant="outline" className="flex-1 rounded-xl gap-1" size="sm">
+              <ArrowUpRight className="w-3.5 h-3.5" /> Rút tiền
+            </Button>
             <Button onClick={() => setShowPayTuition(true)} variant="outline" className="flex-1 rounded-xl gap-1" size="sm">
               <Receipt className="w-3.5 h-3.5" /> Thanh toán
             </Button>
