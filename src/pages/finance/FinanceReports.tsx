@@ -127,9 +127,9 @@ const FinanceReports = () => {
               <YAxis tickFormatter={v => `${(v / 1000000).toFixed(0)}M`} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
               <Tooltip formatter={(v: number) => `${v.toLocaleString("vi-VN")}đ`} contentStyle={tooltipStyle} />
               <Legend />
-              <Bar dataKey="revenue" name="Doanh thu" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
-              <Bar dataKey="expense" name="Chi phí" fill="hsl(var(--destructive))" radius={[6, 6, 0, 0]} />
-              <Bar dataKey="profit" name="Lợi nhuận" fill="hsl(var(--muted-foreground))" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="revenue" name="Doanh thu" fill="hsl(224, 76%, 48%)" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="expense" name="Chi phí" fill="hsl(0, 84%, 60%)" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="profit" name="Lợi nhuận" fill="hsl(142, 71%, 45%)" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
