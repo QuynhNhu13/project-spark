@@ -27,6 +27,7 @@ const pageTitles: Record<string, string> = {
   "/office/classes": "Quản lý lớp",
   "/office/appointments": "Lịch hẹn văn phòng",
   "/office/ai-schedule": "Tự động xếp lịch thông minh",
+  "/office/reviews": "Quản lý đánh giá gia sư",
   "/office/reports": "Báo cáo",
 };
 

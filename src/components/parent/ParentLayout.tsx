@@ -27,6 +27,7 @@ const pageTitles: Record<string, string> = {
   "/parent/find-tutor": "Tìm gia sư",
   "/parent/chat": "Tin nhắn",
   "/parent/children": "Con em",
+  "/parent/reviews": "Đánh giá gia sư",
   "/parent/reports": "Báo cáo học tập",
   "/parent/wallet": "Ví & Thanh toán",
   "/parent/support": "Hỗ trợ",

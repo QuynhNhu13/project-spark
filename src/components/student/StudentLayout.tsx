@@ -55,6 +55,7 @@ const pageTitles: Record<string, string> = {
   "/student/mock-exam": "Thi thử",
   "/student/results": "Kết quả thi",
   "/student/report": "Báo cáo học tập",
+  "/student/reviews": "Đánh giá gia sư",
   "/student/wallet": "Ví học phí",
   "/student/chat": "Tin nhắn",
 };
