@@ -76,7 +76,7 @@ export interface ParentChatMessage {
 
 export interface ParentTransaction {
   id: string;
-  type: "deposit" | "tuition_payment" | "refund";
+  type: "deposit" | "tuition_payment" | "refund" | "withdrawal";
   amount: number;
   description: string;
   date: string;
