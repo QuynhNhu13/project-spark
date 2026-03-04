@@ -350,7 +350,7 @@ export const ParentProvider = ({ children: kids }: { children: ReactNode }) => {
       transactions: txns, walletBalance, childProgress,
       childSchedules: seedChildSchedules, childTests: seedChildTests, childSubjectScores: seedChildSubjectScores,
       markNotificationRead, markAllNotificationsRead, sendChatMessage, markChatRead,
-      payChildTuition, depositWallet, confirmAttendance,
+      payChildTuition, depositWallet, withdrawWallet, confirmAttendance,
     }}>
       {kids}
     </ParentContext.Provider>

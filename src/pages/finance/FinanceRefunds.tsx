@@ -39,10 +39,10 @@ const FinanceRefunds = () => {
   const [showLogs, setShowLogs] = useState(false);
   const [localOverrides, setLocalOverrides] = useState<Record<string, { status: "approved" | "rejected"; note: string; processedAt: string }>>({});
 
-  const merged = [...MOCK_DATA, ...live];
+  const allRefundRequests = [...MOCK_DATA, ...live];
   const gs = (r: RefundRequest) => localOverrides[r.id]?.status || r.status;
-  const filtered = merged.filter(r => filterStatus === "all" || gs(r) === filterStatus).filter(r => !search || r.tutorName.toLowerCase().includes(search.toLowerCase()) || r.className.toLowerCase().includes(search.toLowerCase()));
-  const pendingCount = merged.filter(r => gs(r) === "pending").length;
+  const filtered = allRefundRequests.filter(r => filterStatus === "all" || gs(r) === filterStatus).filter(r => !search || r.tutorName.toLowerCase().includes(search.toLowerCase()) || r.className.toLowerCase().includes(search.toLowerCase()));
+  const pendingCount = allRefundRequests.filter(r => gs(r) === "pending").length;
 
   const handleProcess = () => {
     if (!processDialog || !processNote.trim()) { toast.error("Vui lòng nhập lý do xử lý"); return; }
@@ -59,8 +59,8 @@ const FinanceRefunds = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: "Chờ duyệt", count: pendingCount, icon: Clock, iconColor: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-900/20" },
-          { label: "Đã duyệt", count: merged.filter(r => gs(r) === "approved").length, icon: Check, iconColor: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-900/20" },
-          { label: "Từ chối", count: merged.filter(r => gs(r) === "rejected").length, icon: X, iconColor: "text-destructive", bg: "bg-destructive/10" },
+          { label: "Đã duyệt", count: allRefundRequests.filter(r => gs(r) === "approved").length, icon: Check, iconColor: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-900/20" },
+          { label: "Từ chối", count: allRefundRequests.filter(r => gs(r) === "rejected").length, icon: X, iconColor: "text-destructive", bg: "bg-destructive/10" },
         ].map(s => (
           <div key={s.label} className="bg-card border border-border rounded-2xl p-5">
             <div className="flex items-center gap-3 mb-2">
@@ -156,7 +156,7 @@ const FinanceRefunds = () => {
           <DialogHeader><DialogTitle className="flex items-center gap-2"><FileText className="w-5 h-5 text-primary" /> Nhật ký xử lý hoàn tiền</DialogTitle></DialogHeader>
           <div className="max-h-[400px] overflow-y-auto space-y-2">
             {logs.length === 0 ? <p className="text-sm text-muted-foreground text-center py-8">Chưa có log nào</p> : logs.map(log => {
-              const req = merged.find(r => r.id === log.refundId);
+              const req = allRefundRequests.find(r => r.id === log.refundId);
               return (
                 <div key={log.id} className="p-3 border border-border rounded-xl">
                   <div className="flex items-center gap-2 mb-1">
