@@ -77,7 +77,7 @@ const ParentWallet = () => {
     setWithdrawAmt("");
     setSelectedMethod("");
   };
-
+  const handleExport = () => {
     toast.success("Đang xuất lịch sử giao dịch...");
     setTimeout(() => {
       const content = [
