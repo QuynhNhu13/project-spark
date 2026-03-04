@@ -170,6 +170,7 @@ const App = () => (
                   <Route path="chat" element={<ParentChat />} />
                   <Route path="children" element={<ParentChildren />} />
                   <Route path="reports" element={<ParentReports />} />
+                  <Route path="reviews" element={<ParentReviews />} />
                   <Route path="wallet" element={<ParentWallet />} />
                   <Route path="support" element={<ParentSupport />} />
                 </Route>
