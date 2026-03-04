@@ -67,80 +67,105 @@ const OfficeReports = () => {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground">Báo cáo tuần này</h2>
-        <Button variant="outline" className="rounded-xl" onClick={exportReport}><Download className="w-4 h-4 mr-1" /> Xuất báo cáo</Button>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Báo cáo tuần này</h1>
+          <p className="text-sm text-muted-foreground">Tổng hợp hoạt động văn phòng</p>
+        </div>
+        <Button variant="outline" className="rounded-2xl" onClick={exportReport}>
+          <Download className="w-4 h-4 mr-1" /> Xuất báo cáo
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map(k => (
-          <Card key={k.label} className="border-border"><CardContent className="p-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-muted"><k.icon className="w-5 h-5 text-foreground" /></div>
-            <p className="text-2xl font-bold text-foreground">{k.value}</p>
-            <p className="text-xs text-muted-foreground mt-1">{k.label}</p>
-          </CardContent></Card>
+          <Card key={k.label} className="rounded-2xl shadow-soft border-border">
+            <CardContent className="p-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-muted">
+                <k.icon className="w-5 h-5 text-foreground" />
+              </div>
+              <p className="text-2xl font-bold text-foreground">{k.value}</p>
+              <p className="text-xs text-muted-foreground mt-1">{k.label}</p>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-border">
-          <CardHeader className="pb-2"><CardTitle className="text-base">Buổi học & Sự cố theo ngày</CardTitle></CardHeader>
+        <Card className="rounded-2xl shadow-soft border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">Buổi học & Sự cố theo ngày</CardTitle>
+          </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={dailyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="day" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
                 <YAxis tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
-                <Tooltip />
-                <Bar dataKey="sessions" name="Buổi học" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="issues" name="Sự cố" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+                <Tooltip contentStyle={{ borderRadius: "1rem", border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", color: "hsl(var(--foreground))" }} />
+                <Bar dataKey="sessions" name="Buổi học" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="issues" name="Sự cố" fill="hsl(var(--destructive))" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
-        <Card className="border-border">
-          <CardHeader className="pb-2"><CardTitle className="text-base">Phân bổ lớp theo môn</CardTitle></CardHeader>
+        <Card className="rounded-2xl shadow-soft border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">Phân bổ lớp theo môn</CardTitle>
+          </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
                 <Pie data={classDistribution} cx="50%" cy="50%" outerRadius={100} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                   {classDistribution.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
-                <Tooltip />
+                <Tooltip contentStyle={{ borderRadius: "1rem", border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", color: "hsl(var(--foreground))" }} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="border-border">
+      <Card className="rounded-2xl shadow-soft border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Thống kê qua các tuần</CardTitle>
+          <CardTitle className="text-base font-semibold">Thống kê qua các tuần</CardTitle>
           <p className="text-xs text-muted-foreground">So sánh các chỉ số qua các tuần</p>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader><TableRow>
-              <TableHead>Tuần</TableHead><TableHead className="text-center">Đăng ký mới</TableHead><TableHead className="text-center">Lớp tạo mới</TableHead><TableHead className="text-center">Yêu cầu xử lý</TableHead><TableHead className="text-center">Tỷ lệ hài lòng</TableHead>
-            </TableRow></TableHeader>
-            <TableBody>
-              {weeklyData.map(w => (
-                <TableRow key={w.week}>
-                  <TableCell className="font-medium">{w.week}</TableCell>
-                  <TableCell className="text-center">{w.registrations}</TableCell>
-                  <TableCell className="text-center">{w.classes}</TableCell>
-                  <TableCell className="text-center">{w.requests}</TableCell>
-                  <TableCell className="text-center"><Badge variant={w.satisfaction >= 95 ? "default" : "secondary"} className="text-xs">{w.satisfaction}%</Badge></TableCell>
+          <div className="rounded-xl overflow-hidden border border-border">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead>Tuần</TableHead>
+                  <TableHead className="text-center">Đăng ký mới</TableHead>
+                  <TableHead className="text-center">Lớp tạo mới</TableHead>
+                  <TableHead className="text-center">Yêu cầu xử lý</TableHead>
+                  <TableHead className="text-center">Tỷ lệ hài lòng</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {weeklyData.map(w => (
+                  <TableRow key={w.week}>
+                    <TableCell className="font-medium">{w.week}</TableCell>
+                    <TableCell className="text-center">{w.registrations}</TableCell>
+                    <TableCell className="text-center">{w.classes}</TableCell>
+                    <TableCell className="text-center">{w.requests}</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant={w.satisfaction >= 95 ? "default" : "secondary"} className="text-xs rounded-full">
+                        {w.satisfaction}%
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-border">
+        <Card className="rounded-2xl shadow-soft border-border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Chỉ số KPI</CardTitle>
+            <CardTitle className="text-base font-semibold">Chỉ số KPI</CardTitle>
             <p className="text-xs text-muted-foreground">Hiệu suất so với mục tiêu</p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -156,9 +181,9 @@ const OfficeReports = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-border">
+        <Card className="rounded-2xl shadow-soft border-border">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Báo cáo nhanh</CardTitle>
+            <CardTitle className="text-base font-semibold">Báo cáo nhanh</CardTitle>
             <p className="text-xs text-muted-foreground">Tải xuống các báo cáo thường dùng</p>
           </CardHeader>
           <CardContent className="space-y-2">

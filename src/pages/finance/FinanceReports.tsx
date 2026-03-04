@@ -41,6 +41,13 @@ const topTutors = [
 const COLORS_REV = ["hsl(var(--primary))", "hsl(var(--ring))", "hsl(var(--muted-foreground))", "hsl(var(--foreground))"];
 const COLORS_EXP = ["hsl(var(--destructive))", "hsl(var(--ring))", "hsl(var(--primary))", "hsl(var(--muted-foreground))", "hsl(var(--foreground))"];
 
+const tooltipStyle = {
+  borderRadius: "1rem",
+  border: "1px solid hsl(var(--border))",
+  background: "hsl(var(--card))",
+  color: "hsl(var(--foreground))",
+};
+
 const FinanceReports = () => {
   const { toast } = useToast();
   const totalRevenue = monthlyData[monthlyData.length - 1].revenue;
@@ -54,73 +61,90 @@ const FinanceReports = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Báo cáo tài chính</h2>
+          <h1 className="text-2xl font-bold text-foreground">Báo cáo tài chính</h1>
           <p className="text-sm text-muted-foreground">Dữ liệu cập nhật đến tháng 3/2026</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="rounded-xl text-sm" onClick={() => exportReport("báo cáo PDF")}>
+          <Button variant="outline" className="rounded-2xl text-sm" onClick={() => exportReport("báo cáo PDF")}>
             <Download className="w-4 h-4 mr-1" /> PDF
           </Button>
-          <Button variant="outline" className="rounded-xl text-sm" onClick={() => exportReport("báo cáo Excel")}>
+          <Button variant="outline" className="rounded-2xl text-sm" onClick={() => exportReport("báo cáo Excel")}>
             <Download className="w-4 h-4 mr-1" /> Excel
           </Button>
         </div>
       </div>
 
-      {/* KPI Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-border"><CardContent className="p-4">
-          <div className="flex items-center gap-2 mb-2"><DollarSign className="w-4 h-4 text-foreground" /><span className="text-xs text-muted-foreground">Doanh thu T3</span></div>
-          <p className="text-xl font-bold text-primary">{totalRevenue.toLocaleString("vi-VN")}đ</p>
-          <p className="text-xs text-primary flex items-center gap-1 mt-1"><ArrowUpRight className="w-3 h-3" /> +10.5% so với T2</p>
-        </CardContent></Card>
-        <Card className="border-border"><CardContent className="p-4">
-          <div className="flex items-center gap-2 mb-2"><TrendingDown className="w-4 h-4 text-foreground" /><span className="text-xs text-muted-foreground">Chi phí T3</span></div>
-          <p className="text-xl font-bold text-destructive">{totalExpense.toLocaleString("vi-VN")}đ</p>
-          <p className="text-xs text-destructive flex items-center gap-1 mt-1"><ArrowUpRight className="w-3 h-3" /> +6.9% so với T2</p>
-        </CardContent></Card>
-        <Card className="border-border"><CardContent className="p-4">
-          <div className="flex items-center gap-2 mb-2"><TrendingUp className="w-4 h-4 text-foreground" /><span className="text-xs text-muted-foreground">Lợi nhuận T3</span></div>
-          <p className="text-xl font-bold text-foreground">{totalProfit.toLocaleString("vi-VN")}đ</p>
-          <p className="text-xs text-primary flex items-center gap-1 mt-1"><ArrowUpRight className="w-3 h-3" /> +22.2% so với T2</p>
-        </CardContent></Card>
-        <Card className="border-border"><CardContent className="p-4">
-          <div className="flex items-center gap-2 mb-2"><Trophy className="w-4 h-4 text-foreground" /><span className="text-xs text-muted-foreground">Biên lợi nhuận</span></div>
-          <p className="text-xl font-bold text-foreground">{profitMargin}%</p>
-          <p className="text-xs text-muted-foreground mt-1">Tỷ suất lợi nhuận</p>
-        </CardContent></Card>
+        <Card className="rounded-2xl shadow-soft border-border">
+          <CardContent className="p-4">
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-3">
+              <DollarSign className="w-5 h-5 text-foreground" />
+            </div>
+            <p className="text-xl font-bold text-primary">{totalRevenue.toLocaleString("vi-VN")}đ</p>
+            <p className="text-xs text-muted-foreground mt-1">Doanh thu T3</p>
+            <p className="text-xs text-primary flex items-center gap-1 mt-1"><ArrowUpRight className="w-3 h-3" /> +10.5% so với T2</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-soft border-border">
+          <CardContent className="p-4">
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-3">
+              <TrendingDown className="w-5 h-5 text-foreground" />
+            </div>
+            <p className="text-xl font-bold text-destructive">{totalExpense.toLocaleString("vi-VN")}đ</p>
+            <p className="text-xs text-muted-foreground mt-1">Chi phí T3</p>
+            <p className="text-xs text-destructive flex items-center gap-1 mt-1"><ArrowUpRight className="w-3 h-3" /> +6.9% so với T2</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-soft border-border">
+          <CardContent className="p-4">
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-3">
+              <TrendingUp className="w-5 h-5 text-foreground" />
+            </div>
+            <p className="text-xl font-bold text-foreground">{totalProfit.toLocaleString("vi-VN")}đ</p>
+            <p className="text-xs text-muted-foreground mt-1">Lợi nhuận T3</p>
+            <p className="text-xs text-primary flex items-center gap-1 mt-1"><ArrowUpRight className="w-3 h-3" /> +22.2% so với T2</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl shadow-soft border-border">
+          <CardContent className="p-4">
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-3">
+              <Trophy className="w-5 h-5 text-foreground" />
+            </div>
+            <p className="text-xl font-bold text-foreground">{profitMargin}%</p>
+            <p className="text-xs text-muted-foreground mt-1">Biên lợi nhuận</p>
+            <p className="text-xs text-muted-foreground mt-1">Tỷ suất lợi nhuận</p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Revenue/Expense/Profit Chart */}
-      <Card className="border-border">
-        <CardHeader className="pb-2"><CardTitle className="text-base">Doanh thu, Chi phí & Lợi nhuận 6 tháng</CardTitle></CardHeader>
+      <Card className="rounded-2xl shadow-soft border-border">
+        <CardHeader className="pb-2"><CardTitle className="text-base font-semibold">Doanh thu, Chi phí & Lợi nhuận 6 tháng</CardTitle></CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={320}>
             <BarChart data={monthlyData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="month" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
               <YAxis tickFormatter={v => `${(v / 1000000).toFixed(0)}M`} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
-              <Tooltip formatter={(v: number) => `${v.toLocaleString("vi-VN")}đ`} />
+              <Tooltip formatter={(v: number) => `${v.toLocaleString("vi-VN")}đ`} contentStyle={tooltipStyle} />
               <Legend />
-              <Bar dataKey="revenue" name="Doanh thu" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="expense" name="Chi phí" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="profit" name="Lợi nhuận" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="revenue" name="Doanh thu" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="expense" name="Chi phí" fill="hsl(var(--destructive))" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="profit" name="Lợi nhuận" fill="hsl(var(--muted-foreground))" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
-      {/* Revenue & Expense Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="border-border">
-          <CardHeader className="pb-2"><CardTitle className="text-base">Cơ cấu nguồn thu</CardTitle></CardHeader>
+        <Card className="rounded-2xl shadow-soft border-border">
+          <CardHeader className="pb-2"><CardTitle className="text-base font-semibold">Cơ cấu nguồn thu</CardTitle></CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie data={revenueBreakdown} cx="50%" cy="50%" innerRadius={50} outerRadius={90} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                   {revenueBreakdown.map((_, i) => <Cell key={i} fill={COLORS_REV[i % COLORS_REV.length]} />)}
                 </Pie>
-                <Tooltip />
+                <Tooltip contentStyle={tooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
             <div className="mt-3 space-y-2">
@@ -137,15 +161,15 @@ const FinanceReports = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-border">
-          <CardHeader className="pb-2"><CardTitle className="text-base">Cơ cấu chi phí</CardTitle></CardHeader>
+        <Card className="rounded-2xl shadow-soft border-border">
+          <CardHeader className="pb-2"><CardTitle className="text-base font-semibold">Cơ cấu chi phí</CardTitle></CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie data={expenseBreakdown} cx="50%" cy="50%" innerRadius={50} outerRadius={90} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                   {expenseBreakdown.map((_, i) => <Cell key={i} fill={COLORS_EXP[i % COLORS_EXP.length]} />)}
                 </Pie>
-                <Tooltip />
+                <Tooltip contentStyle={tooltipStyle} />
               </PieChart>
             </ResponsiveContainer>
             <div className="mt-3 space-y-2">
@@ -163,9 +187,8 @@ const FinanceReports = () => {
         </Card>
       </div>
 
-      {/* Profit Trend */}
-      <Card className="border-border">
-        <CardHeader className="pb-2"><CardTitle className="text-base">Xu hướng lợi nhuận</CardTitle></CardHeader>
+      <Card className="rounded-2xl shadow-soft border-border">
+        <CardHeader className="pb-2"><CardTitle className="text-base font-semibold">Xu hướng lợi nhuận</CardTitle></CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={monthlyData}>
@@ -178,19 +201,18 @@ const FinanceReports = () => {
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis dataKey="month" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
               <YAxis tickFormatter={v => `${(v / 1000000).toFixed(0)}M`} tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
-              <Tooltip formatter={(v: number) => `${v.toLocaleString("vi-VN")}đ`} />
+              <Tooltip formatter={(v: number) => `${v.toLocaleString("vi-VN")}đ`} contentStyle={tooltipStyle} />
               <Area type="monotone" dataKey="profit" stroke="hsl(var(--primary))" fill="url(#profitGrad)" strokeWidth={2} name="Lợi nhuận" />
             </AreaChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
 
-      {/* Top Tutors */}
-      <Card className="border-border">
+      <Card className="rounded-2xl shadow-soft border-border">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2"><Trophy className="w-4 h-4" /> Top gia sư & giáo viên có doanh thu cao</CardTitle>
-            <Button variant="outline" size="sm" className="rounded-xl text-xs" onClick={() => exportReport("bảng xếp hạng")}>
+            <CardTitle className="text-base font-semibold flex items-center gap-2"><Trophy className="w-4 h-4" /> Top gia sư & giáo viên có doanh thu cao</CardTitle>
+            <Button variant="outline" size="sm" className="rounded-2xl text-xs" onClick={() => exportReport("bảng xếp hạng")}>
               <Download className="w-3.5 h-3.5 mr-1" /> Xuất
             </Button>
           </div>
