@@ -75,6 +75,7 @@ import OfficeAISchedule from "./pages/office/OfficeAISchedule";
 import OfficeRegistrations from "./pages/office/OfficeRegistrations";
 import OfficeAppointments from "./pages/office/OfficeAppointments";
 import OfficeReports from "./pages/office/OfficeReports";
+import OfficeReviews from "./pages/office/OfficeReviews";
 import FinanceLayout from "./components/finance/FinanceLayout";
 import FinanceDashboard from "./pages/finance/FinanceDashboard";
 import FinanceTransactions from "./pages/finance/FinanceTransactions";
