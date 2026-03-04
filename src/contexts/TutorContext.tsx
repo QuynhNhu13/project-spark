@@ -581,6 +581,7 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(seedChat);
   const [studentProgress] = useState<StudentProgress[]>(seedStudentProgress);
   const [reviews] = useState<TutorReview[]>(seedReviews);
+  const [refundRequests, setRefundRequests] = useState<RefundRequest[]>([]);
   const [testResults, setTestResults] = useState<TestResult[]>(seedTestResults);
 
   const walletBalance = wallet
