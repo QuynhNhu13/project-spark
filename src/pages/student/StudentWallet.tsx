@@ -346,6 +346,42 @@ const StudentWallet = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Withdraw Dialog */}
+      <Dialog open={showWithdraw} onOpenChange={setShowWithdraw}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Rút tiền từ ví</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">Số dư khả dụng: <strong className="text-foreground">{walletBalance.toLocaleString("vi-VN")}đ</strong></p>
+            <div>
+              <label className="text-xs font-medium text-foreground">Số tiền</label>
+              <Input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="mt-1 rounded-xl" placeholder="Nhập số tiền" />
+              <div className="flex gap-2 mt-2">
+                {[100000, 200000, 500000, 1000000].map(v => (
+                  <button key={v} onClick={() => setAmount(String(v))} className="px-2 py-1 bg-muted text-muted-foreground rounded-lg text-xs hover:bg-primary/10 hover:text-primary transition-colors">{(v / 1000).toFixed(0)}k</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-foreground">Phương thức nhận tiền</label>
+              <div className="space-y-2 mt-2">
+                {paymentMethods.map(m => (
+                  <button key={m.id} onClick={() => setSelectedMethod(m.id)} className={cn("w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all", selectedMethod === m.id ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50")}>
+                    <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center"><CreditCard className="w-4 h-4 text-muted-foreground" /></div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{m.name}</p>
+                      <p className="text-xs text-muted-foreground">{m.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Button onClick={handleWithdraw} disabled={!amount || parseInt(amount) <= 0 || !selectedMethod || parseInt(amount) > walletBalance} className="w-full rounded-xl">
+              Xác nhận rút tiền
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

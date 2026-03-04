@@ -105,6 +105,7 @@ const ParentWallet = () => {
 
       <div className="flex items-center gap-2">
         <Button onClick={() => setShowDeposit(true)} size="sm" className="rounded-xl gap-1"><Plus className="w-3.5 h-3.5" /> Nạp tiền</Button>
+        <Button onClick={() => setShowWithdraw(true)} variant="outline" size="sm" className="rounded-xl gap-1"><ArrowUpRight className="w-3.5 h-3.5" /> Rút tiền</Button>
         <Button variant="outline" size="sm" className="rounded-xl gap-1" onClick={handleExport}><Download className="w-3.5 h-3.5" /> Xuất file</Button>
       </div>
 
