@@ -178,7 +178,7 @@ export interface StudentChatMessage {
 
 export interface WalletTransaction {
   id: string;
-  type: "deposit" | "tuition_payment" | "mock_exam_purchase" | "refund";
+  type: "deposit" | "tuition_payment" | "mock_exam_purchase" | "refund" | "withdrawal";
   amount: number;
   description: string;
   date: string;
@@ -398,6 +398,7 @@ interface StudentContextType {
   purchaseMockExam: (examId: string) => void;
   depositToWallet: (amount: number, method: string) => void;
   payTuition: (classId: string, amount: number, description: string) => void;
+  withdrawFromWallet: (amount: number, method: string) => void;
 }
 
 const StudentContext = createContext<StudentContextType | undefined>(undefined);
@@ -529,6 +530,11 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
     setWalletTxns(prev => [...prev, { id: `wt${Date.now()}`, type: "tuition_payment", amount: -amount, description, date: new Date().toISOString().split("T")[0], status: "completed", relatedId: classId }]);
   }, []);
 
+  const withdrawFromWallet = useCallback((amount: number, method: string) => {
+    setWalletTxns(prev => [...prev, { id: `wt${Date.now()}`, type: "withdrawal", amount: -amount, description: `Rút tiền từ ví`, date: new Date().toISOString().split("T")[0], status: "completed", paymentMethod: method }]);
+    setNotifications(prev => [{ id: `sn${Date.now()}`, type: "success", title: "Rút tiền thành công", message: `Đã rút ${amount.toLocaleString("vi-VN")}đ qua ${method}.`, timestamp: new Date().toLocaleString("vi-VN"), read: false }, ...prev]);
+  }, []);
+
   return (
     <StudentContext.Provider value={{
       profile, classes, tutorListings, availability, tests, mockExams: mockExamsState,
@@ -536,7 +542,7 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
       notifications, chatMessages: chatMsgs, walletBalance, walletTransactions: walletTxns,
       bookTutor, requestTrial, updateAvailability, submitTest, submitMockExam, rateSession,
       markNotificationRead, markAllNotificationsRead, sendChatMessage, markChatRead, purchaseMockExam,
-      depositToWallet, payTuition,
+      depositToWallet, payTuition, withdrawFromWallet,
     }}>
       {children}
     </StudentContext.Provider>

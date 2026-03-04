@@ -15,6 +15,7 @@ const typeLabels: Record<string, string> = {
   tuition_payment: "Học phí",
   mock_exam_purchase: "Mua đề thi",
   refund: "Hoàn tiền",
+  withdrawal: "Rút tiền",
 };
 
 const paymentMethods = [
@@ -32,9 +33,10 @@ const CHART_COLORS = [
 ];
 
 const StudentWallet = () => {
-  const { walletBalance, walletTransactions, depositToWallet, payTuition, classes } = useStudent();
+  const { walletBalance, walletTransactions, depositToWallet, payTuition, classes, withdrawFromWallet } = useStudent();
   const [showDeposit, setShowDeposit] = useState(false);
   const [showPayTuition, setShowPayTuition] = useState(false);
+  const [showWithdraw, setShowWithdraw] = useState(false);
   const [amount, setAmount] = useState("");
   const [selectedMethod, setSelectedMethod] = useState("");
   const [search, setSearch] = useState("");
@@ -85,6 +87,21 @@ const StudentWallet = () => {
     setSelectedMethod("");
   };
 
+  const handleWithdraw = () => {
+    const amt = parseInt(amount);
+    if (!amt || amt <= 0 || !selectedMethod) return;
+    if (amt > walletBalance) {
+      toast.error("Số tiền vượt quá số dư ví!");
+      return;
+    }
+    const method = paymentMethods.find(m => m.id === selectedMethod)?.name || selectedMethod;
+    withdrawFromWallet(amt, method);
+    toast.success(`Đã rút ${amt.toLocaleString("vi-VN")}đ qua ${method}`);
+    setShowWithdraw(false);
+    setAmount("");
+    setSelectedMethod("");
+  };
+
   const handlePayTuitionItem = (cls: typeof classes[0]) => {
     if (walletBalance < cls.fee) {
       toast.error("Số dư ví không đủ. Vui lòng nạp thêm tiền.");
@@ -129,6 +146,9 @@ const StudentWallet = () => {
           <div className="flex gap-2 mt-3">
             <Button onClick={() => setShowDeposit(true)} className="flex-1 rounded-xl gap-1" size="sm">
               <Plus className="w-3.5 h-3.5" /> Nạp tiền
+            </Button>
+            <Button onClick={() => setShowWithdraw(true)} variant="outline" className="flex-1 rounded-xl gap-1" size="sm">
+              <ArrowUpRight className="w-3.5 h-3.5" /> Rút tiền
             </Button>
             <Button onClick={() => setShowPayTuition(true)} variant="outline" className="flex-1 rounded-xl gap-1" size="sm">
               <Receipt className="w-3.5 h-3.5" /> Thanh toán
@@ -228,7 +248,7 @@ const StudentWallet = () => {
             <Input placeholder="Tìm giao dịch..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 rounded-xl" />
           </div>
           <div className="flex gap-1 flex-wrap">
-            {[{ label: "Tất cả", value: "all" }, { label: "Nạp tiền", value: "deposit" }, { label: "Học phí", value: "tuition_payment" }, { label: "Đề thi", value: "mock_exam_purchase" }, { label: "Hoàn tiền", value: "refund" }].map(f => (
+            {[{ label: "Tất cả", value: "all" }, { label: "Nạp tiền", value: "deposit" }, { label: "Rút tiền", value: "withdrawal" }, { label: "Học phí", value: "tuition_payment" }, { label: "Đề thi", value: "mock_exam_purchase" }, { label: "Hoàn tiền", value: "refund" }].map(f => (
               <button key={f.value} onClick={() => setTypeFilter(f.value)} className={cn("px-3 py-1 rounded-lg text-xs font-medium transition-colors", typeFilter === f.value ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground")}>{f.label}</button>
             ))}
           </div>
@@ -323,6 +343,42 @@ const StudentWallet = () => {
                 </div>
               ))
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Withdraw Dialog */}
+      <Dialog open={showWithdraw} onOpenChange={setShowWithdraw}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Rút tiền từ ví</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">Số dư khả dụng: <strong className="text-foreground">{walletBalance.toLocaleString("vi-VN")}đ</strong></p>
+            <div>
+              <label className="text-xs font-medium text-foreground">Số tiền</label>
+              <Input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="mt-1 rounded-xl" placeholder="Nhập số tiền" />
+              <div className="flex gap-2 mt-2">
+                {[100000, 200000, 500000, 1000000].map(v => (
+                  <button key={v} onClick={() => setAmount(String(v))} className="px-2 py-1 bg-muted text-muted-foreground rounded-lg text-xs hover:bg-primary/10 hover:text-primary transition-colors">{(v / 1000).toFixed(0)}k</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-foreground">Phương thức nhận tiền</label>
+              <div className="space-y-2 mt-2">
+                {paymentMethods.map(m => (
+                  <button key={m.id} onClick={() => setSelectedMethod(m.id)} className={cn("w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all", selectedMethod === m.id ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50")}>
+                    <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center"><CreditCard className="w-4 h-4 text-muted-foreground" /></div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{m.name}</p>
+                      <p className="text-xs text-muted-foreground">{m.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Button onClick={handleWithdraw} disabled={!amount || parseInt(amount) <= 0 || !selectedMethod || parseInt(amount) > walletBalance} className="w-full rounded-xl">
+              Xác nhận rút tiền
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

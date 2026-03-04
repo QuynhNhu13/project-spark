@@ -8,6 +8,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
+const typeLabels: Record<string, string> = {
+  deposit: "Nạp tiền",
+  tuition_payment: "Học phí",
+  refund: "Hoàn tiền",
+  withdrawal: "Rút tiền",
+};
+
 const paymentMethods = [
   { id: "momo", name: "MoMo", desc: "Ví điện tử MoMo" },
   { id: "vnpay", name: "VNPay", desc: "Cổng thanh toán VNPay" },
@@ -16,10 +23,12 @@ const paymentMethods = [
 ];
 
 const ParentWallet = () => {
-  const { children, transactions, walletBalance, payChildTuition, depositWallet } = useParent();
+  const { children, transactions, walletBalance, payChildTuition, depositWallet, withdrawWallet } = useParent();
   const [tab, setTab] = useState<"pending" | "history">("pending");
   const [showDeposit, setShowDeposit] = useState(false);
+  const [showWithdraw, setShowWithdraw] = useState(false);
   const [depositAmt, setDepositAmt] = useState("");
+  const [withdrawAmt, setWithdrawAmt] = useState("");
   const [selectedMethod, setSelectedMethod] = useState("");
   const [search, setSearch] = useState("");
 
@@ -54,6 +63,20 @@ const ParentWallet = () => {
     setSelectedMethod("");
   };
 
+  const handleWithdraw = () => {
+    const amt = parseInt(withdrawAmt);
+    if (!amt || amt <= 0 || !selectedMethod) return;
+    if (amt > walletBalance) {
+      toast.error("Số tiền vượt quá số dư ví!");
+      return;
+    }
+    const method = paymentMethods.find(m => m.id === selectedMethod)?.name || selectedMethod;
+    withdrawWallet(amt, method);
+    toast.success(`Đã rút ${amt.toLocaleString("vi-VN")}đ qua ${method}`);
+    setShowWithdraw(false);
+    setWithdrawAmt("");
+    setSelectedMethod("");
+  };
   const handleExport = () => {
     toast.success("Đang xuất lịch sử giao dịch...");
     setTimeout(() => {
@@ -96,6 +119,7 @@ const ParentWallet = () => {
 
       <div className="flex items-center gap-2">
         <Button onClick={() => setShowDeposit(true)} size="sm" className="rounded-xl gap-1"><Plus className="w-3.5 h-3.5" /> Nạp tiền</Button>
+        <Button onClick={() => setShowWithdraw(true)} variant="outline" size="sm" className="rounded-xl gap-1"><ArrowUpRight className="w-3.5 h-3.5" /> Rút tiền</Button>
         <Button variant="outline" size="sm" className="rounded-xl gap-1" onClick={handleExport}><Download className="w-3.5 h-3.5" /> Xuất file</Button>
       </div>
 
@@ -195,6 +219,42 @@ const ParentWallet = () => {
               </div>
             </div>
             <Button onClick={handleDeposit} disabled={!depositAmt || parseInt(depositAmt) <= 0 || !selectedMethod} className="w-full rounded-xl">Xác nhận nạp tiền</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Withdraw Dialog */}
+      <Dialog open={showWithdraw} onOpenChange={setShowWithdraw}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Rút tiền từ ví</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">Số dư khả dụng: <strong className="text-foreground">{walletBalance.toLocaleString("vi-VN")}đ</strong></p>
+            <div>
+              <label className="text-xs font-medium text-foreground">Số tiền</label>
+              <Input type="number" value={withdrawAmt} onChange={e => setWithdrawAmt(e.target.value)} placeholder="Nhập số tiền" className="mt-1 rounded-xl" />
+              <div className="flex gap-2 mt-2">
+                {[500000, 1000000, 2000000, 5000000].map(v => (
+                  <button key={v} onClick={() => setWithdrawAmt(String(v))} className="px-2 py-1 bg-muted text-muted-foreground rounded-lg text-xs hover:bg-primary/10 hover:text-primary transition-colors">{(v / 1000000).toFixed(1)}tr</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-foreground">Phương thức nhận tiền</label>
+              <div className="space-y-2 mt-2">
+                {paymentMethods.map(m => (
+                  <button key={m.id} onClick={() => setSelectedMethod(m.id)}
+                    className={cn("w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all",
+                      selectedMethod === m.id ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/50")}>
+                    <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center"><CreditCard className="w-4 h-4 text-muted-foreground" /></div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{m.name}</p>
+                      <p className="text-xs text-muted-foreground">{m.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Button onClick={handleWithdraw} disabled={!withdrawAmt || parseInt(withdrawAmt) <= 0 || !selectedMethod || parseInt(withdrawAmt) > walletBalance} className="w-full rounded-xl">Xác nhận rút tiền</Button>
           </div>
         </DialogContent>
       </Dialog>

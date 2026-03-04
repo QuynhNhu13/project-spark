@@ -76,7 +76,7 @@ export interface ParentChatMessage {
 
 export interface ParentTransaction {
   id: string;
-  type: "deposit" | "tuition_payment" | "refund";
+  type: "deposit" | "tuition_payment" | "refund" | "withdrawal";
   amount: number;
   description: string;
   date: string;
@@ -279,6 +279,7 @@ interface ParentContextType {
   markChatRead: (contactId: string) => void;
   payChildTuition: (classId: string, childId: string, amount: number, description: string) => void;
   depositWallet: (amount: number) => void;
+  withdrawWallet: (amount: number, method: string) => void;
   confirmAttendance: (childId: string, confirmId: string, confirmed: boolean) => void;
 }
 
@@ -332,6 +333,10 @@ export const ParentProvider = ({ children: kids }: { children: ReactNode }) => {
     setTxns(prev => [...prev, { id: `pt${Date.now()}`, type: "deposit" as const, amount, description: "Nạp tiền vào ví", date: new Date().toISOString().split("T")[0], status: "completed" as const }]);
   }, []);
 
+  const withdrawWallet = useCallback((amount: number, method: string) => {
+    setTxns(prev => [...prev, { id: `pt${Date.now()}`, type: "withdrawal" as const, amount: -amount, description: `Rút tiền từ ví qua ${method}`, date: new Date().toISOString().split("T")[0], status: "completed" as const }]);
+  }, []);
+
   const confirmAttendance = useCallback((childId: string, confirmId: string, confirmed: boolean) => {
     setChildren(prev => prev.map(c => c.id === childId ? {
       ...c,
@@ -345,7 +350,7 @@ export const ParentProvider = ({ children: kids }: { children: ReactNode }) => {
       transactions: txns, walletBalance, childProgress,
       childSchedules: seedChildSchedules, childTests: seedChildTests, childSubjectScores: seedChildSubjectScores,
       markNotificationRead, markAllNotificationsRead, sendChatMessage, markChatRead,
-      payChildTuition, depositWallet, confirmAttendance,
+      payChildTuition, depositWallet, withdrawWallet, confirmAttendance,
     }}>
       {kids}
     </ParentContext.Provider>
