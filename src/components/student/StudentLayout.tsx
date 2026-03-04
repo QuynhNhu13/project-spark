@@ -39,6 +39,7 @@ const navGroups = [
   {
     items: [
       { to: "/student/wallet", icon: Wallet, label: "Ví học phí" },
+      { to: "/student/reviews", icon: Star, label: "Đánh giá" },
       { to: "/student/chat", icon: MessageSquare, label: "Tin nhắn" },
     ],
   },
