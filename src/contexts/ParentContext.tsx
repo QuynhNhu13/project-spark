@@ -333,6 +333,10 @@ export const ParentProvider = ({ children: kids }: { children: ReactNode }) => {
     setTxns(prev => [...prev, { id: `pt${Date.now()}`, type: "deposit" as const, amount, description: "Nạp tiền vào ví", date: new Date().toISOString().split("T")[0], status: "completed" as const }]);
   }, []);
 
+  const withdrawWallet = useCallback((amount: number, method: string) => {
+    setTxns(prev => [...prev, { id: `pt${Date.now()}`, type: "withdrawal" as const, amount: -amount, description: `Rút tiền từ ví qua ${method}`, date: new Date().toISOString().split("T")[0], status: "completed" as const }]);
+  }, []);
+
   const confirmAttendance = useCallback((childId: string, confirmId: string, confirmed: boolean) => {
     setChildren(prev => prev.map(c => c.id === childId ? {
       ...c,
