@@ -182,6 +182,7 @@ const App = () => (
                   <Route path="classes" element={<OfficeClasses />} />
                   <Route path="appointments" element={<OfficeAppointments />} />
                   <Route path="ai-schedule" element={<OfficeAISchedule />} />
+                  <Route path="reviews" element={<OfficeReviews />} />
                   <Route path="reports" element={<OfficeReports />} />
                 </Route>
                 <Route path="/finance" element={<FinanceLayout />}>
