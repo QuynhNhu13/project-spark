@@ -746,7 +746,7 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
   return (
     <TutorContext.Provider value={{
       profile, classes, trials, wallet, chatMessages, studentProgress, reviews,
-      testQuestions: seedTestQuestions,
+      refundRequests, testQuestions: seedTestQuestions,
       testResults, walletBalance, escrowBalance,
       updateProfile, confirmTrial, rejectTrial,
       startSession, endSession, confirmSessionByParent, requestAbsence,
