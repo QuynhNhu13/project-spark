@@ -63,7 +63,21 @@ const ParentWallet = () => {
     setSelectedMethod("");
   };
 
-  const handleExport = () => {
+  const handleWithdraw = () => {
+    const amt = parseInt(withdrawAmt);
+    if (!amt || amt <= 0 || !selectedMethod) return;
+    if (amt > walletBalance) {
+      toast.error("Số tiền vượt quá số dư ví!");
+      return;
+    }
+    const method = paymentMethods.find(m => m.id === selectedMethod)?.name || selectedMethod;
+    withdrawWallet(amt, method);
+    toast.success(`Đã rút ${amt.toLocaleString("vi-VN")}đ qua ${method}`);
+    setShowWithdraw(false);
+    setWithdrawAmt("");
+    setSelectedMethod("");
+  };
+
     toast.success("Đang xuất lịch sử giao dịch...");
     setTimeout(() => {
       const content = [
