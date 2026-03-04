@@ -248,7 +248,7 @@ const StudentWallet = () => {
             <Input placeholder="Tìm giao dịch..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10 rounded-xl" />
           </div>
           <div className="flex gap-1 flex-wrap">
-            {[{ label: "Tất cả", value: "all" }, { label: "Nạp tiền", value: "deposit" }, { label: "Học phí", value: "tuition_payment" }, { label: "Đề thi", value: "mock_exam_purchase" }, { label: "Hoàn tiền", value: "refund" }].map(f => (
+            {[{ label: "Tất cả", value: "all" }, { label: "Nạp tiền", value: "deposit" }, { label: "Rút tiền", value: "withdrawal" }, { label: "Học phí", value: "tuition_payment" }, { label: "Đề thi", value: "mock_exam_purchase" }, { label: "Hoàn tiền", value: "refund" }].map(f => (
               <button key={f.value} onClick={() => setTypeFilter(f.value)} className={cn("px-3 py-1 rounded-lg text-xs font-medium transition-colors", typeFilter === f.value ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground")}>{f.label}</button>
             ))}
           </div>
