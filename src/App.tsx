@@ -65,6 +65,7 @@ import ParentReports from "./pages/parent/ParentReports";
 import ParentWallet from "./pages/parent/ParentWallet";
 import ParentFindTutor from "./pages/parent/ParentFindTutor";
 import ParentSupport from "./pages/parent/ParentSupport";
+import ParentReviews from "./pages/parent/ParentReviews";
 import OfficeLayout from "./components/office/OfficeLayout";
 import OfficeDashboard from "./pages/office/OfficeDashboard";
 import OfficeAttendance from "./pages/office/OfficeAttendance";
