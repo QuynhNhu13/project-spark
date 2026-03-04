@@ -178,7 +178,7 @@ export interface StudentChatMessage {
 
 export interface WalletTransaction {
   id: string;
-  type: "deposit" | "tuition_payment" | "mock_exam_purchase" | "refund";
+  type: "deposit" | "tuition_payment" | "mock_exam_purchase" | "refund" | "withdrawal";
   amount: number;
   description: string;
   date: string;
