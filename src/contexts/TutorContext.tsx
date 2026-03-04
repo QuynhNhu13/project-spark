@@ -182,6 +182,24 @@ export interface TutorReview {
   tags?: string[];
 }
 
+export interface RefundRequest {
+  id: string;
+  classId: string;
+  className: string;
+  tutorId: string;
+  tutorName: string;
+  amount: number;
+  maxAmount: number;
+  reason: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+  processedAt?: string;
+  processedBy?: string;
+  processNote?: string;
+  studentName: string;
+  subject: string;
+}
+
 export interface TestQuestion {
   id: string;
   subject: string;
@@ -534,7 +552,8 @@ interface TutorContextType {
   requestAbsence: (sessionId: string, classId: string, reason: string, requestedBy: "tutor" | "student") => void;
   sendMessage: (classId: string, message: string) => void;
   markMessagesRead: (classId: string) => void;
-  requestRefund: (classId: string) => void;
+  refundRequests: RefundRequest[];
+  requestRefund: (classId: string, reason: string, amount: number) => void;
   requestWithdrawal: (amount: number, method: string) => void;
   requestDeposit: (amount: number, method: string) => void;
   updateAvailability: (availability: TutorProfile["availability"]) => void;
@@ -562,6 +581,7 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(seedChat);
   const [studentProgress] = useState<StudentProgress[]>(seedStudentProgress);
   const [reviews] = useState<TutorReview[]>(seedReviews);
+  const [refundRequests, setRefundRequests] = useState<RefundRequest[]>([]);
   const [testResults, setTestResults] = useState<TestResult[]>(seedTestResults);
 
   const walletBalance = wallet
@@ -659,19 +679,31 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
     setChatMessages(prev => prev.map(m => m.classId === classId ? { ...m, read: true } : m));
   }, []);
 
-  const requestRefund = useCallback((classId: string) => {
-    setClasses(prev => prev.map(c =>
-      c.id === classId && (c.escrowStatus === "pending" || c.escrowStatus === "in_progress")
-        ? { ...c, escrowStatus: "refunded" as EscrowStatus }
-        : c
-    ));
+  const requestRefund = useCallback((classId: string, reason: string, amount: number) => {
+    const cls = classes.find(c => c.id === classId);
+    if (!cls) return;
+    const req: RefundRequest = {
+      id: genId("rf"),
+      classId,
+      className: cls.name,
+      tutorId: profile.id,
+      tutorName: profile.name,
+      amount,
+      maxAmount: cls.escrowAmount - cls.escrowReleased,
+      reason,
+      status: "pending",
+      createdAt: new Date().toLocaleString("vi-VN"),
+      studentName: cls.studentName,
+      subject: cls.subject,
+    };
+    setRefundRequests(prev => [...prev, req]);
     setWallet(prev => [...prev, {
       id: genId("w"), type: "refund", amount: 0,
       date: new Date().toISOString().slice(0, 10),
-      description: `Yêu cầu hoàn tiền lớp ${classId} - đang chờ Admin xử lý`,
+      description: `Yêu cầu hoàn tiền ${amount.toLocaleString("vi-VN")}đ - ${cls.name} - Chờ duyệt`,
       classId, status: "pending",
     }]);
-  }, []);
+  }, [classes, profile.id, profile.name]);
 
   const requestWithdrawal = useCallback((amount: number, method: string) => {
     setWallet(prev => [...prev, {
@@ -714,7 +746,7 @@ export const TutorProvider = ({ children }: { children: ReactNode }) => {
   return (
     <TutorContext.Provider value={{
       profile, classes, trials, wallet, chatMessages, studentProgress, reviews,
-      testQuestions: seedTestQuestions,
+      refundRequests, testQuestions: seedTestQuestions,
       testResults, walletBalance, escrowBalance,
       updateProfile, confirmTrial, rejectTrial,
       startSession, endSession, confirmSessionByParent, requestAbsence,

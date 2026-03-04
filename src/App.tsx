@@ -81,6 +81,7 @@ import FinanceDashboard from "./pages/finance/FinanceDashboard";
 import FinanceTransactions from "./pages/finance/FinanceTransactions";
 import FinancePayouts from "./pages/finance/FinancePayouts";
 import FinanceReports from "./pages/finance/FinanceReports";
+import FinanceRefunds from "./pages/finance/FinanceRefunds";
 import ExamManagerLayout from "./components/exam-manager/ExamManagerLayout";
 import ExamManagerDashboard from "./pages/exam-manager/ExamManagerDashboard";
 import ExamManagerExams from "./pages/exam-manager/ExamManagerExams";
@@ -189,6 +190,7 @@ const App = () => (
                   <Route index element={<FinanceDashboard />} />
                   <Route path="transactions" element={<FinanceTransactions />} />
                   <Route path="payouts" element={<FinancePayouts />} />
+                  <Route path="refunds" element={<FinanceRefunds />} />
                   <Route path="reports" element={<FinanceReports />} />
                 </Route>
                 <Route path="/exam-manager" element={<ExamManagerLayout />}>
