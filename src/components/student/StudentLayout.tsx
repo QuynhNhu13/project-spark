@@ -82,8 +82,8 @@ const StudentLayout = () => {
         <nav className="flex-1 px-2 py-4 overflow-y-auto">
           {navGroups.map((group, gi) => (
             <div key={gi} className={gi > 0 ? "mt-4" : ""}>
-              {!collapsed && group.label && (
-                <p className="text-[10px] font-semibold uppercase tracking-wider px-3 mb-2 opacity-50">{group.label}</p>
+              {!collapsed && gi === 0 && (
+                <p className="text-[10px] font-semibold uppercase tracking-wider px-3 mb-2 opacity-50">Menu</p>
               )}
               {collapsed && gi > 0 && <div className="border-t border-border my-2 mx-2" />}
               <div className="space-y-0.5">
