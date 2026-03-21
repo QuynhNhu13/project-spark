@@ -36,7 +36,7 @@ const HeroSection = () => {
       }} />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-6 items-center">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -53,14 +53,14 @@ const HeroSection = () => {
             </motion.span>
 
             <h1 className="text-hero md:text-hero-lg lg:text-[4.5rem] leading-[1.1] mb-6">
-              <span className="text-foreground">Kết nối</span>
+              <span className="text-deep-blue">Kết nối</span>
               <br />
               <span className="text-gradient">Gia sư chất lượng</span>
               <br />
-              <span className="text-foreground">với Học sinh</span>
+              <span className="text-deep-blue">với Học sinh</span>
             </h1>
 
-            <p className="text-foreground/70 text-body-lg mb-8 max-w-lg leading-relaxed">
+            <p className="text-muted-foreground text-body-lg mb-8 max-w-lg leading-relaxed">
               EduConnect giúp phụ huynh tìm gia sư phù hợp, đảm bảo chất lượng giảng dạy thông qua hệ thống kiểm tra năng lực và đánh giá AI.
             </p>
 
@@ -113,21 +113,22 @@ const HeroSection = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="relative"
+             className="relative lg:-mr-16 xl:-mr-24"
           >
-            <div className="rounded-3xl border border-primary/20 bg-card p-3 shadow-elevated">
+            <div className="relative rounded-[2rem] border border-primary/15 bg-card/70 shadow-elevated overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent z-10" />
               <img
                 src={heroBanner}
                 alt="Minh họa gia sư và học sinh học tiếng Anh trực tuyến"
-                className="w-full rounded-2xl object-cover"
+                className="w-full h-[430px] md:h-[540px] lg:h-[620px] rounded-[1.75rem] object-cover object-center scale-[1.08]"
               />
             </div>
 
-            <div className="absolute -bottom-6 left-6 right-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="absolute -bottom-7 left-4 right-4 md:left-8 md:right-8 grid grid-cols-1 sm:grid-cols-3 gap-3 z-20">
               {stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="bg-card/95 backdrop-blur rounded-2xl px-4 py-3 border border-border shadow-soft"
+                  className="bg-card/95 backdrop-blur rounded-2xl px-4 py-3 border border-primary/15 shadow-soft"
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <stat.icon className="w-4 h-4 text-primary" />
@@ -138,7 +139,7 @@ const HeroSection = () => {
               ))}
             </div>
 
-            <div className="absolute top-4 right-4 bg-success/15 text-success border border-success/30 px-4 py-2 rounded-full text-xs font-bold">
+            <div className="absolute top-5 right-5 bg-success/15 text-success border border-success/30 px-4 py-2 rounded-full text-xs font-bold z-20">
               Tỉ lệ hoàn thành mục tiêu cao
             </div>
           </motion.div>
