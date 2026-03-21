@@ -3,13 +3,13 @@ import { motion } from "framer-motion";
 
 const features = [
   { icon: ShieldCheck, title: "Xác thực gia sư", desc: "Kiểm tra lý lịch, bằng cấp và năng lực qua AI + Admin trong 48 giờ", style: "bg-primary/10 text-primary" },
-  { icon: Brain, title: "AI đánh giá", desc: "Tự động tạo đề và chấm điểm, báo cáo tiến độ học tập hàng tháng", style: "bg-info/15 text-info" },
+  { icon: Brain, title: "AI đánh giá", desc: "Tự động tạo đề và chấm điểm, báo cáo tiến độ học tập hàng tháng", style: "bg-success/15 text-success" },
   { icon: CreditCard, title: "Thanh toán an toàn", desc: "Escrow 20%, thanh toán qua MoMo/VNPay, audit log realtime", style: "bg-primary/10 text-primary" },
   { icon: FileText, title: "Test online", desc: "Thi thử THPT QG 12 môn, AI proctoring chống gian lận", style: "bg-warning/15 text-warning" },
   { icon: Video, title: "Học trực tuyến", desc: "Tích hợp Zoom/Google Meet, lịch tự động đồng bộ", style: "bg-primary/10 text-primary" },
   { icon: Bell, title: "Thông báo thông minh", desc: "Push notification, email nhắc nhở vắng học tự động", style: "bg-warning/15 text-warning" },
   { icon: Globe, title: "Đa ngôn ngữ", desc: "Hỗ trợ Tiếng Việt và Tiếng Anh đầy đủ", style: "bg-info/15 text-info" },
-  { icon: Smartphone, title: "Mobile App", desc: "Quản lý lớp học mọi lúc mọi nơi trên điện thoại", style: "bg-primary/10 text-primary" },
+  { icon: Smartphone, title: "Mobile App", desc: "Quản lý lớp học mọi lúc mọi nơi trên điện thoại", style: "bg-success/15 text-success" },
 ];
 
 const FeaturesSection = () => {

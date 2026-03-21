@@ -7,6 +7,7 @@ import tutor2 from "@/assets/tutor-2.jpg";
 import tutor3 from "@/assets/tutor-3.jpg";
 import tutor4 from "@/assets/tutor-4.jpg";
 import tutor5 from "@/assets/tutor-5.jpg";
+import heroBanner from "@/assets/hero-english-banner.png";
 
 const stats = [
   { icon: Users, value: "1,200+", label: "Gia sư & Giáo viên" },
@@ -24,12 +25,12 @@ const avatars = [tutor1, tutor2, tutor3, tutor4, tutor5];
 
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden gradient-hero pt-28 pb-24 md:pt-40 md:pb-32">
-      <div className="absolute top-20 -right-20 w-[500px] h-[500px] bg-primary/15 blur-[120px] rounded-full" />
-      <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] bg-bright-blue/20 blur-[100px] rounded-full" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[150px] rounded-full" />
+    <section className="relative overflow-hidden gradient-hero pt-24 pb-20 md:pt-32 md:pb-24">
+      <div className="absolute top-0 -right-20 w-[460px] h-[460px] bg-primary/15 blur-[120px] rounded-full" />
+      <div className="absolute bottom-0 -left-20 w-[380px] h-[380px] bg-info/15 blur-[100px] rounded-full" />
+      <div className="absolute top-24 left-[38%] w-[320px] h-[320px] bg-success/10 blur-[120px] rounded-full" />
 
-      <div className="absolute inset-0 opacity-[0.03]" style={{
+      <div className="absolute inset-0 opacity-[0.04]" style={{
         backgroundImage: `linear-gradient(hsl(var(--primary) / 0.35) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.35) 1px, transparent 1px)`,
         backgroundSize: '60px 60px'
       }} />
@@ -45,21 +46,21 @@ const HeroSection = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/15 border border-primary/25 text-primary-foreground text-sm font-semibold mb-8"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/25 text-primary text-sm font-semibold mb-8"
             >
-              <span className="w-2 h-2 rounded-full bg-primary-foreground animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
               Nền tảng giáo dục hàng đầu Việt Nam
             </motion.span>
 
             <h1 className="text-hero md:text-hero-lg lg:text-[4.5rem] leading-[1.1] mb-6">
-              <span className="text-white">Kết nối</span>
+              <span className="text-foreground">Kết nối</span>
               <br />
               <span className="text-gradient">Gia sư chất lượng</span>
               <br />
-              <span className="text-white">với Học sinh</span>
+              <span className="text-foreground">với Học sinh</span>
             </h1>
 
-            <p className="text-white/60 text-body-lg mb-8 max-w-lg leading-relaxed">
+            <p className="text-foreground/70 text-body-lg mb-8 max-w-lg leading-relaxed">
               EduConnect giúp phụ huynh tìm gia sư phù hợp, đảm bảo chất lượng giảng dạy thông qua hệ thống kiểm tra năng lực và đánh giá AI.
             </p>
 
@@ -70,9 +71,9 @@ const HeroSection = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 + i * 0.1 }}
-                  className="flex items-center gap-3 text-white/80"
+                  className="flex items-center gap-3 text-foreground/80"
                 >
-                  <CheckCircle className="w-5 h-5 text-info flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-success flex-shrink-0" />
                   <span className="font-medium text-body">{b}</span>
                 </motion.li>
               ))}
@@ -85,7 +86,7 @@ const HeroSection = () => {
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="border-white/20 text-white hover:bg-white/10 text-body px-10 h-14 rounded-full font-semibold">
+              <Button size="lg" variant="outline" asChild className="border-primary/30 text-primary hover:bg-primary/10 text-body px-10 h-14 rounded-full font-semibold">
                 <Link to="/register-tutor">Đăng ký làm gia sư</Link>
               </Button>
             </div>
@@ -102,8 +103,8 @@ const HeroSection = () => {
                 ))}
               </div>
               <div>
-                <span className="text-info font-bold text-sm">+180</span>
-                <span className="text-white/50 text-sm ml-1">gia sư nổi bật</span>
+                <span className="text-success font-bold text-sm">+180</span>
+                <span className="text-foreground/60 text-sm ml-1">gia sư nổi bật</span>
               </div>
             </div>
           </motion.div>
@@ -112,33 +113,34 @@ const HeroSection = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="flex flex-col gap-5"
+            className="relative"
           >
-            {stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 + i * 0.15 }}
-                className="bg-white/5 backdrop-blur-xl rounded-2xl p-7 flex items-center gap-6 border border-white/10 hover:border-primary/40 transition-all group"
-              >
-                <div className="w-16 h-16 rounded-2xl bg-primary/15 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/25 transition-colors">
-                  <stat.icon className="w-8 h-8 text-info" />
-                </div>
-                <div>
-                  <div className="text-4xl font-extrabold text-white">{stat.value}</div>
-                  <div className="text-white/50 text-sm mt-1">{stat.label}</div>
-                </div>
-              </motion.div>
-            ))}
+            <div className="rounded-3xl border border-primary/20 bg-card p-3 shadow-elevated">
+              <img
+                src={heroBanner}
+                alt="Minh họa gia sư và học sinh học tiếng Anh trực tuyến"
+                className="w-full rounded-2xl object-cover"
+              />
+            </div>
 
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="self-end bg-primary text-primary-foreground px-8 py-3.5 rounded-full font-bold text-sm shadow-neon"
-            >
-              AI-Powered Platform
-            </motion.div>
+            <div className="absolute -bottom-6 left-6 right-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {stats.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="bg-card/95 backdrop-blur rounded-2xl px-4 py-3 border border-border shadow-soft"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <stat.icon className="w-4 h-4 text-primary" />
+                    <span className="text-xs text-muted-foreground">{stat.label}</span>
+                  </div>
+                  <div className="text-xl font-extrabold text-foreground">{stat.value}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="absolute top-4 right-4 bg-success/15 text-success border border-success/30 px-4 py-2 rounded-full text-xs font-bold">
+              Tỉ lệ hoàn thành mục tiêu cao
+            </div>
           </motion.div>
         </div>
       </div>
