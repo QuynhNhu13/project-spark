@@ -6,12 +6,12 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, AreaChart, Area, Cell, RadialBarChart, RadialBar, ResponsiveContainer, Legend } from "recharts";
 
 const COLORS = [
-  "hsl(224, 76%, 48%)",
-  "hsl(142, 71%, 45%)",
-  "hsl(38, 92%, 50%)",
-  "hsl(280, 68%, 55%)",
-  "hsl(0, 84%, 60%)",
-  "hsl(190, 90%, 42%)",
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "hsl(var(--muted-foreground))",
 ];
 
 const StudentReport = () => {

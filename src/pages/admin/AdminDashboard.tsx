@@ -5,7 +5,7 @@ import { Users, GraduationCap, BookOpen, CreditCard, Clock, FileText, UserCheck,
 import { useNavigate } from "react-router-dom";
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Pie, Cell, PieChart } from "recharts";
 
-const COLORS = ["hsl(var(--primary))", "hsl(var(--muted-foreground))", "hsl(var(--secondary-foreground))", "hsl(var(--destructive))"];
+const COLORS = ["hsl(var(--chart-1))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))"];
 
 const AdminDashboard = () => {
   const { users, classes, tests, transactions, settings } = useAdmin();
