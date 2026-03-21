@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, TrendingUp, Wallet, Receipt, Search, Download } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "@/components/ui/pagination";
 
 const typeLabel: Record<string, string> = { tuition: "Học phí", salary: "Lương gia sư", "exam-fee": "Phí thi thử" };
 const typeVariant: Record<string, "default" | "success" | "warning"> = {
@@ -29,7 +30,36 @@ const AdminTransactions = () => {
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [period, setPeriod] = useState("month");
+  const [selectedMonth, setSelectedMonth] = useState("03");
+  const [selectedYear, setSelectedYear] = useState("2026");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [page, setPage] = useState(1);
   const { toast } = useToast();
+
+  const ITEMS_PER_PAGE = 10;
+
+  const parseDate = (value: string) => {
+    if (value.includes("/")) {
+      const [d, m, y] = value.split("/");
+      return new Date(`${y}-${m}-${d}`);
+    }
+    return new Date(value);
+  };
+
+  const inPeriod = (value: string) => {
+    const date = parseDate(value);
+    if (Number.isNaN(date.getTime())) return false;
+    if (period === "month") return date.getMonth() + 1 === Number(selectedMonth) && date.getFullYear() === Number(selectedYear);
+    if (period === "year") return date.getFullYear() === Number(selectedYear);
+    if (period === "custom") {
+      if (!fromDate || !toDate) return true;
+      const from = new Date(fromDate);
+      const to = new Date(toDate);
+      return date >= from && date <= to;
+    }
+    return true;
+  };
 
   const totalRevenue = transactions.filter(t => t.status === "completed").reduce((s, t) => s + t.amount, 0);
   const escrowProfit = Math.round(totalRevenue * settings.escrowPercent / 100);
@@ -38,6 +68,7 @@ const AdminTransactions = () => {
   const filtered = transactions.filter(t => {
     if (filterType !== "all" && t.type !== filterType) return false;
     if (filterStatus !== "all" && t.status !== filterStatus) return false;
+    if (!inPeriod(t.date)) return false;
     if (search) {
       const user = users.find(u => u.id === t.userId);
       const q = search.toLowerCase();
@@ -45,6 +76,9 @@ const AdminTransactions = () => {
     }
     return true;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   const stats = [
     { label: "Tổng giao dịch", value: transactions.length, icon: Receipt, color: "bg-primary/10 text-primary" },
