@@ -34,7 +34,14 @@ const AdminClasses = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilterVal, setStatusFilterVal] = useState("all");
   const [formatFilterVal, setFormatFilterVal] = useState("all");
+  const [periodType, setPeriodType] = useState("month");
+  const [monthFilter, setMonthFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [page, setPage] = useState(1);
   const { toast } = useToast();
+  const ITEMS_PER_PAGE = 10;
 
   const students = users.filter(u => u.role === "student" && u.status === "approved");
   const tutors = users.filter(u => (u.role === "tutor" || u.role === "teacher") && u.status === "approved");
@@ -94,14 +101,14 @@ const AdminClasses = () => {
       <div className="flex flex-col md:flex-row gap-3">
         <div className="relative flex-1">
           <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
+              <Input
             placeholder="Tìm theo tên lớp, môn học..."
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+                onChange={e => { setSearchQuery(e.target.value); setPage(1); }}
             className="pl-10 h-11 rounded-2xl bg-card border-border"
           />
         </div>
-        <Select value={statusFilterVal} onValueChange={setStatusFilterVal}>
+        <Select value={statusFilterVal} onValueChange={(v) => { setStatusFilterVal(v); setPage(1); }}>
           <SelectTrigger className="w-full md:w-48 h-11 rounded-2xl bg-card border-border">
             <SelectValue placeholder="Lọc trạng thái" />
           </SelectTrigger>
@@ -112,7 +119,7 @@ const AdminClasses = () => {
             <SelectItem value="completed">Hoàn thành</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={formatFilterVal} onValueChange={setFormatFilterVal}>
+        <Select value={formatFilterVal} onValueChange={(v) => { setFormatFilterVal(v); setPage(1); }}>
           <SelectTrigger className="w-full md:w-44 h-11 rounded-2xl bg-card border-border">
             <SelectValue placeholder="Hình thức" />
           </SelectTrigger>
@@ -123,8 +130,70 @@ const AdminClasses = () => {
             <SelectItem value="hybrid">Hybrid</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={periodType} onValueChange={(v) => { setPeriodType(v); setPage(1); }}>
+          <SelectTrigger className="w-full md:w-44 h-11 rounded-2xl bg-card border-border"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="month">Theo tháng</SelectItem>
+            <SelectItem value="year">Theo năm</SelectItem>
+            <SelectItem value="custom">Khoảng tùy chọn</SelectItem>
+          </SelectContent>
+        </Select>
+        {periodType === "month" && (
+          <Select value={monthFilter} onValueChange={(v) => { setMonthFilter(v); setPage(1); }}>
+            <SelectTrigger className="w-36 h-11 rounded-2xl bg-card border-border"><SelectValue placeholder="Tháng" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả tháng</SelectItem>
+              {Array.from({ length: 12 }, (_, i) => (
+                <SelectItem key={i + 1} value={String(i + 1).padStart(2, "0")}>Tháng {i + 1}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {periodType === "year" && (
+          <Select value={yearFilter} onValueChange={(v) => { setYearFilter(v); setPage(1); }}>
+            <SelectTrigger className="w-32 h-11 rounded-2xl bg-card border-border"><SelectValue placeholder="Năm" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả năm</SelectItem>
+              <SelectItem value="2025">2025</SelectItem>
+              <SelectItem value="2026">2026</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+        {periodType === "custom" && (
+          <>
+            <Input type="date" value={fromDate} onChange={e => { setFromDate(e.target.value); setPage(1); }} className="w-40 h-11 rounded-2xl bg-card border-border" />
+            <Input type="date" value={toDate} onChange={e => { setToDate(e.target.value); setPage(1); }} className="w-40 h-11 rounded-2xl bg-card border-border" />
+          </>
+        )}
         <Button className="rounded-xl h-11" onClick={openCreate}><Plus className="w-4 h-4 mr-1.5" /> Tạo lớp mới</Button>
       </div>
+
+      {(() => {
+        const filteredClasses = classes.filter(c => {
+          if (statusFilterVal !== "all" && c.status !== statusFilterVal) return false;
+          if (formatFilterVal !== "all" && c.format !== formatFilterVal) return false;
+          if (searchQuery && !c.name.toLowerCase().includes(searchQuery.toLowerCase()) && !c.subject.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+
+          const createdDate = c.createdAt;
+          const d = new Date(c.createdAt);
+          const month = String(d.getMonth() + 1).padStart(2, "0");
+          const year = String(d.getFullYear());
+
+          if (periodType === "month" && monthFilter !== "all" && month !== monthFilter) return false;
+          if (periodType === "year" && yearFilter !== "all" && year !== yearFilter) return false;
+          if (periodType === "custom") {
+            if (!fromDate || !toDate) return false;
+            if (createdDate < fromDate || createdDate > toDate) return false;
+          }
+
+          return true;
+        });
+
+        const totalPages = Math.max(1, Math.ceil(filteredClasses.length / ITEMS_PER_PAGE));
+        const paginated = filteredClasses.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+
+        return (
+          <>
 
       {/* Table */}
       <Card className="border-0 shadow-soft overflow-hidden">
@@ -143,12 +212,7 @@ const AdminClasses = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {classes.filter(c => {
-                if (statusFilterVal !== "all" && c.status !== statusFilterVal) return false;
-                if (formatFilterVal !== "all" && c.format !== formatFilterVal) return false;
-                if (searchQuery && !c.name.toLowerCase().includes(searchQuery.toLowerCase()) && !c.subject.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-                return true;
-              }).map(c => (
+              {paginated.map(c => (
                 <TableRow key={c.id} className="hover:bg-muted/20 transition-colors">
                   <TableCell className="font-medium text-foreground">{c.name}</TableCell>
                   <TableCell className="text-sm">{getUserName(c.studentId)}</TableCell>
@@ -185,6 +249,22 @@ const AdminClasses = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {filteredClasses.length > 0 && (
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">Hiển thị {(page - 1) * ITEMS_PER_PAGE + 1}-{Math.min(page * ITEMS_PER_PAGE, filteredClasses.length)} / {filteredClasses.length}</p>
+          <div className="flex gap-1">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button key={i} onClick={() => setPage(i + 1)} className={`h-8 min-w-8 px-2 rounded-lg text-xs font-medium ${page === i + 1 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+          </>
+        );
+      })()}
 
       {/* Create/Edit Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
