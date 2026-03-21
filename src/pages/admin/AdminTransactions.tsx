@@ -29,7 +29,14 @@ const AdminTransactions = () => {
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [period, setPeriod] = useState("month");
+  const [monthFilter, setMonthFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+  const [page, setPage] = useState(1);
   const { toast } = useToast();
+
+  const ITEMS_PER_PAGE = 10;
 
   const totalRevenue = transactions.filter(t => t.status === "completed").reduce((s, t) => s + t.amount, 0);
   const escrowProfit = Math.round(totalRevenue * settings.escrowPercent / 100);
@@ -43,8 +50,24 @@ const AdminTransactions = () => {
       const q = search.toLowerCase();
       if (!t.description.toLowerCase().includes(q) && !(user?.name.toLowerCase().includes(q))) return false;
     }
+
+    const txDate = new Date(t.date);
+    const txMonth = String(txDate.getMonth() + 1).padStart(2, "0");
+    const txYear = String(txDate.getFullYear());
+
+    if (period === "month" && monthFilter !== "all" && txMonth !== monthFilter) return false;
+    if (period === "year" && yearFilter !== "all" && txYear !== yearFilter) return false;
+    if (period === "custom") {
+      if (!customFrom || !customTo) return false;
+      const dateOnly = txDate.toISOString().slice(0, 10);
+      if (dateOnly < customFrom || dateOnly > customTo) return false;
+    }
+
     return true;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   const stats = [
     { label: "Tổng giao dịch", value: transactions.length, icon: Receipt, color: "bg-primary/10 text-primary" },
@@ -110,6 +133,33 @@ const AdminTransactions = () => {
             <SelectItem value="custom">Khoảng tùy chọn</SelectItem>
           </SelectContent>
         </Select>
+        {period === "month" && (
+          <Select value={monthFilter} onValueChange={(v) => { setMonthFilter(v); setPage(1); }}>
+            <SelectTrigger className="w-36 h-10 rounded-xl"><SelectValue placeholder="Tháng" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả tháng</SelectItem>
+              {Array.from({ length: 12 }, (_, i) => (
+                <SelectItem key={i + 1} value={String(i + 1).padStart(2, "0")}>Tháng {i + 1}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {period === "year" && (
+          <Select value={yearFilter} onValueChange={(v) => { setYearFilter(v); setPage(1); }}>
+            <SelectTrigger className="w-32 h-10 rounded-xl"><SelectValue placeholder="Năm" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả năm</SelectItem>
+              <SelectItem value="2025">2025</SelectItem>
+              <SelectItem value="2026">2026</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+        {period === "custom" && (
+          <>
+            <Input type="date" value={customFrom} onChange={(e) => { setCustomFrom(e.target.value); setPage(1); }} className="w-40 h-10 rounded-xl" />
+            <Input type="date" value={customTo} onChange={(e) => { setCustomTo(e.target.value); setPage(1); }} className="w-40 h-10 rounded-xl" />
+          </>
+        )}
         <Button
           variant="outline"
           onClick={() => toast({ title: "Đã xuất dữ liệu giao dịch" })}
@@ -134,7 +184,7 @@ const AdminTransactions = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map(tx => {
+              {paginated.map(tx => {
                 const user = users.find(u => u.id === tx.userId);
                 return (
                   <TableRow key={tx.id} className="hover:bg-muted/20 transition-colors">
@@ -160,13 +210,26 @@ const AdminTransactions = () => {
                   </TableRow>
                 );
               })}
-              {filtered.length === 0 && (
+              {paginated.length === 0 && (
                 <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-12">Không tìm thấy giao dịch</TableCell></TableRow>
               )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      {filtered.length > 0 && (
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">Hiển thị {(page - 1) * ITEMS_PER_PAGE + 1}-{Math.min(page * ITEMS_PER_PAGE, filtered.length)} / {filtered.length}</p>
+          <div className="flex gap-1">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button key={i} onClick={() => setPage(i + 1)} className={`h-8 min-w-8 px-2 rounded-lg text-xs font-medium ${page === i + 1 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
