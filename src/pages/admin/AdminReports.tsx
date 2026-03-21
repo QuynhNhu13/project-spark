@@ -6,12 +6,12 @@ import { useMemo } from "react";
 import { CreditCard, BookOpen, Users, TrendingUp } from "lucide-react";
 
 const COLORS = [
-  "hsl(224, 76%, 48%)",   // primary blue
-  "hsl(142, 71%, 45%)",   // emerald
-  "hsl(38, 92%, 50%)",    // amber
-  "hsl(0, 84%, 60%)",     // red
-  "hsl(262, 83%, 58%)",   // purple
-  "hsl(199, 89%, 48%)",   // sky blue
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "hsl(var(--muted-foreground))",
 ];
 
 const AdminReports = () => {
@@ -28,8 +28,8 @@ const AdminReports = () => {
 
   const stats = [
     { label: "Tổng doanh thu", value: `${(totalRevenue / 1000000).toFixed(1)}M`, icon: CreditCard, color: "bg-primary/10 text-primary" },
-    { label: "Lớp đang mở", value: activeClasses, icon: BookOpen, color: "bg-success/150/10 text-success" },
-    { label: "Người dùng mới", value: newUsersMonth, icon: Users, color: "bg-warning/150/10 text-warning" },
+    { label: "Lớp đang mở", value: activeClasses, icon: BookOpen, color: "bg-success/10 text-success" },
+    { label: "Người dùng mới", value: newUsersMonth, icon: Users, color: "bg-warning/10 text-warning" },
     { label: "Lợi nhuận Escrow", value: `${(escrowProfit / 1000000).toFixed(1)}M`, icon: TrendingUp, color: "bg-secondary/20 text-secondary-foreground" },
   ];
 
@@ -80,9 +80,9 @@ const AdminReports = () => {
   }, [users]);
 
   const chartConfig = {
-    revenue: { label: "Doanh thu", color: "hsl(224, 76%, 48%)" },
-    profit: { label: "Lợi nhuận", color: "hsl(142, 71%, 45%)" },
-    count: { label: "Người dùng mới", color: "hsl(224, 76%, 48%)" },
+    revenue: { label: "Doanh thu", color: "hsl(var(--chart-1))" },
+    profit: { label: "Lợi nhuận", color: "hsl(var(--chart-2))" },
+    count: { label: "Người dùng mới", color: "hsl(var(--chart-1))" },
   };
 
   return (
@@ -115,8 +115,8 @@ const AdminReports = () => {
                 <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis tickFormatter={v => `${(v / 1000000).toFixed(1)}M`} tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="revenue" fill="hsl(224, 76%, 48%)" radius={[6, 6, 0, 0]} name="Doanh thu" />
-                <Bar dataKey="profit" fill="hsl(142, 71%, 45%)" radius={[6, 6, 0, 0]} name="Lợi nhuận" />
+                <Bar dataKey="revenue" fill="hsl(var(--chart-1))" radius={[6, 6, 0, 0]} name="Doanh thu" />
+                <Bar dataKey="profit" fill="hsl(var(--chart-2))" radius={[6, 6, 0, 0]} name="Lợi nhuận" />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -129,15 +129,15 @@ const AdminReports = () => {
               <AreaChart data={weeklyUsers}>
                 <defs>
                   <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(224, 76%, 48%)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(224, 76%, 48%)" stopOpacity={0} />
+                    <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="week" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Area type="monotone" dataKey="count" stroke="hsl(224, 76%, 48%)" strokeWidth={2.5} fill="url(#colorCount)" dot={{ r: 4, fill: "hsl(224, 76%, 48%)" }} />
+                <Area type="monotone" dataKey="count" stroke="hsl(var(--chart-1))" strokeWidth={2.5} fill="url(#colorCount)" dot={{ r: 4, fill: "hsl(var(--chart-1))" }} />
               </AreaChart>
             </ChartContainer>
           </CardContent>

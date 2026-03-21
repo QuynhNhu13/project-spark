@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, Legend } from "recharts";
 import { useState } from "react";
 
-const COLORS = ["hsl(220, 70%, 55%)", "hsl(160, 60%, 45%)", "hsl(35, 90%, 55%)", "hsl(280, 60%, 55%)", "hsl(350, 70%, 55%)", "hsl(190, 60%, 50%)", "hsl(120, 50%, 45%)", "hsl(30, 80%, 50%)"];
+const COLORS = ["hsl(var(--chart-1))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))", "hsl(var(--muted-foreground))"];
 
 const ExamManagerStats = () => {
   const { exams, attempts } = useExamManager();
@@ -58,7 +58,7 @@ const ExamManagerStats = () => {
                 <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
                 <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
                 <Tooltip />
-                <Bar dataKey="attempts" name="Lượt thi" fill="hsl(220, 70%, 55%)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="attempts" name="Lượt thi" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -88,8 +88,8 @@ const ExamManagerStats = () => {
                 <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="completionRate" name="Hoàn thành (%)" fill="hsl(160, 60%, 45%)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="aboveAvg" name="Trên TB (%)" fill="hsl(35, 90%, 55%)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="completionRate" name="Hoàn thành (%)" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="aboveAvg" name="Trên TB (%)" fill="hsl(var(--chart-3))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -100,12 +100,12 @@ const ExamManagerStats = () => {
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={monthlyRevenue}>
-                <defs><linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="hsl(220, 70%, 55%)" stopOpacity={0.3} /><stop offset="95%" stopColor="hsl(220, 70%, 55%)" stopOpacity={0} /></linearGradient></defs>
+                <defs><linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} /><stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} /></linearGradient></defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
                 <YAxis tickFormatter={v => `${(v / 1000000).toFixed(0)}M`} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
                 <Tooltip formatter={(v: number) => `${v.toLocaleString("vi-VN")}đ`} />
-                <Area type="monotone" dataKey="revenue" stroke="hsl(220, 70%, 55%)" fill="url(#revGrad)" strokeWidth={2} />
+                <Area type="monotone" dataKey="revenue" stroke="hsl(var(--chart-1))" fill="url(#revGrad)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
