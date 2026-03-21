@@ -7,12 +7,12 @@ import tutor2 from "@/assets/tutor-2.jpg";
 import tutor3 from "@/assets/tutor-3.jpg";
 import tutor4 from "@/assets/tutor-4.jpg";
 import tutor5 from "@/assets/tutor-5.jpg";
-import heroBanner from "@/assets/hero-english-banner.png";
+import heroCharacters from "@/assets/hero-characters.png";
 
 const stats = [
-  { icon: Users, value: "1,200+", label: "Gia sư & Giáo viên" },
-  { icon: GraduationCap, value: "890+", label: "Học sinh" },
-  { icon: ThumbsUp, value: "98%", label: "Hài lòng" },
+  { icon: Users, value: "1,200+", label: "Gia sư & Giáo viên", desktopPos: "md:absolute md:left-4 md:top-8" },
+  { icon: GraduationCap, value: "890+", label: "Học sinh", desktopPos: "md:absolute md:right-0 md:top-24" },
+  { icon: ThumbsUp, value: "98%", label: "Hài lòng", desktopPos: "md:absolute md:left-20 md:bottom-6" },
 ];
 
 const bullets = [
@@ -113,34 +113,47 @@ const HeroSection = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-             className="relative lg:-mr-20 xl:-mr-28"
+            className="relative lg:-mr-16"
           >
-            <div className="relative overflow-visible">
-              <div className="absolute -inset-8 bg-primary/10 blur-3xl rounded-[3rem]" />
-              <div className="absolute inset-x-0 -bottom-2 h-24 bg-gradient-to-t from-background via-background/70 to-transparent z-20" />
+            <div className="relative min-h-[420px] md:min-h-[520px] lg:min-h-[600px] flex items-center justify-center overflow-visible">
+              <div className="absolute inset-x-10 top-16 h-[70%] rounded-full bg-primary/20 blur-3xl" />
+              <div className="absolute inset-x-16 bottom-8 h-[45%] rounded-full bg-success/15 blur-3xl" />
               <img
-                src={heroBanner}
-                alt="Minh họa gia sư và học sinh học tiếng Anh trực tuyến"
-                className="relative z-10 w-[108%] max-w-none h-[390px] md:h-[500px] lg:h-[560px] object-cover object-center rounded-[2.25rem] shadow-elevated"
+                src={heroCharacters}
+                alt="Minh họa gia sư và học sinh học cùng laptop trong không gian học tập hiện đại"
+                className="relative z-20 w-full max-w-[700px] h-[330px] md:h-[480px] lg:h-[560px] object-contain drop-shadow-[0_20px_40px_hsl(var(--primary)/0.28)]"
               />
-            </div>
 
-            <div className="absolute -bottom-8 left-3 right-3 md:left-6 md:right-6 grid grid-cols-1 sm:grid-cols-3 gap-3 z-30">
+              <div className="absolute inset-x-2 bottom-0 grid grid-cols-1 sm:grid-cols-3 gap-3 md:hidden z-30">
+                {stats.map((stat) => (
+                  <div
+                    key={`mobile-${stat.label}`}
+                    className="bg-card/95 backdrop-blur rounded-2xl px-4 py-3 border border-primary/15 shadow-soft"
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <stat.icon className="w-4 h-4 text-primary" />
+                      <span className="text-xs text-muted-foreground">{stat.label}</span>
+                    </div>
+                    <div className="text-xl font-extrabold text-deep-blue">{stat.value}</div>
+                  </div>
+                ))}
+              </div>
+
               {stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="bg-card/95 backdrop-blur rounded-2xl px-4 py-3 border border-primary/15 shadow-soft"
+                  className={`hidden md:block ${stat.desktopPos} z-30 bg-card/95 backdrop-blur rounded-2xl px-4 py-3 border border-primary/15 shadow-soft`}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <stat.icon className="w-4 h-4 text-primary" />
                     <span className="text-xs text-muted-foreground">{stat.label}</span>
                   </div>
-                  <div className="text-xl font-extrabold text-foreground">{stat.value}</div>
+                  <div className="text-xl font-extrabold text-deep-blue">{stat.value}</div>
                 </div>
               ))}
             </div>
 
-            <div className="absolute top-5 right-5 bg-success/15 text-success border border-success/30 px-4 py-2 rounded-full text-xs font-bold z-20">
+            <div className="absolute top-5 right-5 bg-success/15 text-success border border-success/30 px-4 py-2 rounded-full text-xs font-bold z-30">
               Tỉ lệ hoàn thành mục tiêu cao
             </div>
           </motion.div>
