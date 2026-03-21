@@ -24,11 +24,11 @@ const FinanceReconciliation = () => {
   return (
     <div className="p-6 space-y-6">
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Đã thu</p><p className="text-xl font-bold text-foreground">{summary.totalIn.toLocaleString("vi-VN")}đ</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Đã chi</p><p className="text-xl font-bold text-foreground">{summary.totalOut.toLocaleString("vi-VN")}đ</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Khoản treo</p><p className="text-xl font-bold text-foreground">{summary.pending.toLocaleString("vi-VN")}đ</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Chờ chi trả GS</p><p className="text-xl font-bold text-foreground">{summary.pendingWithdraw.toLocaleString("vi-VN")}đ</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Chênh lệch</p><p className="text-xl font-bold text-foreground">{summary.delta.toLocaleString("vi-VN")}đ</p></CardContent></Card>
+        <Card className="overview-surface border-primary/10"><CardContent className="p-4"><p className="text-xs text-muted-foreground">Đã thu</p><p className="text-xl font-bold text-primary">{summary.totalIn.toLocaleString("vi-VN")}đ</p></CardContent></Card>
+        <Card className="overview-surface border-success/20"><CardContent className="p-4"><p className="text-xs text-muted-foreground">Đã chi</p><p className="text-xl font-bold text-success">{summary.totalOut.toLocaleString("vi-VN")}đ</p></CardContent></Card>
+        <Card className="overview-surface border-warning/20"><CardContent className="p-4"><p className="text-xs text-muted-foreground">Khoản treo</p><p className="text-xl font-bold text-warning">{summary.pending.toLocaleString("vi-VN")}đ</p></CardContent></Card>
+        <Card className="overview-surface border-warning/20"><CardContent className="p-4"><p className="text-xs text-muted-foreground">Chờ chi trả GS</p><p className="text-xl font-bold text-warning">{summary.pendingWithdraw.toLocaleString("vi-VN")}đ</p></CardContent></Card>
+        <Card className="overview-surface border-info/20"><CardContent className="p-4"><p className="text-xs text-muted-foreground">Chênh lệch</p><p className="text-xl font-bold text-info">{summary.delta.toLocaleString("vi-VN")}đ</p></CardContent></Card>
       </div>
 
       <Card>
@@ -43,8 +43,8 @@ const FinanceReconciliation = () => {
                 <p className="text-xs text-muted-foreground">{tx.user} · {tx.date}</p>
               </div>
               <div className="flex items-center gap-2">
-                {tx.status === "completed" ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <AlertTriangle className="w-4 h-4 text-muted-foreground" />}
-                <Badge variant={tx.status === "completed" ? "default" : "outline"}>{tx.status === "completed" ? "Khớp" : "Cần kiểm tra"}</Badge>
+                {tx.status === "completed" ? <CheckCircle2 className="w-4 h-4 text-success" /> : <AlertTriangle className="w-4 h-4 text-warning" />}
+                <Badge variant={tx.status === "completed" ? "success" : "warning"}>{tx.status === "completed" ? "Khớp" : "Cần kiểm tra"}</Badge>
               </div>
             </div>
           ))}
