@@ -34,11 +34,11 @@ const classDistribution = [
 ];
 
 const COLORS = [
-  "hsl(224, 76%, 48%)",
-  "hsl(142, 71%, 45%)",
-  "hsl(38, 92%, 50%)",
-  "hsl(280, 68%, 55%)",
-  "hsl(0, 84%, 60%)",
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
 ];
 
 const kpiData = [
@@ -108,7 +108,7 @@ const OfficeReports = () => {
                 <XAxis dataKey="day" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
                 <YAxis tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} />
                 <Tooltip contentStyle={{ borderRadius: "1rem", border: "1px solid hsl(var(--border))", background: "hsl(var(--card))", color: "hsl(var(--foreground))" }} />
-                <Bar dataKey="sessions" name="Buổi học" fill="hsl(224, 76%, 48%)" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="sessions" name="Buổi học" fill="hsl(var(--chart-1))" radius={[6, 6, 0, 0]} />
                 <Bar dataKey="issues" name="Sự cố" fill="hsl(0, 84%, 60%)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
