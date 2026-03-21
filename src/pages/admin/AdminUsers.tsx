@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Trash2, Eye, Search, Star, Users, UserCheck, GraduationCap, UserPlus, CheckCircle2, XCircle } from "lucide-react";
 import type { AdminUser, UserStatus } from "@/contexts/AdminContext";
 import { useToast } from "@/hooks/use-toast";
-import { Textarea } from "@/components/ui/textarea";
 
 const roleTabs = [
   { value: "all", label: "Tất cả", icon: Users },
@@ -45,8 +44,6 @@ const AdminUsers = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [detail, setDetail] = useState<AdminUser | null>(null);
   const [page, setPage] = useState(1);
-  const [rejectDialog, setRejectDialog] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState("");
   const { toast } = useToast();
 
   const filtered = useMemo(() => users.filter(u => {
@@ -65,21 +62,8 @@ const AdminUsers = () => {
   };
 
   const handleStatusChange = (id: string, status: string) => {
-    if (status === "rejected") {
-      setRejectDialog(id);
-      setRejectReason("");
-      return;
-    }
     updateUserStatus(id, status as UserStatus);
     toast({ title: "Đã cập nhật trạng thái" });
-  };
-
-  const submitReject = () => {
-    if (!rejectDialog || !rejectReason.trim()) return;
-    updateUserStatus(rejectDialog, "rejected", rejectReason.trim());
-    toast({ title: "Đã từ chối người dùng" });
-    setRejectDialog(null);
-    setRejectReason("");
   };
 
   const resetFilters = () => {
@@ -167,7 +151,7 @@ const AdminUsers = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Button size="sm" onClick={() => handleStatusChange(u.id, "approved")} className="rounded-lg h-8"><CheckCircle2 className="w-3.5 h-3.5 mr-1" />Duyệt</Button>
-                    <Button size="sm" variant="destructive" onClick={() => { setRejectDialog(u.id); setRejectReason(""); }} className="rounded-lg h-8"><XCircle className="w-3.5 h-3.5 mr-1" />Từ chối</Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleStatusChange(u.id, "rejected")} className="rounded-lg h-8"><XCircle className="w-3.5 h-3.5 mr-1" />Từ chối</Button>
                   </div>
                 </div>
               ))}
@@ -271,24 +255,12 @@ const AdminUsers = () => {
                 <div className="bg-muted/50 p-3 rounded-xl"><span className="text-muted-foreground block text-xs mb-1">Trạng thái</span><span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor[detail.status]}`}>{statusLabel[detail.status]}</span></div>
                 <div className="bg-muted/50 p-3 rounded-xl"><span className="text-muted-foreground block text-xs mb-1">Ngày tạo</span><span className="text-foreground">{detail.createdAt}</span></div>
                 {detail.subject && <div className="bg-muted/50 p-3 rounded-xl col-span-2"><span className="text-muted-foreground block text-xs mb-1">Môn</span><span className="text-foreground">{detail.subject}</span></div>}
-                {detail.rejectionReason && <div className="bg-destructive/5 border border-destructive/20 p-3 rounded-xl col-span-2"><span className="text-destructive block text-xs mb-1">Lý do từ chối</span><span className="text-destructive text-sm">{detail.rejectionReason}</span></div>}
                 {detail.school && <div className="bg-muted/50 p-3 rounded-xl col-span-2"><span className="text-muted-foreground block text-xs mb-1">Trường</span><span className="text-foreground">{detail.school}</span></div>}
                 {detail.studentId && <div className="bg-muted/50 p-3 rounded-xl col-span-2"><span className="text-muted-foreground block text-xs mb-1">MSSV</span><span className="text-foreground">{detail.studentId}</span></div>}
               </div>
               {detail.bio && <p className="text-sm text-foreground bg-muted/50 p-3 rounded-xl">{detail.bio}</p>}
             </div>
           )}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!rejectDialog} onOpenChange={() => setRejectDialog(null)}>
-        <DialogContent className="rounded-2xl">
-          <DialogHeader><DialogTitle>Từ chối phê duyệt</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">Nhập lý do để gửi lại cho người dùng.</p>
-            <Textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} placeholder="VD: Hồ sơ thiếu bằng cấp/chứng chỉ hợp lệ..." rows={4} className="rounded-xl" />
-            <Button variant="destructive" className="w-full rounded-xl" disabled={!rejectReason.trim()} onClick={submitReject}>Xác nhận từ chối</Button>
-          </div>
         </DialogContent>
       </Dialog>
     </div>

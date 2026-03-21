@@ -37,7 +37,6 @@ export interface AdminUser {
   bio?: string;
   school?: string;
   studentId?: string;
-  rejectionReason?: string;
 }
 
 export interface AdminClass {
@@ -224,14 +223,6 @@ const seedClasses: AdminClass[] = [
   { id: "c2", name: "Văn 11 - Nâng cao", studentId: "u8", tutorId: "u2", format: "offline", fee: 1500000, status: "active", subject: "Văn", createdAt: "2026-01-20", schedule: "T3, T5 - 18:00-20:00", totalSessions: 16, completedSessions: 8, notes: "Tập trung phân tích tác phẩm văn học" },
   { id: "c3", name: "IELTS Writing", studentId: "u11", tutorId: "u1", format: "hybrid", fee: 3000000, status: "searching", subject: "Anh", createdAt: "2026-02-15", schedule: "T7 - 9:00-12:00", totalSessions: 12, completedSessions: 0, notes: "Mục tiêu IELTS Writing 7.0+" },
   { id: "c4", name: "Lý 10 - Cơ bản", studentId: "u3", tutorId: "u1", format: "online", fee: 1800000, status: "completed", subject: "Lý", createdAt: "2025-11-01", schedule: "T2, T6 - 17:00-19:00", totalSessions: 20, completedSessions: 20, notes: "Hoàn thành chương trình Lý 10" },
-  { id: "c5", name: "Anh 10 - Giao tiếp", studentId: "u8", tutorId: "u7", format: "online", fee: 1700000, status: "active", subject: "Anh", createdAt: "2026-02-02", schedule: "T3, T5 - 20:00-21:30", totalSessions: 18, completedSessions: 7, notes: "Tăng phản xạ giao tiếp" },
-  { id: "c6", name: "Hóa 12 - Luyện đề", studentId: "u11", tutorId: "u6", format: "offline", fee: 2200000, status: "searching", subject: "Hóa", createdAt: "2026-02-06", schedule: "CN - 8:00-10:00", totalSessions: 14, completedSessions: 0, notes: "Ôn trọng tâm phản ứng hữu cơ" },
-  { id: "c7", name: "Văn 9 - Vào 10", studentId: "u3", tutorId: "u2", format: "hybrid", fee: 1600000, status: "active", subject: "Văn", createdAt: "2026-02-10", schedule: "T2, T4 - 18:00-19:30", totalSessions: 16, completedSessions: 6, notes: "Nghị luận xã hội" },
-  { id: "c8", name: "Sinh 11 - Cơ bản", studentId: "u8", tutorId: "u5", format: "online", fee: 1500000, status: "active", subject: "Sinh", createdAt: "2026-02-12", schedule: "T7 - 15:00-17:00", totalSessions: 12, completedSessions: 3, notes: "Bổ trợ kiến thức nền" },
-  { id: "c9", name: "Toán 11 - Nâng cao", studentId: "u11", tutorId: "u1", format: "offline", fee: 2100000, status: "searching", subject: "Toán", createdAt: "2026-02-16", schedule: "T3, T6 - 19:00-20:30", totalSessions: 20, completedSessions: 0, notes: "Tập trung hàm số và xác suất" },
-  { id: "c10", name: "Lý 12 - Ôn thi", studentId: "u3", tutorId: "u5", format: "hybrid", fee: 2400000, status: "active", subject: "Lý", createdAt: "2026-02-18", schedule: "T2, T5 - 19:30-21:00", totalSessions: 18, completedSessions: 5, notes: "Đề thi chuẩn cấu trúc mới" },
-  { id: "c11", name: "Anh văn 8", studentId: "u8", tutorId: "u7", format: "online", fee: 1300000, status: "completed", subject: "Anh", createdAt: "2025-10-12", schedule: "T4 - 17:00-18:30", totalSessions: 14, completedSessions: 14, notes: "Hoàn thành mục tiêu giao tiếp cơ bản" },
-  { id: "c12", name: "Hóa 10 - Nhập môn", studentId: "u11", tutorId: "u6", format: "offline", fee: 1400000, status: "active", subject: "Hóa", createdAt: "2026-02-20", schedule: "CN - 10:00-12:00", totalSessions: 10, completedSessions: 2, notes: "Định hướng phương pháp học" },
 ];
 
 const seedTests: AdminTest[] = [
@@ -251,16 +242,6 @@ const seedTransactions: AdminTransaction[] = [
   { id: "tx6", userId: "u3", type: "exam-fee", amount: 30000, date: "2026-02-18", status: "completed", description: "Phí thi thử Toán 12" },
   { id: "tx7", userId: "u3", type: "tuition", amount: 2000000, date: "2026-03-01", status: "completed", description: "Học phí Toán 12 - T3/2026" },
   { id: "tx8", userId: "u8", type: "tuition", amount: 1500000, date: "2026-03-01", status: "pending", description: "Học phí Văn 11 - T3/2026" },
-  { id: "tx9", userId: "u11", type: "tuition", amount: 2100000, date: "2026-02-26", status: "completed", description: "Học phí Toán 11 - T2/2026" },
-  { id: "tx10", userId: "u1", type: "salary", amount: 1750000, date: "2026-02-27", status: "completed", description: "Lương gia sư Toán 11 - T2/2026" },
-  { id: "tx11", userId: "u3", type: "tuition", amount: 2400000, date: "2026-02-28", status: "completed", description: "Học phí Lý 12 - T2/2026" },
-  { id: "tx12", userId: "u5", type: "salary", amount: 1800000, date: "2026-03-02", status: "pending", description: "Lương gia sư Lý 12 - T2/2026" },
-  { id: "tx13", userId: "u8", type: "exam-fee", amount: 45000, date: "2026-03-03", status: "completed", description: "Phí thi thử Anh 10" },
-  { id: "tx14", userId: "u10", type: "tuition", amount: 1600000, date: "2026-03-03", status: "failed", description: "Học phí Văn 9 - T3/2026" },
-  { id: "tx15", userId: "u2", type: "salary", amount: 1300000, date: "2026-03-04", status: "refunded", description: "Điều chỉnh lương GV Văn 9" },
-  { id: "tx16", userId: "u4", type: "tuition", amount: 1700000, date: "2026-03-04", status: "completed", description: "Học phí Anh 10 - T3/2026" },
-  { id: "tx17", userId: "u7", type: "salary", amount: 1200000, date: "2026-03-05", status: "completed", description: "Lương gia sư Anh 10 - T2/2026" },
-  { id: "tx18", userId: "u6", type: "salary", amount: 1100000, date: "2026-03-06", status: "pending", description: "Lương GV Hóa 10 - T2/2026" },
 ];
 
 const seedAuditLog: AuditLogEntry[] = [
@@ -268,16 +249,6 @@ const seedAuditLog: AuditLogEntry[] = [
   { id: "al2", actor: "Admin", action: "Tạo lớp học", target: "Toán 12 - Ôn thi ĐH", timestamp: "2026-01-15 10:30" },
   { id: "al3", actor: "Admin", action: "Từ chối tài khoản", target: "Bùi Văn Hùng (Gia sư)", timestamp: "2026-02-01 14:00" },
   { id: "al4", actor: "Admin", action: "Cập nhật cài đặt", target: "Phí escrow: 20%", timestamp: "2026-02-10 08:15" },
-  { id: "al5", actor: "Admin", action: "Tạo lớp học", target: "Anh 10 - Giao tiếp", timestamp: "2026-02-12 10:00" },
-  { id: "al6", actor: "Admin", action: "Cập nhật lớp học", target: "Toán 11 - Nâng cao", timestamp: "2026-02-16 14:20" },
-  { id: "al7", actor: "Admin", action: "Thêm giao dịch", target: "Học phí Lý 12 - T2/2026", timestamp: "2026-02-28 09:10" },
-  { id: "al8", actor: "Admin", action: "Duyệt tài khoản", target: "Đinh Thị Hoa (teacher)", timestamp: "2026-03-01 08:40" },
-  { id: "al9", actor: "Admin", action: "Từ chối tài khoản", target: "Bùi Văn Hùng (tutor) - Thiếu chứng chỉ", timestamp: "2026-03-01 11:15" },
-  { id: "al10", actor: "Admin", action: "Xóa người dùng", target: "Tài khoản test demo", timestamp: "2026-03-02 13:05" },
-  { id: "al11", actor: "Admin", action: "Cập nhật cài đặt", target: "Bật thông báo email", timestamp: "2026-03-02 15:45" },
-  { id: "al12", actor: "Admin", action: "Thêm giao dịch", target: "Điều chỉnh lương GV Văn 9", timestamp: "2026-03-04 10:25" },
-  { id: "al13", actor: "Admin", action: "Tạo bài test", target: "Đề Anh 10 tháng 3", timestamp: "2026-03-05 09:50" },
-  { id: "al14", actor: "Admin", action: "Cập nhật lớp học", target: "Lý 12 - Ôn thi", timestamp: "2026-03-06 16:30" },
 ];
 
 const seedNotifications: Notification[] = [
@@ -314,8 +285,8 @@ interface AdminContextType {
   notifications: Notification[];
   settings: SystemSettings;
   approveUser: (id: string) => void;
-  rejectUser: (id: string, reason?: string) => void;
-  updateUserStatus: (id: string, status: UserStatus, reason?: string) => void;
+  rejectUser: (id: string) => void;
+  updateUserStatus: (id: string, status: UserStatus) => void;
   deleteUser: (id: string) => void;
   addClass: (cls: Omit<AdminClass, "id" | "createdAt">) => void;
   updateClass: (id: string, data: Partial<AdminClass>) => void;
@@ -368,20 +339,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     if (user) addAuditLog("Duyệt tài khoản", `${user.name} (${user.role})`);
   }, [users, addAuditLog]);
 
-  const rejectUser = useCallback((id: string, reason?: string) => {
-    setUsers(prev => prev.map(u => u.id === id ? { ...u, status: "rejected" as UserStatus, rejectionReason: reason || "Không đáp ứng yêu cầu duyệt hồ sơ" } : u));
+  const rejectUser = useCallback((id: string) => {
+    setUsers(prev => prev.map(u => u.id === id ? { ...u, status: "rejected" as UserStatus } : u));
     const user = users.find(u => u.id === id);
-    if (user) addAuditLog("Từ chối tài khoản", `${user.name} (${user.role})${reason ? ` - ${reason}` : ""}`);
+    if (user) addAuditLog("Từ chối tài khoản", `${user.name} (${user.role})`);
   }, [users, addAuditLog]);
 
-  const updateUserStatus = useCallback((id: string, status: UserStatus, reason?: string) => {
-    setUsers(prev => prev.map(u => {
-      if (u.id !== id) return u;
-      if (status === "rejected") {
-        return { ...u, status, rejectionReason: reason || u.rejectionReason || "Không đáp ứng yêu cầu duyệt hồ sơ" };
-      }
-      return { ...u, status, rejectionReason: status === "approved" ? undefined : u.rejectionReason };
-    }));
+  const updateUserStatus = useCallback((id: string, status: UserStatus) => {
+    setUsers(prev => prev.map(u => u.id === id ? { ...u, status } : u));
   }, []);
 
   const deleteUser = useCallback((id: string) => {
