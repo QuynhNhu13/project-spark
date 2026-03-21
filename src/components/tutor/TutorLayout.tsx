@@ -89,7 +89,7 @@ const TutorLayout = () => {
           {!collapsed && (
             <div className="min-w-0">
                 <h1 className="text-base font-bold leading-tight truncate text-sidebar-foreground">EduConnect</h1>
-                <p className="text-[11px] text-sidebar-muted-foreground leading-tight">Gia sư</p>
+                <p className="text-[11px] text-sidebar-foreground/70 leading-tight">Gia sư</p>
             </div>
           )}
           <button
@@ -101,7 +101,7 @@ const TutorLayout = () => {
         </div>
 
         <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
-          {!collapsed && <p className="text-[11px] font-semibold uppercase tracking-wider px-3 mb-3 text-sidebar-muted-foreground">Menu</p>}
+          {!collapsed && <p className="text-[11px] font-semibold uppercase tracking-wider px-3 mb-3 text-sidebar-foreground/70">Menu</p>}
           {navItems.map(item => (
             <NavLink
               key={item.to}

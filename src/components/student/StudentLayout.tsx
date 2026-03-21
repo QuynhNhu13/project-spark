@@ -69,7 +69,7 @@ const StudentLayout = () => {
           {!collapsed && (
             <div className="min-w-0">
                 <h1 className="text-base font-bold leading-tight truncate text-sidebar-foreground">EduConnect</h1>
-                <p className="text-[11px] text-sidebar-muted-foreground leading-tight">Học sinh</p>
+                <p className="text-[11px] text-sidebar-foreground/70 leading-tight">Học sinh</p>
             </div>
           )}
           <button
@@ -84,7 +84,7 @@ const StudentLayout = () => {
           {navGroups.map((group, gi) => (
             <div key={gi} className={gi > 0 ? "mt-4" : ""}>
               {!collapsed && gi === 0 && (
-                <p className="text-[10px] font-semibold uppercase tracking-wider px-3 mb-2 text-sidebar-muted-foreground">Menu</p>
+                <p className="text-[10px] font-semibold uppercase tracking-wider px-3 mb-2 text-sidebar-foreground/70">Menu</p>
               )}
               {collapsed && gi > 0 && <div className="border-t border-border my-2 mx-2" />}
               <div className="space-y-0.5">

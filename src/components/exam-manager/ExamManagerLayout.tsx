@@ -49,7 +49,7 @@ const ExamManagerLayout = () => {
           {!collapsed && (
             <div className="min-w-0">
                 <h1 className="text-base font-bold leading-tight truncate text-sidebar-foreground">EduConnect</h1>
-                <p className="text-[11px] text-sidebar-muted-foreground leading-tight">Quản lý đề thi</p>
+                <p className="text-[11px] text-sidebar-foreground/70 leading-tight">Quản lý đề thi</p>
             </div>
           )}
           <button onClick={() => setCollapsed(!collapsed)} className={cn("p-1.5 rounded-lg hover:bg-sidebar-accent transition-colors text-sidebar-foreground/80", collapsed ? "mx-auto" : "ml-auto")}>
@@ -57,7 +57,7 @@ const ExamManagerLayout = () => {
           </button>
         </div>
         <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
-          {!collapsed && <p className="text-[11px] font-semibold uppercase tracking-wider px-3 mb-3 text-sidebar-muted-foreground">Menu</p>}
+          {!collapsed && <p className="text-[11px] font-semibold uppercase tracking-wider px-3 mb-3 text-sidebar-foreground/70">Menu</p>}
           {navItems.map(item => (
             <NavLink key={item.to} to={item.to} end={item.end} title={collapsed ? item.label : undefined}
               className={({ isActive }) => cn(
