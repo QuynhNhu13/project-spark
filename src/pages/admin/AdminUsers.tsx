@@ -28,10 +28,10 @@ const statusOptions = [
 
 const statusLabel: Record<string, string> = { pending: "Chờ duyệt", approved: "Hoạt động", rejected: "Từ chối", suspended: "Tạm khóa" };
 const statusColor: Record<string, string> = {
-  pending: "bg-muted text-muted-foreground",
-  approved: "bg-primary/10 text-primary",
-  rejected: "bg-destructive/10 text-destructive",
-  suspended: "bg-muted text-muted-foreground",
+  pending: "bg-amber-100 text-amber-700",
+  approved: "bg-emerald-100 text-emerald-700",
+  rejected: "bg-rose-100 text-rose-700",
+  suspended: "bg-slate-100 text-slate-700",
 };
 const roleLabel: Record<string, string> = { tutor: "Gia sư", teacher: "Giáo viên", student: "Học sinh", parent: "Phụ huynh", admin: "Admin" };
 
@@ -44,6 +44,7 @@ const AdminUsers = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [detail, setDetail] = useState<AdminUser | null>(null);
   const [page, setPage] = useState(1);
+  const [showPendingDialog, setShowPendingDialog] = useState(false);
   const { toast } = useToast();
 
   const filtered = useMemo(() => users.filter(u => {
@@ -84,19 +85,19 @@ const AdminUsers = () => {
       {/* Stats row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Tổng người dùng", value: stats.total, icon: Users },
-          { label: "Gia sư & Giáo viên", value: stats.tutors, icon: GraduationCap },
-          { label: "Học sinh", value: stats.students, icon: UserPlus },
-          { label: "Chờ duyệt", value: stats.pending, icon: UserCheck },
+          { label: "Tổng người dùng", value: stats.total, icon: Users, fg: "from-blue-700 to-blue-900" },
+          { label: "Gia sư & Giáo viên", value: stats.tutors, icon: GraduationCap, fg: "from-emerald-500 to-teal-500" },
+          { label: "Học sinh", value: stats.students, icon: UserPlus, fg: "from-amber-500 to-orange-500" },
+          { label: "Chờ duyệt", value: stats.pending, icon: UserCheck, fg: "from-rose-500 to-pink-500" },
         ].map((s, i) => (
-          <Card key={i} className="border-0 shadow-soft">
+          <Card key={i} className={`border-0 shadow-soft text-white bg-gradient-to-r ${s.fg}`}>
             <CardContent className="p-4 flex items-center justify-between">
               <div>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
-                <p className="text-2xl font-bold text-foreground">{s.value}</p>
+                <p className="text-xs text-white/80">{s.label}</p>
+                <p className="text-2xl font-bold text-white">{s.value}</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
-                <s.icon className="w-5 h-5 text-foreground" />
+              <div className="w-10 h-10 rounded-full border border-white/30 bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                <s.icon className="w-5 h-5 text-white" />
               </div>
             </CardContent>
           </Card>
@@ -106,8 +107,8 @@ const AdminUsers = () => {
       {/* Search + Filters */}
       <div className="flex flex-col md:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Tìm theo tên, email hoặc môn..." value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} className="pl-10 h-11 rounded-2xl bg-card border-border" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Input placeholder="Tìm theo tên, email hoặc môn..." value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} className="pl-10 h-11 rounded-2xl bg-white/80 border border-slate-200 shadow-sm" />
         </div>
         <Select value={statusFilter} onValueChange={v => { setStatusFilter(v); setPage(1); }}>
           <SelectTrigger className="w-full md:w-48 h-11 rounded-2xl bg-card border-border"><SelectValue placeholder="Lọc trạng thái" /></SelectTrigger>
@@ -118,23 +119,23 @@ const AdminUsers = () => {
         )}
       </div>
 
-      {/* Role tabs */}
-      <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-2xl w-fit">
-        {roleTabs.map(r => (
-          <button key={r.value} onClick={() => { setTab(r.value); setPage(1); }}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${tab === r.value ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
-            <r.icon className="w-3.5 h-3.5" />
-            {r.label}
-          </button>
-        ))}
-      </div>
-
       <p className="text-sm text-muted-foreground">Tìm thấy <span className="font-semibold text-foreground">{filtered.length}</span> người dùng</p>
 
       <Card className="border-0 shadow-soft">
         <CardContent className="p-5">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-foreground">Yêu cầu phê duyệt ({pendingApprovals.length})</h3>
+            <h3 className="text-sm font-semibold text-slate-900">Yêu cầu phê duyệt ({pendingApprovals.length})</h3>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 border-blue-500 text-blue-600 bg-white/80 hover:bg-blue-50 hover:text-blue-800 transition-colors duration-200"
+              onClick={() => {
+                setTab("all");
+                setStatusFilter("pending");
+                setPage(1);
+                setShowPendingDialog(true);
+              }}
+            >Xem tất cả</Button>
           </div>
           {pendingApprovals.length === 0 ? (
             <p className="text-sm text-muted-foreground">Không có yêu cầu chờ duyệt.</p>
@@ -159,6 +160,50 @@ const AdminUsers = () => {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={showPendingDialog} onOpenChange={setShowPendingDialog}>
+        <DialogContent className="rounded-2xl max-w-4xl w-full">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">Danh sách chờ duyệt</DialogTitle>
+          </DialogHeader>
+          <div className="h-72 overflow-y-auto">
+            <div className="space-y-2">
+              {pendingApprovals.length === 0 ? (
+                <p className="text-sm text-muted-foreground p-4">Không có yêu cầu chờ duyệt.</p>
+              ) : (
+                pendingApprovals.map(u => (
+                  <div key={u.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <div className="flex items-center gap-3">
+                      <img src={u.avatar} alt={u.name} className="w-9 h-9 rounded-full object-cover" />
+                      <div>
+                        <p className="text-sm font-medium text-slate-900">{u.name}</p>
+                        <p className="text-xs text-slate-500">{roleLabel[u.role] || u.role} · {u.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" className="rounded-lg h-8 bg-blue-700 text-white hover:bg-blue-800" onClick={() => handleStatusChange(u.id, "approved")}>Duyệt</Button>
+                      <Button size="sm" className="rounded-lg h-8 bg-rose-500 text-white hover:bg-rose-600" onClick={() => handleStatusChange(u.id, "rejected")}>Từ chối</Button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Role tabs */}
+      <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-2xl w-fit">
+        {roleTabs.map(r => (
+          <button key={r.value} onClick={() => { setTab(r.value); setPage(1); }}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${tab === r.value ? "bg-blue-700 text-white shadow-sm" : "text-muted-foreground hover:text-slate-700"}`}>
+            <r.icon className="w-3.5 h-3.5" />
+            {r.label}
+          </button>
+        ))}
+      </div>
+
+      
 
       {/* Table */}
       <Card className="border-0 shadow-soft overflow-hidden">

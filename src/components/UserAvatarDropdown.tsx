@@ -47,7 +47,7 @@ const UserAvatarDropdown = ({ avatar, name, role, profilePath }: UserAvatarDropd
             <User className="w-4 h-4" /> Hồ sơ cá nhân
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem className="cursor-pointer gap-2">
+        <DropdownMenuItem onClick={() => navigate("/admin/settings")} className="cursor-pointer gap-2">
           <Settings className="w-4 h-4" /> Cài đặt tài khoản
         </DropdownMenuItem>
         <DropdownMenuSeparator />

@@ -22,19 +22,45 @@ const AdminSettings = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <Card className="border-0 shadow-soft bg-gradient-to-br from-blue-700 to-blue-900 text-white">
+          <CardContent className="p-4">
+            <p className="text-xs text-white/80">Phí Escrow</p>
+            <p className="text-2xl font-bold">{form.escrowPercent}%</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-soft bg-gradient-to-br from-emerald-500 to-teal-500 text-white">
+          <CardContent className="p-4">
+            <p className="text-xs text-white/80">Thời gian giữ tiền</p>
+            <p className="text-2xl font-bold">{form.escrowHoldDays} ngày</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-soft bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+          <CardContent className="p-4">
+            <p className="text-xs text-white/80">Thi thử</p>
+            <p className="text-2xl font-bold">{form.enableExams ? "Bật" : "Tắt"}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-soft bg-gradient-to-br from-rose-500 to-pink-500 text-white">
+          <CardContent className="p-4">
+            <p className="text-xs text-white/80">Thanh toán QR</p>
+            <p className="text-2xl font-bold">{form.enablePayments ? "Bật" : "Tắt"}</p>
+          </CardContent>
+        </Card>
+      </div>
+
       <Tabs defaultValue="escrow" className="space-y-6">
-        <TabsList className="bg-muted/50 p-1 rounded-2xl h-auto flex-wrap">
-          <TabsTrigger value="escrow" className="rounded-xl data-[state=active]:shadow-sm px-4 py-2.5 gap-2 text-sm">
+        <TabsList className="bg-muted/50 p-1 rounded-2xl h-auto flex-wrap">          <TabsTrigger value="escrow" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm px-4 py-2.5 gap-2 text-sm">
             <CreditCard className="w-4 h-4" /> Giao dịch & Escrow
           </TabsTrigger>
-          <TabsTrigger value="general" className="rounded-xl data-[state=active]:shadow-sm px-4 py-2.5 gap-2 text-sm">
+          <TabsTrigger value="general" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm px-4 py-2.5 gap-2 text-sm">
             <Settings className="w-4 h-4" /> Hệ thống chung
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="rounded-xl data-[state=active]:shadow-sm px-4 py-2.5 gap-2 text-sm">
+          <TabsTrigger value="notifications" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm px-4 py-2.5 gap-2 text-sm">
             <Bell className="w-4 h-4" /> Thông báo
           </TabsTrigger>
-          <TabsTrigger value="security" className="rounded-xl data-[state=active]:shadow-sm px-4 py-2.5 gap-2 text-sm">
+          <TabsTrigger value="security" className="rounded-xl data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm px-4 py-2.5 gap-2 text-sm">
             <Shield className="w-4 h-4" /> Bảo mật & Phân quyền
           </TabsTrigger>
         </TabsList>

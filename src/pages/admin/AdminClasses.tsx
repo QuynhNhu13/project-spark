@@ -13,9 +13,9 @@ import { useToast } from "@/hooks/use-toast";
 
 const statusLabel: Record<string, string> = { searching: "Đang tìm", active: "Đang học", completed: "Hoàn thành" };
 const statusColor: Record<string, string> = {
-  searching: "bg-warning/150/10 text-warning",
-  active: "bg-success/150/10 text-success",
-  completed: "bg-primary/10 text-primary",
+  searching: "bg-amber-100 text-amber-700",
+  active: "bg-emerald-100 text-emerald-700",
+  completed: "bg-blue-100 text-blue-700",
 };
 const formatColor: Record<string, string> = {
   online: "bg-primary/10 text-primary",
@@ -65,10 +65,10 @@ const AdminClasses = () => {
   const getUserAvatar = (id: string) => users.find(u => u.id === id)?.avatar;
 
   const stats = [
-    { label: "Tổng lớp", value: classes.length, icon: BookOpen, color: "bg-primary/10 text-primary" },
-    { label: "Đang hoạt động", value: activeClasses, icon: Users, color: "bg-success/150/10 text-success" },
-    { label: "Đang tìm gia sư", value: searchingClasses, icon: SearchIcon, color: "bg-warning/150/10 text-warning" },
-    { label: "Buổi học tháng này", value: activeClasses * 8, icon: Calendar, color: "bg-primary/10 text-primary" },
+    { label: "Tổng lớp", value: classes.length, icon: BookOpen, bg: "from-blue-700 to-blue-900", iconBg: "bg-blue-100", iconColor: "text-blue-700" },
+    { label: "Đang hoạt động", value: activeClasses, icon: Users, bg: "from-emerald-500 to-teal-500", iconBg: "bg-emerald-100", iconColor: "text-emerald-600" },
+    { label: "Đang tìm gia sư", value: searchingClasses, icon: SearchIcon, bg: "from-amber-500 to-orange-500", iconBg: "bg-amber-100", iconColor: "text-amber-600" },
+    { label: "Buổi học tháng này", value: activeClasses * 8, icon: Calendar, bg: "from-rose-500 to-pink-500", iconBg: "bg-rose-100", iconColor: "text-rose-600" },
   ];
 
   return (
@@ -76,14 +76,14 @@ const AdminClasses = () => {
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map(s => (
-          <Card key={s.label} className="border-0 shadow-soft">
+          <Card key={s.label} className={`border-0 shadow-soft bg-gradient-to-br ${s.bg} text-white`}>
             <CardContent className="p-4 flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.color}`}>
-                <s.icon className="w-5 h-5" />
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.iconBg} backdrop-blur-sm`}>
+                <s.icon className={`w-5 h-5 ${s.iconColor}`} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">{s.value}</p>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
+                <p className="text-2xl font-bold">{s.value}</p>
+                <p className="text-xs opacity-90">{s.label}</p>
               </div>
             </CardContent>
           </Card>
@@ -161,7 +161,7 @@ const AdminClasses = () => {
                   <TableCell className="text-sm font-medium">{c.fee.toLocaleString("vi-VN")}đ</TableCell>
                   <TableCell>
                     <Select value={c.status} onValueChange={v => handleStatusChange(c.id, v)}>
-                      <SelectTrigger className={`w-28 h-7 text-[11px] rounded-full border-0 font-medium ${statusColor[c.status]}`}>
+                      <SelectTrigger className={`w-32 h-8 text-[11px] rounded-full border-0 font-semibold ${statusColor[c.status]} shadow-sm`}> 
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>

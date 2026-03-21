@@ -1,62 +1,103 @@
 import { useAdmin } from "@/contexts/AdminContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ScrollText, Shield, Clock, User } from "lucide-react";
+import { ScrollText, Shield, Clock, User, Search } from "lucide-react";
+import { useState } from "react";
 
 const actionColor: Record<string, string> = {
-  "Duyệt tài khoản": "bg-success/150/10 text-success",
-  "Từ chối tài khoản": "bg-destructive/10 text-destructive",
-  "Xóa người dùng": "bg-destructive/10 text-destructive",
-  "Tạo lớp học": "bg-primary/10 text-primary",
-  "Cập nhật lớp học": "bg-warning/150/10 text-warning",
-  "Xóa lớp học": "bg-destructive/10 text-destructive",
-  "Tạo bài test": "bg-primary/10 text-primary",
-  "Cập nhật bài test": "bg-warning/150/10 text-warning",
-  "Xóa bài test": "bg-destructive/10 text-destructive",
-  "Cập nhật cài đặt": "bg-muted text-muted-foreground",
-  "Thêm giao dịch": "bg-success/150/10 text-success",
+  "Duyệt tài khoản": "bg-emerald-100 text-emerald-700",
+  "Từ chối tài khoản": "bg-rose-100 text-rose-700",
+  "Xóa người dùng": "bg-rose-100 text-rose-700",
+  "Tạo lớp học": "bg-blue-100 text-blue-700",
+  "Cập nhật lớp học": "bg-amber-100 text-amber-700",
+  "Xóa lớp học": "bg-rose-100 text-rose-700",
+  "Tạo bài test": "bg-blue-100 text-blue-700",
+  "Cập nhật bài test": "bg-amber-100 text-amber-700",
+  "Xóa bài test": "bg-rose-100 text-rose-700",
+  "Cập nhật cài đặt": "bg-slate-100 text-slate-700",
+  "Thêm giao dịch": "bg-green-100 text-green-700",
 };
+
+const mockAuditLog = [
+  { id: "al1", actor: "Admin", action: "Duyệt tài khoản", target: "Nguyễn Văn An (Gia sư)", timestamp: "2026-03-10 09:00" },
+  { id: "al2", actor: "Admin", action: "Tạo lớp học", target: "Toán 12 - Ôn thi ĐH", timestamp: "2026-03-09 15:20" },
+  { id: "al3", actor: "Admin", action: "Cập nhật cài đặt", target: "Phí escrow 20%", timestamp: "2026-03-09 14:10" },
+  { id: "al4", actor: "Admin", action: "Xóa người dùng", target: "Bùi Văn Hùng", timestamp: "2026-03-08 11:45" },
+  { id: "al5", actor: "Admin", action: "Thêm giao dịch", target: "Học phí Văn 11", timestamp: "2026-03-07 13:30" },
+  { id: "al6", actor: "Admin", action: "Cập nhật lớp học", target: "IELTS Writing", timestamp: "2026-03-06 10:25" },
+  { id: "al7", actor: "Admin", action: "Từ chối tài khoản", target: "Đinh Thị Hoa", timestamp: "2026-03-05 08:40" },
+];
+
+const actionOptions = [
+  { value: "all", label: "Tất cả hành động" },
+  { value: "Duyệt tài khoản", label: "Duyệt tài khoản" },
+  { value: "Từ chối tài khoản", label: "Từ chối tài khoản" },
+  { value: "Xóa người dùng", label: "Xóa người dùng" },
+  { value: "Tạo lớp học", label: "Tạo lớp học" },
+  { value: "Cập nhật lớp học", label: "Cập nhật lớp học" },
+  { value: "Cập nhật cài đặt", label: "Cập nhật cài đặt" },
+  { value: "Thêm giao dịch", label: "Thêm giao dịch" },
+];
 
 const AdminAudit = () => {
   const { auditLog } = useAdmin();
+  const [search, setSearch] = useState("");
+  const [actionFilter, setActionFilter] = useState("all");
+
+  const auditLogData = auditLog.length ? auditLog : mockAuditLog;
+  const sortedAuditLog = [...auditLogData].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  const filteredAuditLog = sortedAuditLog.filter(log => {
+    const matchesAction = actionFilter === "all" || log.action === actionFilter;
+    const q = search.trim().toLowerCase();
+    const matchesSearch = !q || log.actor.toLowerCase().includes(q) || log.target.toLowerCase().includes(q) || log.action.toLowerCase().includes(q);
+    return matchesAction && matchesSearch;
+  });
+
+  const totalLog = auditLogData.length;
+  const approved = auditLogData.filter(l => l.action.includes("Duyệt")).length;
+  const deleted = auditLogData.filter(l => l.action.includes("Xóa")).length;
 
   return (
     <div className="p-6 space-y-5">
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="border-0 shadow-soft">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <ScrollText className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-foreground">{auditLog.length}</p>
-              <p className="text-xs text-muted-foreground">Tổng log</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-soft">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-success/150/10 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-success" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-foreground">{auditLog.filter(l => l.action.includes("Duyệt")).length}</p>
-              <p className="text-xs text-muted-foreground">Phê duyệt</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-0 shadow-soft">
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
-              <User className="w-5 h-5 text-destructive" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-foreground">{auditLog.filter(l => l.action.includes("Xóa")).length}</p>
-              <p className="text-xs text-muted-foreground">Xóa dữ liệu</p>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          { label: "Tổng log", value: totalLog, icon: ScrollText, bg: "from-blue-700 to-blue-900", iconBg: "bg-blue-100", iconColor: "text-blue-700" },
+          { label: "Phê duyệt", value: approved, icon: Shield, bg: "from-emerald-500 to-teal-500", iconBg: "bg-emerald-100", iconColor: "text-emerald-700" },
+          { label: "Xóa dữ liệu", value: deleted, icon: User, bg: "from-rose-500 to-pink-500", iconBg: "bg-rose-100", iconColor: "text-rose-700" },
+        ].map((s, idx) => (
+          <Card key={idx} className={`border-0 shadow-soft bg-gradient-to-br ${s.bg} text-white`}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.iconBg} backdrop-blur-sm`}>
+                <s.icon className={`w-5 h-5 ${s.iconColor}`} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{s.value}</p>
+                <p className="text-xs text-white/80">{s.label}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Filter & Search */}
+      <div className="flex flex-col md:flex-row items-center gap-3">
+        <div className="relative flex-1 min-w-[240px]">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Tìm theo người thực hiện, hành động, đối tượng..."
+            className="w-full pl-10 h-10 rounded-2xl border border-border bg-card text-sm"
+          />
+        </div>
+        <select
+          value={actionFilter}
+          onChange={e => setActionFilter(e.target.value)}
+          className="w-full md:w-48 h-10 rounded-2xl border border-border bg-card px-3 text-sm"
+        >
+          {actionOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
       </div>
 
       {/* Table */}
@@ -72,7 +113,7 @@ const AdminAudit = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {auditLog.map(log => (
+              {filteredAuditLog.map(log => (
                 <TableRow key={log.id} className="hover:bg-muted/20 transition-colors">
                   <TableCell>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -96,8 +137,8 @@ const AdminAudit = () => {
                   <TableCell className="text-sm text-muted-foreground">{log.target}</TableCell>
                 </TableRow>
               ))}
-              {auditLog.length === 0 && (
-                <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-12">Chưa có log nào</TableCell></TableRow>
+              {filteredAuditLog.length === 0 && (
+                <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-12">Chưa có log nào phù hợp</TableCell></TableRow>
               )}
             </TableBody>
           </Table>

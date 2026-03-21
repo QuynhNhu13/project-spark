@@ -5,82 +5,159 @@ import { Users, GraduationCap, BookOpen, CreditCard, Clock, FileText, UserCheck,
 import { useNavigate } from "react-router-dom";
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Pie, Cell, PieChart } from "recharts";
 
-const COLORS = ["hsl(var(--chart-1))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))"];
+const DASHBOARD_THEME = {
+  primary: "#1E68E6",
+  success: "#16A34A",
+  warning: "#f59e0b",
+  danger: "#ef4444",
+  neutral: "#94a3b8",
+  muted: "#64748b",
+};
+
+const PIE_COLORS = [DASHBOARD_THEME.primary, DASHBOARD_THEME.success, DASHBOARD_THEME.warning, DASHBOARD_THEME.danger];
 
 const AdminDashboard = () => {
   const { users, classes, tests, transactions, settings } = useAdmin();
   const navigate = useNavigate();
 
-  const totalUsers = users.length;
-  const totalTutorsTeachers = users.filter(u => u.role === "tutor" || u.role === "teacher").length;
-  const activeClasses = classes.filter(c => c.status === "active").length;
-  const pendingApprovals = users.filter(u => u.status === "pending").length;
+  // Mock demo data nếu chưa có data thật để demo nhanh
+  const demoUsers = users.length ? users : [
+    { id: "u1", name: "Mai Anh", role: "student", status: "active", avatar: "https://i.pravatar.cc/40?img=32", createdAt: "2024-02-01" },
+    { id: "u2", name: "Nguyễn Dũng", role: "tutor", status: "active", avatar: "https://i.pravatar.cc/40?img=12", createdAt: "2024-03-10" },
+    { id: "u3", name: "Lê Thảo", role: "parent", status: "pending", avatar: "https://i.pravatar.cc/40?img=8", createdAt: "2024-03-14" },
+    { id: "u4", name: "Vũ Minh", role: "teacher", status: "active", avatar: "https://i.pravatar.cc/40?img=24", createdAt: "2024-03-08" },
+    { id: "u5", name: "Trần Hương", role: "student", status: "active", avatar: "https://i.pravatar.cc/40?img=16", createdAt: "2024-03-02" },
+    { id: "u6", name: "Phạm Khánh", role: "tutor", status: "pending", avatar: "https://i.pravatar.cc/40?img=36", createdAt: "2024-04-01" },
+    { id: "u7", name: "Hoàng Long", role: "teacher", status: "active", avatar: "https://i.pravatar.cc/40?img=22", createdAt: "2024-03-12" },
+    { id: "u8", name: "Đặng Sơn", role: "parent", status: "active", avatar: "https://i.pravatar.cc/40?img=20", createdAt: "2024-03-18" },
+  ];
+
+  const demoClasses = classes.length ? classes : [
+    { id: "c1", name: "Toán lớp 10", tutorId: "u2", fee: 1900000, status: "active" },
+    { id: "c2", name: "Hóa lớp 11", tutorId: "u4", fee: 2200000, status: "searching" },
+    { id: "c3", name: "Anh văn giao tiếp", tutorId: "u2", fee: 1700000, status: "completed" },
+    { id: "c4", name: "Lý luyện thi", tutorId: "u4", fee: 2200000, status: "active" },
+    { id: "c5", name: "Vật lý 9", tutorId: "u7", fee: 1800000, status: "active" },
+    { id: "c6", name: "Sinh học 12", tutorId: "u2", fee: 2300000, status: "completed" },
+    { id: "c7", name: "Tiếng Anh thi Đại học", tutorId: "u6", fee: 2500000, status: "searching" },
+  ];
+
+  const demoTests = tests.length ? tests : [
+    { id: "t1", createdAt: "2024-01-20" },
+    { id: "t2", createdAt: "2024-02-02" },
+    { id: "t3", createdAt: "2024-02-27" },
+    { id: "t4", createdAt: "2024-03-05" },
+    { id: "t5", createdAt: "2024-03-09" },
+    { id: "t6", createdAt: "2024-03-11" },
+    { id: "t7", createdAt: "2024-03-15" },
+    { id: "t8", createdAt: "2024-03-17" },
+  ];
+
+  const demoTransactions = transactions.length ? transactions : [
+    { id: "tx1", userId: "u1", date: "2024-01-18", amount: 900000, status: "completed", description: "Thanh toán lớp Toán" },
+    { id: "tx2", userId: "u3", date: "2024-01-22", amount: 1200000, status: "completed", description: "Đăng ký lớp Hóa" },
+    { id: "tx3", userId: "u2", date: "2024-02-01", amount: 1700000, status: "completed", description: "Thanh toán lớp Anh" },
+    { id: "tx4", userId: "u4", date: "2024-02-15", amount: 2100000, status: "completed", description: "Thanh toán lớp Lý" },
+    { id: "tx5", userId: "u1", date: "2024-03-02", amount: 1400000, status: "failed", description: "Thanh toán thất bại" },
+    { id: "tx6", userId: "u8", date: "2024-03-05", amount: 2300000, status: "completed", description: "Đăng ký lớp Vật lý" },
+    { id: "tx7", userId: "u5", date: "2024-03-10", amount: 1800000, status: "pending", description: "Đang chờ xác nhận" },
+    { id: "tx8", userId: "u7", date: "2024-03-14", amount: 2500000, status: "refunded", description: "Hoàn tiền lớp Anh văn" },
+    { id: "tx9", userId: "u6", date: "2024-03-18", amount: 2000000, status: "completed", description: "Thanh toán lớp Toán 11" },
+  ];
+
+  const userData = demoUsers;
+  const classData = demoClasses;
+  const testData = demoTests;
+  const transactionData = demoTransactions;
+
+  const totalUsers = userData.length;
+  const totalTutorsTeachers = userData.filter(u => u.role === "tutor" || u.role === "teacher").length;
+  const activeClasses = classData.filter(c => c.status === "active").length;
+  const pendingApprovals = userData.filter(u => u.status === "pending").length;
 
   const now = new Date();
-  const monthRevenue = transactions
+  const monthRevenue = transactionData
     .filter(t => t.status === "completed" && new Date(t.date).getMonth() === now.getMonth() && new Date(t.date).getFullYear() === now.getFullYear())
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const monthTests = tests.filter(t => {
+  const monthTests = testData.filter(t => {
     const d = new Date(t.createdAt);
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   }).length;
 
-  const pendingUsers = users.filter(u => u.status === "pending");
+  const pendingUsers = userData.filter(u => u.status === "pending");
   const avgApprovalDays = pendingUsers.length > 0
     ? Math.round(pendingUsers.reduce((sum, u) => sum + Math.ceil((now.getTime() - new Date(u.createdAt).getTime()) / 86400000), 0) / pendingUsers.length)
     : 0;
 
   const topStats = [
-    { label: "Tổng người dùng", value: totalUsers, icon: Users, change: "+12%", up: true },
-    { label: "Gia sư & Giáo viên", value: totalTutorsTeachers, icon: GraduationCap, change: "+8%", up: true },
-    { label: "Lớp đang hoạt động", value: activeClasses, icon: BookOpen, change: "+5%", up: true },
-    { label: "Doanh thu tháng", value: `${(monthRevenue / 1000000).toFixed(1)}M`, icon: CreditCard, change: "+18%", up: true },
+    { label: "Tổng người dùng", value: totalUsers, icon: Users, change: "+12%", up: true, bg: "from-blue-700 to-blue-900", iconBg: "bg-blue-100", iconColor: "text-blue-700" },
+    { label: "Gia sư & Giáo viên", value: totalTutorsTeachers, icon: GraduationCap, change: "+8%", up: true, bg: "from-emerald-500 to-teal-500", iconBg: "bg-emerald-100", iconColor: "text-emerald-600" },
+    { label: "Lớp đang hoạt động", value: activeClasses, icon: BookOpen, change: "+5%", up: true, bg: "from-amber-500 to-orange-500", iconBg: "bg-amber-100", iconColor: "text-amber-600" },
+    { label: "Doanh thu tháng", value: `${(monthRevenue / 1000000).toFixed(1)}M`, icon: CreditCard, change: "+18%", up: true, bg: "from-rose-500 to-pink-500", iconBg: "bg-rose-100", iconColor: "text-rose-600" },
   ];
 
-  const recentClasses = classes.filter(c => c.status === "searching" || c.status === "active").slice(0, 4);
-  const recentTransactions = transactions.slice(0, 5);
+  const recentClasses = classData.filter(c => c.status === "searching" || c.status === "active").slice(0, 4);
+  const recentTransactions = transactionData.slice(0, 5);
 
   const monthlyData = Array.from({ length: 6 }).map((_, i) => {
     const d = new Date();
     d.setMonth(d.getMonth() - (5 - i));
-    const month = `${d.getMonth() + 1}`;
-    const revenue = transactions
+    const month = `Tháng ${d.getMonth() + 1}`;
+    const revenue = transactionData
       .filter((t) => t.status === "completed" && new Date(t.date).getMonth() === d.getMonth())
       .reduce((s, t) => s + t.amount, 0);
     return { month, revenue };
   });
 
+  const roleNameMap: Record<string, string> = {
+    tutor: "Gia sư",
+    teacher: "Giáo viên",
+    student: "Học sinh",
+    parent: "Phụ huynh",
+  };
+
   const usersByRole = ["tutor", "teacher", "student", "parent"].map((role) => ({
-    name: role,
-    value: users.filter((u) => u.role === role).length,
+    name: roleNameMap[role] || role,
+    value: userData.filter((u) => u.role === role).length,
   }));
 
-  const getUserName = (id: string) => users.find(u => u.id === id)?.name || "—";
+  const getUserName = (id: string) => userData.find(u => u.id === id)?.name || "—";
 
   const statusLabel: Record<string, string> = { searching: "Đang tìm", active: "Đang học", completed: "Hoàn thành" };
-  
+  const statusClass: Record<string, string> = {
+    searching: "bg-amber-100 text-amber-700",
+    active: "bg-blue-100 text-blue-700",
+    completed: "bg-emerald-100 text-emerald-700",
+  };
+
   const txStatusLabel: Record<string, string> = { completed: "Hoàn thành", pending: "Đang xử lý", failed: "Thất bại", refunded: "Hoàn tiền" };
+  const txStatusClass: Record<string, string> = {
+    completed: "bg-emerald-100 text-emerald-700",
+    pending: "bg-amber-100 text-amber-700",
+    failed: "bg-red-100 text-red-700",
+    refunded: "bg-sky-100 text-sky-700",
+  };
 
   return (
     <div className="p-6 space-y-6">
       {/* Top 4 stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {topStats.map(s => (
-          <Card key={s.label} className="border-0 shadow-soft hover:shadow-elevated transition-shadow duration-300">
+          <Card key={s.label} className={`border-0 shadow-soft hover:shadow-elevated transition-shadow duration-300 bg-gradient-to-r ${s.bg} text-white`}>
             <CardContent className="p-5">
               <div className="flex items-start justify-between">
                 <div className="space-y-2">
-                  <p className="text-[13px] text-muted-foreground font-medium">{s.label}</p>
-                  <p className="text-3xl font-bold text-foreground tracking-tight">{s.value}</p>
+                  <p className="text-[13px] text-white/80 font-medium">{s.label}</p>
+                  <p className="text-3xl font-bold text-white tracking-tight">{s.value}</p>
                   <div className="flex items-center gap-1">
-                    {s.up ? <ArrowUpRight className="w-3.5 h-3.5 text-primary" /> : <ArrowDownRight className="w-3.5 h-3.5 text-destructive" />}
-                    <span className={`text-xs font-semibold ${s.up ? "text-primary" : "text-destructive"}`}>{s.change}</span>
-                    <span className="text-xs text-muted-foreground">vs tháng trước</span>
+                    {s.up ? <ArrowUpRight className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,.9)" }} /> : <ArrowDownRight className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,.9)" }} />}
+                    <span className="text-xs font-semibold text-white/90">{s.change}</span>
+                    <span className="text-xs text-white/70">vs tháng trước</span>
                   </div>
                 </div>
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-muted">
-                  <s.icon className="w-5 h-5 text-foreground" />
+                <div className="w-11 h-11 rounded-full flex items-center justify-center border border-white/30 bg-white/20 backdrop-blur-sm shadow-sm">
+                  <s.icon className="w-5 h-5 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -94,12 +171,12 @@ const AdminDashboard = () => {
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
-                  <UserCheck className="w-5 h-5 text-destructive" />
+                <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                  <UserCheck className="w-5 h-5 text-amber-600" />
                 </div>
                 <div>
                   <p className="text-[13px] text-muted-foreground font-medium">Chờ phê duyệt</p>
-                  <p className="text-2xl font-bold text-foreground">{pendingApprovals}</p>
+                  <p className="text-2xl font-bold text-slate-900">{pendingApprovals}</p>
                 </div>
               </div>
             </div>
@@ -122,8 +199,8 @@ const AdminDashboard = () => {
             </div>
             <div className="flex items-end gap-1.5 h-10">
               {[40, 65, 55, 80, 70, 90, 60].map((h, i) => (
-                <div key={i} className="flex-1 rounded-sm bg-primary/20 relative overflow-hidden" style={{ height: `${h}%` }}>
-                  <div className="absolute bottom-0 w-full bg-primary rounded-sm" style={{ height: `${h}%` }} />
+                <div key={i} className="flex-1 rounded-sm bg-blue-100/50 relative overflow-hidden" style={{ height: `${h}%` }}>
+                  <div className="absolute bottom-0 w-full rounded-sm" style={{ height: `${h}%`, backgroundColor: DASHBOARD_THEME.primary }} />
                 </div>
               ))}
             </div>
@@ -161,11 +238,14 @@ const AdminDashboard = () => {
             <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2"><BarChart3 className="w-4 h-4" /> Doanh thu theo tháng</h3>
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
-                <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} tickFormatter={(v) => `${Math.round(v / 1000000)}M`} />
-                <Tooltip formatter={(v: number) => `${v.toLocaleString("vi-VN")}đ`} />
-                <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 116, 139, 0.35)" />
+                <XAxis dataKey="month" tick={{ fill: "#475569", fontSize: 12 }} />
+                <YAxis tick={{ fill: "#475569", fontSize: 12 }} tickFormatter={(v) => `${Math.round(v / 1000000)}M`} />
+                <Tooltip
+                  formatter={(v: number) => [`${v.toLocaleString("vi-VN")} đ`, "Doanh thu"]}
+                  cursor={{ fill: "rgba(30, 58, 138, 0.06)" }}
+                />
+                <Bar dataKey="revenue" fill={DASHBOARD_THEME.primary} radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -178,9 +258,9 @@ const AdminDashboard = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie data={usersByRole} dataKey="value" nameKey="name" outerRadius={85} label>
-                    {usersByRole.map((entry, index) => <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />)}
+                    {usersByRole.map((entry, index) => <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />)}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip contentStyle={{ backgroundColor: "rgba(15, 23, 42, 0.9)", border: "1px solid rgba(148, 163, 184, 0.4)", color: "white" }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -208,7 +288,7 @@ const AdminDashboard = () => {
                     <p className="text-sm font-medium text-foreground truncate">{c.name}</p>
                     <p className="text-xs text-muted-foreground">{getUserName(c.tutorId)} · {c.fee.toLocaleString("vi-VN")}đ</p>
                   </div>
-                  <span className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-muted text-foreground">
+                  <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${statusClass[c.status] ?? "bg-slate-100 text-slate-700"}`}>
                     {statusLabel[c.status]}
                   </span>
                 </div>
@@ -241,7 +321,7 @@ const AdminDashboard = () => {
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-semibold text-foreground">{tx.amount.toLocaleString("vi-VN")}đ</p>
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${txStatusClass[tx.status] ?? "bg-slate-100 text-slate-700"}`}>
                         {txStatusLabel[tx.status]}
                       </span>
                     </div>

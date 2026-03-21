@@ -47,10 +47,10 @@ const AdminTransactions = () => {
   });
 
   const stats = [
-    { label: "Tổng giao dịch", value: transactions.length, icon: Receipt, color: "bg-primary/10 text-primary" },
-    { label: "Tổng doanh thu", value: `${(totalRevenue / 1000000).toFixed(1)}M`, icon: CreditCard, color: "bg-success/15 text-success" },
-    { label: `Lợi nhuận (${settings.escrowPercent}%)`, value: `${(escrowProfit / 1000000).toFixed(1)}M`, icon: TrendingUp, color: "bg-info/15 text-info" },
-    { label: "Đang chờ xử lý", value: `${(pendingAmount / 1000000).toFixed(1)}M`, icon: Wallet, color: "bg-warning/15 text-warning" },
+    { label: "Tổng giao dịch", value: transactions.length, icon: Receipt, bg: "from-blue-700 to-blue-900", iconBg: "bg-blue-100", iconColor: "text-blue-700" },
+    { label: "Tổng doanh thu", value: `${(totalRevenue / 1000000).toFixed(1)}M`, icon: CreditCard, bg: "from-emerald-500 to-teal-500", iconBg: "bg-emerald-100", iconColor: "text-emerald-600" },
+    { label: `Lợi nhuận (${settings.escrowPercent}%)`, value: `${(escrowProfit / 1000000).toFixed(1)}M`, icon: TrendingUp, bg: "from-amber-500 to-orange-500", iconBg: "bg-amber-100", iconColor: "text-amber-600" },
+    { label: "Đang chờ xử lý", value: `${(pendingAmount / 1000000).toFixed(1)}M`, icon: Wallet, bg: "from-rose-500 to-pink-500", iconBg: "bg-rose-100", iconColor: "text-rose-600" },
   ];
 
   return (
@@ -58,14 +58,14 @@ const AdminTransactions = () => {
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map(s => (
-          <Card key={s.label} className="border-0 shadow-soft">
+          <Card key={s.label} className={`border-0 shadow-soft bg-gradient-to-br ${s.bg} text-white`}>
             <CardContent className="p-4 flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.color}`}>
-                <s.icon className="w-5 h-5" />
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.iconBg} backdrop-blur-sm`}>
+                <s.icon className={`w-5 h-5 ${s.iconColor}`} />
               </div>
               <div>
-                <p className="text-xl font-bold text-foreground">{s.value}</p>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
+                <p className="text-xl font-bold text-white">{s.value}</p>
+                <p className="text-xs text-white/80">{s.label}</p>
               </div>
             </CardContent>
           </Card>
@@ -84,7 +84,7 @@ const AdminTransactions = () => {
           />
         </div>
         <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-40 h-10 rounded-xl"><SelectValue placeholder="Loại giao dịch" /></SelectTrigger>
+          <SelectTrigger className="w-40 h-10 rounded-2xl bg-card border border-border shadow-sm"><SelectValue placeholder="Loại giao dịch" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tất cả loại</SelectItem>
             <SelectItem value="tuition">Học phí</SelectItem>
@@ -93,7 +93,7 @@ const AdminTransactions = () => {
           </SelectContent>
         </Select>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-40 h-10 rounded-xl"><SelectValue placeholder="Trạng thái" /></SelectTrigger>
+          <SelectTrigger className="w-40 h-10 rounded-2xl bg-card border border-border shadow-sm"><SelectValue placeholder="Trạng thái" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tất cả trạng thái</SelectItem>
             <SelectItem value="completed">Hoàn thành</SelectItem>
