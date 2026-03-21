@@ -45,13 +45,13 @@
 
     --radius: 1.25rem;
 
-    --sidebar-background: 218 76% 42%;
+    --sidebar-background: 219 72% 24%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 218 76% 32%;
-    --sidebar-accent: 214 100% 96%;
-    --sidebar-accent-foreground: 218 76% 36%;
-    --sidebar-border: 218 58% 50%;
+    --sidebar-primary: 214 92% 66%;
+    --sidebar-primary-foreground: 218 80% 16%;
+    --sidebar-accent: 214 86% 78%;
+    --sidebar-accent-foreground: 219 72% 20%;
+    --sidebar-border: 217 56% 36%;
     --sidebar-ring: 224 76% 48%;
     --sidebar-muted-foreground: 214 48% 84%;
 
@@ -128,10 +128,11 @@
   .sidebar-theme {
     --card: var(--sidebar-background);
     --card-foreground: var(--sidebar-foreground);
-    --muted: var(--sidebar-accent);
+    --muted: 218 64% 30%;
     --muted-foreground: var(--sidebar-muted-foreground);
     --border: var(--sidebar-border);
     --foreground: var(--sidebar-foreground);
+    background: linear-gradient(180deg, hsl(var(--sidebar-background)) 0%, hsl(219 70% 22%) 100%);
   }
 
   .overview-surface {
