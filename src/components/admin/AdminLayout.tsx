@@ -112,13 +112,13 @@ const AdminLayout = () => {
           ))}
         </nav>
 
-        <div className="mt-auto px-4 py-3">
+         <div className="px-3 py-3 border-t border-sidebar-border/40">
           <button
             onClick={() => navigate("/")}
             title={collapsed ? "Đăng xuất" : undefined}
-            className={cn("flex items-center gap-3 rounded-full text-sm font-medium text-slate-200 hover:bg-red-500 hover:text-white w-full transition-all duration-300", collapsed ? "px-3 py-3 justify-center" : "px-4 py-3")}
+            className={cn("flex items-center gap-3 rounded-full text-[13px] font-semibold text-slate-200 hover:bg-red-500 hover:text-white w-full transition-all duration-300", collapsed ? "px-0 py-2.5 justify-center" : "px-3 py-2.5")}
           >
-            <LogOut className="w-5 h-5 shrink-0" />
+            <LogOut className="w-[18px] h-[18px] shrink-0" />
             {!collapsed && <span>Đăng xuất</span>}
           </button>
         </div>

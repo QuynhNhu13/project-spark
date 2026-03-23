@@ -82,8 +82,8 @@ const TutorLayout = () => {
   const markAllNotificationsRead = () => setNotifications(prev => prev.map(n => ({ ...n, read: true })));
 
   return (
-    <div className="flex h-screen bg-muted/30 overflow-hidden">
-      <aside className={cn("sidebar-theme mx-3 my-3 rounded-[1.75rem] border border-sidebar-border/70 bg-card shadow-elevated backdrop-blur-sm flex flex-col shrink-0 transition-all duration-300", collapsed ? "w-[72px]" : "w-[260px]")}>
+    <div className="flex h-screen bg-muted/30">
+      <aside className={cn("mx-3 my-3 rounded-3xl shadow-2xl border border-white/15 bg-gradient-to-b from-[#0b2e6a] via-[#052861] to-[#0a2160] text-slate-200 flex flex-col h-full shrink-0 transition-all duration-300", collapsed ? "w-[72px]" : "w-[260px]")}>
         <div className="h-16 flex items-center gap-3 px-4 border-b border-sidebar-border/40">
           <EduLogo size={collapsed ? 28 : 36} />
           {!collapsed && (
@@ -94,14 +94,14 @@ const TutorLayout = () => {
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className={cn("p-1.5 rounded-full hover:bg-sidebar-accent/80 transition-all duration-300 text-sidebar-foreground/90 hover:text-sidebar-accent-foreground hover:shadow-soft", collapsed ? "mx-auto" : "ml-auto")}
+            className={cn("p-1.5 rounded-full hover:bg-white/20 transition-all duration-300 text-white/90 hover:text-white shadow-soft", collapsed ? "mx-auto" : "ml-auto")}
           >
             {collapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
           </button>
         </div>
 
         <nav className="flex-1 px-3 py-5 overflow-y-auto">
-          {!collapsed && <p className="text-[10px] font-semibold uppercase tracking-[0.18em] px-3 mb-3 text-sidebar-muted-foreground">Menu</p>}
+          {/* {!collapsed && <p className="text-[10px] font-semibold uppercase tracking-[0.18em] px-3 mb-3 text-sidebar-muted-foreground">Menu</p>} */}
           {navItems.map(item => (
             <NavLink
               key={item.to}
@@ -113,8 +113,8 @@ const TutorLayout = () => {
                   "flex items-center gap-3 rounded-full text-[13px] font-semibold transition-all duration-300 relative",
                   collapsed ? "px-0 py-2.5 justify-center" : "px-3 py-2.5",
                   isActive
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-soft"
-                    : "text-sidebar-foreground/95 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    ? "bg-white/20 text-white shadow-soft"
+                    : "text-slate-200 hover:bg-slate-800 hover:text-white"
                 )
               }
             >
@@ -136,7 +136,7 @@ const TutorLayout = () => {
           <button
             onClick={() => navigate("/")}
             title={collapsed ? "Đăng xuất" : undefined}
-            className={cn("flex items-center gap-3 rounded-full text-[13px] font-semibold text-sidebar-foreground/95 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full transition-all duration-300", collapsed ? "px-0 py-2.5 justify-center" : "px-3 py-2.5")}
+            className={cn("flex items-center gap-3 rounded-full text-[13px] font-semibold text-slate-200 hover:bg-red-500 hover:text-white w-full transition-all duration-300", collapsed ? "px-0 py-2.5 justify-center" : "px-3 py-2.5")}
           >
             <LogOut className="w-[18px] h-[18px] shrink-0" />
             {!collapsed && <span>Đăng xuất</span>}
@@ -144,13 +144,13 @@ const TutorLayout = () => {
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-border bg-card px-6 flex items-center justify-between shrink-0">
-          <h2 className="text-lg font-semibold text-foreground">{currentTitle}</h2>
+      <div className="flex-1 m-4 mt-4 rounded-3xl bg-white shadow-2xl border border-slate-200/40 overflow-hidden flex flex-col">
+        <header className="h-20 px-8 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white border-b border-slate-200/60 shadow-sm">
+          <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#1E68E6] to-blue-500">{currentTitle}</h2>
           <div className="flex items-center gap-3">
-            <div className="relative" ref={notifRef}>
-              <button className="relative p-2 rounded-xl hover:bg-muted transition-colors" onClick={() => setShowNotif(!showNotif)}>
-                <Bell className="w-5 h-5 text-muted-foreground" />
+              <div className="relative" ref={notifRef}>
+                <button className="relative p-2 rounded-xl hover:bg-muted transition-colors" onClick={() => setShowNotif(!showNotif)}>
+                  <Bell className="w-5 h-5 text-muted-foreground" />
                 {unreadNotif > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold rounded-full bg-destructive text-destructive-foreground px-1">
                     {unreadNotif}
@@ -198,7 +198,7 @@ const TutorLayout = () => {
             <UserAvatarDropdown avatar={profile.avatar} name={profile.name} role="Gia sư" profilePath="/tutor/profile" />
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto p-6 bg-slate-50">
           <Outlet />
         </main>
       </div>
